@@ -119,7 +119,7 @@ export default function Reservation() {
 
   return (
     <CustomerLayout>
-      <div className="container mx-auto px-4 py-12 max-w-2xl">
+      <div className={`container mx-auto px-4 py-12 transition-all ${step === 1 ? "max-w-5xl" : "max-w-2xl"}`}>
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold tracking-tight mb-2">Reserve a Table</h1>
           <p className="text-muted-foreground">Complete the steps below to secure your spot at MyHUB.</p>
@@ -129,27 +129,48 @@ export default function Reservation() {
 
         {/* STEP 1 — Select Date */}
         {step === 1 && (
-          <div className="flex flex-col items-center gap-6">
-            <div className="flex items-center gap-2 text-lg font-semibold">
-              <CalendarCheck className="w-5 h-5 text-primary" />
-              Choose a Date
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-[480px] rounded-3xl border border-border shadow-md overflow-hidden bg-card">
+            {/* Left panel — info */}
+            <div className="flex flex-col justify-between p-10 bg-primary/5 border-b md:border-b-0 md:border-r border-border">
+              <div>
+                <div className="bg-primary/15 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                  <CalendarCheck className="w-8 h-8 text-primary" />
+                </div>
+                <h2 className="text-3xl font-extrabold tracking-tight mb-3">Choose a Date</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Pick the day you'd like to visit MyHUB. Past dates are unavailable.
+                </p>
+
+                {selectedDate && (
+                  <div className="mt-8 bg-primary/10 border border-primary/20 rounded-2xl p-5">
+                    <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Selected Date</p>
+                    <p className="text-2xl font-bold text-foreground">{format(selectedDate, "MMMM d, yyyy")}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{format(selectedDate, "EEEE")}</p>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                className="h-12 text-base font-semibold mt-8 w-full"
+                disabled={!selectedDate}
+                onClick={goNext}
+              >
+                Continue <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
             </div>
-            <div className="border border-border rounded-2xl p-4 bg-card shadow-sm">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                disabled={(date) => isBefore(startOfDay(date), startOfDay(new Date()))}
-                className="rounded-xl"
-              />
+
+            {/* Right panel — calendar */}
+            <div className="flex items-center justify-center p-8 bg-card">
+              <div className="w-full [&_.rdp]:w-full [&_.rdp-month]:w-full [&_.rdp-table]:w-full [&_.rdp-head_cell]:text-base [&_.rdp-cell]:py-1.5 [&_.rdp-button]:text-base [&_.rdp-button]:h-11 [&_.rdp-button]:w-11 [&_.rdp-caption_label]:text-lg [&_.rdp-caption_label]:font-bold">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={(date) => isBefore(startOfDay(date), startOfDay(new Date()))}
+                  className="rounded-xl w-full"
+                />
+              </div>
             </div>
-            <Button
-              className="w-full max-w-xs h-12 text-base"
-              disabled={!selectedDate}
-              onClick={goNext}
-            >
-              Continue <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
           </div>
         )}
 
