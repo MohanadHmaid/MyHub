@@ -1,0 +1,176 @@
+Internet Café Management System
+🧠 1. Project Overview
+
+Build a web-based internet café management system for a single café that supports:
+
+Table visualization (real-time status)
+QR code table ordering system
+Simple reservation system (no customer accounts)
+Admin dashboard for full control
+Basic payment tracking (no full payment gateway required)
+
+The system is optimized for simplicity, speed, and real-world usability.
+
+👥 2. User Roles
+🟢 Customer (No account required)
+View café tables visually
+Scan QR code at table
+Place orders
+Make reservations (guest mode using phone number)
+Receive reservation code
+🔵 Admin (Login required)
+Manage tables
+View reservations
+Manage orders
+Update order status
+View payments status
+Simple dashboard overview
+🧱 3. Core Features
+🪑 A. Table System
+Each table has:
+ID
+Name/Number
+Status: available | occupied
+QR code URL: /table/{tableId}
+Visual layout:
+Green = available
+Red = occupied
+📲 B. QR Ordering System
+
+Flow:
+
+Customer scans QR
+Opens menu page for that table
+Selects items
+Places order
+Order linked to table ID
+🍔 C. Menu & Orders
+Product categories (food/drinks)
+Add to cart
+Submit order
+Order statuses:
+pending
+preparing
+completed
+📅 D. Reservation System (NO accounts)
+Customer inputs:
+Name
+Phone number
+Date/time
+System generates:
+Reservation code (unique)
+Admin can view/manage reservations
+
+Optional:
+
+Mark reservation as confirmed/cancelled
+🧾 E. Payment (Simple Version)
+Payment status:
+unpaid
+paid
+No payment gateway required (manual confirmation)
+🧑‍💻 F. Admin Dashboard (Simple UI)
+
+Sections:
+
+Tables overview (visual grid)
+Orders list
+Reservations list
+Menu management
+🌐 4. Pages Structure
+🟢 Customer Pages
+/ → Home (table layout view)
+/table/{id} → QR menu page
+/reservation → booking form
+/success → confirmation page
+🔵 Admin Pages
+/admin/login
+/admin/dashboard
+/admin/tables
+/admin/orders
+/admin/reservations
+/admin/menu
+🗄️ 5. Database Design
+Tables:
+tables
+id
+name
+status
+orders
+id
+table_id
+status
+created_at
+order_items
+id
+order_id
+product_id
+quantity
+products
+id
+name
+price
+category
+reservations
+id
+name
+phone
+date_time
+code
+status
+admins
+id
+username
+password (hashed)
+⚙️ 6. Backend Requirements
+REST API (Spring Boot or Node.js)
+CRUD for all entities
+Simple admin authentication only
+No customer authentication
+Table status updates when orders are placed
+🔌 7. API Endpoints Example
+Tables
+GET /api/tables
+PUT /api/tables/{id}
+Orders
+POST /api/orders
+GET /api/orders
+PUT /api/orders/{id}/status
+Reservations
+POST /api/reservations
+GET /api/reservations
+GET /api/reservations/{code}
+Products
+GET /api/products
+Admin
+POST /api/admin/login
+🎨 8. Frontend Requirements
+React-based UI
+Simple and fast UI
+Table grid visualization (no borders, color-based)
+Admin dashboard layout:
+Left: navigation
+Main: data panels
+📱 9. UX Rules
+No customer login system
+QR should auto-identify table
+Minimal clicks for ordering
+Fast reservation flow
+🚀 10. Deployment Plan (Free)
+Frontend → Vercel
+Backend → Render
+Database → Supabase
+Code → GitHub
+⚠️ 11. Constraints
+Keep system simple (no microservices)
+No complex authentication systems for customers
+No real payment gateway integration
+Focus on functionality, not enterprise scale
+🎯 12. Goal
+
+A working system that:
+
+Replaces manual café management
+Handles table-based ordering via QR
+Manages reservations efficiently
+Provides admin control dashboard

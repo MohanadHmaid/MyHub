@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "MyHUB - Internet Café Management"
+version = "1.0.0"
+id = "artifacts/myhub"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25365
+
+[services.development]
+run = "pnpm --filter @workspace/myhub run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/myhub", "run", "build" ]
+publicDir = "artifacts/myhub/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25365"
+BASE_PATH = "/"
