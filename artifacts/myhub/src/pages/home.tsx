@@ -1,14 +1,43 @@
+import { useState } from "react";
 import { useGetTables } from "@workspace/api-client-react";
 import CustomerLayout from "@/components/layout/customer-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "wouter";
-import { Monitor, Users, Wifi, Clock, QrCode, CalendarCheck } from "lucide-react";
+import { Monitor, Users, Wifi, Clock, QrCode, CalendarCheck, ExternalLink, Copy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QRCodeSVG } from "qrcode.react";
+import { useToast } from "@/hooks/use-toast";
+
+type TableItem = {
+  id: number;
+  name: string;
+  capacity: number;
+  status: string;
+};
+
+function getTableUrl(tableId: number): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return `${window.location.origin}${base}/table/${tableId}`;
+}
 
 export default function Home() {
   const { data: tables, isLoading } = useGetTables();
+  const { toast } = useToast();
+  const [qrTable, setQrTable] = useState<TableItem | null>(null);
+
+  const handleTableClick = (table: TableItem) => {
+    if (table.status === "available") {
+      setQrTable(table);
+    }
+  };
+
+  const copyUrl = (url: string) => {
+    navigator.clipboard.writeText(url);
+    toast({ title: "Copied!", description: "Table URL copied to clipboard." });
+  };
 
   return (
     <CustomerLayout>
@@ -78,7 +107,9 @@ export default function Home() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h2 className="text-3xl font-bold tracking-tight mb-1">Live Table Status</h2>
-            <p className="text-muted-foreground">Click an available table to view the menu and place your order.</p>
+            <p className="text-muted-foreground">
+              Click an <span className="text-emerald-600 font-medium">available</span> table to get its QR code and order link.
+            </p>
           </div>
           <Link href="/reservation">
             <Button variant="outline" className="shrink-0">
@@ -98,45 +129,108 @@ export default function Home() {
               <p className="text-muted-foreground">No tables available at the moment.</p>
             </div>
           ) : (
-            tables?.map((table) => (
-              <Link key={table.id} href={`/table/${table.id}`} className={table.status === 'occupied' ? 'pointer-events-none' : ''}>
-                <Card className={`h-full transition-all duration-200 rounded-2xl border-2 ${
-                  table.status === 'available'
-                    ? 'hover:border-primary hover:shadow-lg cursor-pointer border-border bg-card'
-                    : 'opacity-60 border-destructive/20 bg-destructive/5 cursor-not-allowed'
-                }`}>
-                  <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-                    <CardTitle className="text-lg font-bold">{table.name}</CardTitle>
-                    <div className={`w-3 h-3 rounded-full ${table.status === 'available' ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1 mb-4">
-                      <Monitor className={`w-4 h-4 ${table.status === 'available' ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <span>PC Terminal</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-muted-foreground text-xs">
-                        <Users className="w-3.5 h-3.5 mr-1" />
-                        <span>Up to {table.capacity}</span>
+            tables?.map((table) => {
+              const isAvailable = table.status === "available";
+              return (
+                <button
+                  key={table.id}
+                  onClick={() => handleTableClick(table as TableItem)}
+                  disabled={!isAvailable}
+                  className={`text-left w-full transition-all duration-200 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+                    isAvailable
+                      ? "hover:border-primary hover:shadow-lg cursor-pointer border-border bg-card"
+                      : "opacity-60 border-destructive/20 bg-destructive/5 cursor-not-allowed"
+                  }`}
+                >
+                  <Card className="border-0 shadow-none bg-transparent h-full rounded-2xl">
+                    <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+                      <CardTitle className="text-lg font-bold">{table.name}</CardTitle>
+                      <div className={`w-3 h-3 rounded-full ${isAvailable ? "bg-emerald-500" : "bg-red-500"}`} />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1 mb-4">
+                        <Monitor className={`w-4 h-4 ${isAvailable ? "text-primary" : "text-muted-foreground"}`} />
+                        <span>PC Terminal</span>
                       </div>
-                      <Badge
-                        className={
-                          table.status === 'available'
-                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200'
-                            : 'bg-red-100 text-red-700 hover:bg-red-100 border-red-200'
-                        }
-                        variant="outline"
-                      >
-                        {table.status === 'available' ? 'Available' : 'Occupied'}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-muted-foreground text-xs">
+                          <Users className="w-3.5 h-3.5 mr-1" />
+                          <span>Up to {table.capacity}</span>
+                        </div>
+                        <Badge
+                          className={
+                            isAvailable
+                              ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200"
+                              : "bg-red-100 text-red-700 hover:bg-red-100 border-red-200"
+                          }
+                          variant="outline"
+                        >
+                          {isAvailable ? "Available" : "Occupied"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </button>
+              );
+            })
           )}
         </div>
       </section>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!qrTable} onOpenChange={(open) => !open && setQrTable(null)}>
+        <DialogContent className="max-w-sm text-center">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              {qrTable?.name} — QR Code
+            </DialogTitle>
+          </DialogHeader>
+
+          {qrTable && (() => {
+            const url = getTableUrl(qrTable.id);
+            return (
+              <div className="flex flex-col items-center gap-5 py-2">
+                <div className="bg-white p-4 rounded-2xl border border-border shadow-sm">
+                  <QRCodeSVG
+                    value={url}
+                    size={200}
+                    level="H"
+                    includeMargin={false}
+                    fgColor="#134e4a"
+                  />
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Scan to open the order page for this table
+                </p>
+
+                <div className="w-full bg-secondary/60 rounded-xl border border-border px-4 py-3 flex items-center gap-2">
+                  <span className="text-xs font-mono text-foreground break-all flex-1 text-left">{url}</span>
+                  <button
+                    onClick={() => copyUrl(url)}
+                    className="text-muted-foreground hover:text-primary transition-colors shrink-0"
+                    title="Copy URL"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button className="w-full h-11" variant="default">
+                    Open Table Page
+                    <ExternalLink className="w-4 h-4 ml-2" />
+                  </Button>
+                </a>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </CustomerLayout>
   );
 }

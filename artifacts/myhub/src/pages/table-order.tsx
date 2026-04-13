@@ -97,7 +97,7 @@ export default function TableOrder() {
 
   if (isTableLoading || isProductsLoading) {
     return (
-      <CustomerLayout>
+      <CustomerLayout minimal>
         <div className="container mx-auto px-4 py-8">
           <Skeleton className="h-10 w-48 mb-6" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -118,7 +118,7 @@ export default function TableOrder() {
 
   if (!table) {
     return (
-      <CustomerLayout>
+      <CustomerLayout minimal>
         <div className="container mx-auto px-4 py-20 text-center flex flex-col items-center justify-center">
           <div className="bg-destructive/10 text-destructive p-4 rounded-full mb-4">
             <CheckCircle2 className="w-12 h-12" />
@@ -131,7 +131,7 @@ export default function TableOrder() {
   }
 
   return (
-    <CustomerLayout>
+    <CustomerLayout minimal>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Order for {table.name}</h1>

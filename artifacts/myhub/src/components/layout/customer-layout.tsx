@@ -4,9 +4,10 @@ import { Monitor, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "luci
 
 interface CustomerLayoutProps {
   children: ReactNode;
+  minimal?: boolean;
 }
 
-export default function CustomerLayout({ children }: CustomerLayoutProps) {
+export default function CustomerLayout({ children, minimal = false }: CustomerLayoutProps) {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,12 +18,14 @@ export default function CustomerLayout({ children }: CustomerLayoutProps) {
             </div>
             <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
           </Link>
-          <nav className="flex items-center gap-1">
-            <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Home</Link>
-            <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Reserve a Table</Link>
-            <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Contact</a>
-            <a href="#about" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">About</a>
-          </nav>
+          {!minimal && (
+            <nav className="flex items-center gap-1">
+              <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Home</Link>
+              <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Reserve a Table</Link>
+              <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Contact</a>
+              <a href="#about" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">About</a>
+            </nav>
+          )}
         </div>
       </header>
 
