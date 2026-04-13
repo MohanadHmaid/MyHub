@@ -228,7 +228,7 @@ export default function TableOrder() {
                                 variant="ghost" 
                                 size="icon" 
                                 className="h-8 w-8 rounded-none rounded-r-md hover:bg-primary/10 hover:text-primary"
-                                onClick={() => addToCart(item.product.id as any /* type cheat */ || item.product)}
+                                onClick={() => addToCart(item.product)}
                               >
                                 <Plus className="w-3 h-3" />
                               </Button>
