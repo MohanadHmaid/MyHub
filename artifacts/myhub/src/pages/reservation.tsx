@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
-import { useGetTables, useCreateReservation } from "@workspace/api-client-react";
+import { useGetTables, useCreateReservation, useGetReservations, getGetReservationsQueryKey } from "@workspace/api-client-react";
 import CustomerLayout from "@/components/layout/customer-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,6 +71,50 @@ export default function Reservation() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data: tables, isLoading: tablesLoading } = useGetTables();
+  const { data: allReservations } = useGetReservations({
+    query: { queryKey: getGetReservationsQueryKey() }
+  });
+
+  const TOTAL_TABLES = tables?.length ?? 8;
+
+  // Build a map: dateStr → slotStr → count of confirmed reservations
+  const reservationMap = useMemo(() => {
+    const map: Record<string, Record<string, number>> = {};
+    for (const r of allReservations ?? []) {
+      if (r.status === "cancelled") continue;
+      const dt = new Date(r.dateTime);
+      const day = format(dt, "yyyy-MM-dd");
+      const slot = format(dt, "HH") + ":00";
+      if (!map[day]) map[day] = {};
+      map[day][slot] = (map[day][slot] || 0) + 1;
+    }
+    return map;
+  }, [allReservations]);
+
+  // Day status: 'free' | 'partial' | 'hasFullSlot'
+  const getDayStatus = (date: Date): "free" | "partial" | "hasFullSlot" => {
+    const key = format(date, "yyyy-MM-dd");
+    const slots = reservationMap[key];
+    if (!slots) return "free";
+    const maxCount = Math.max(...Object.values(slots));
+    if (maxCount >= TOTAL_TABLES) return "hasFullSlot";
+    return "partial";
+  };
+
+  // Is a day fully blocked (ALL slots have count >= TOTAL_TABLES)?
+  const isDayFullyBlocked = (date: Date): boolean => {
+    const key = format(date, "yyyy-MM-dd");
+    const slots = reservationMap[key];
+    if (!slots) return false;
+    return TIME_SLOTS.every((s) => (slots[s] ?? 0) >= TOTAL_TABLES);
+  };
+
+  // Slot counts for selected date
+  const slotCounts = useMemo(() => {
+    if (!selectedDate) return {} as Record<string, number>;
+    const key = format(selectedDate, "yyyy-MM-dd");
+    return reservationMap[key] ?? {};
+  }, [reservationMap, selectedDate]);
 
   const createReservation = useCreateReservation({
     mutation: {
@@ -141,10 +185,26 @@ export default function Reservation() {
                   Pick the day you'd like to visit MyHUB. Past dates are unavailable.
                 </p>
 
+                {/* Legend */}
+                <div className="mt-6 space-y-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2">Availability</p>
+                  {[
+                    { color: "#dcfce7", border: "#86efac", label: "All tables free" },
+                    { color: "#fef9c3", border: "#fde047", label: "Partially booked" },
+                    { color: "#fee2e2", border: "#fca5a5", label: "Heavily booked" },
+                    { color: "#f3f4f6", border: "#d1d5db", label: "Fully booked / unavailable", cross: true },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="inline-block w-5 h-5 rounded-md border flex-shrink-0" style={{ backgroundColor: item.color, borderColor: item.border }} />
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+
                 {selectedDate && (
-                  <div className="mt-8 bg-primary/10 border border-primary/20 rounded-2xl p-5">
+                  <div className="mt-6 bg-primary/10 border border-primary/20 rounded-2xl p-4">
                     <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Selected Date</p>
-                    <p className="text-2xl font-bold text-foreground">{format(selectedDate, "MMMM d, yyyy")}</p>
+                    <p className="text-xl font-bold text-foreground">{format(selectedDate, "MMMM d, yyyy")}</p>
                     <p className="text-sm text-muted-foreground mt-0.5">{format(selectedDate, "EEEE")}</p>
                   </div>
                 )}
@@ -165,8 +225,24 @@ export default function Reservation() {
                 <Calendar
                   mode="single"
                   selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  disabled={(date) => isBefore(startOfDay(date), startOfDay(new Date()))}
+                  onSelect={(d) => {
+                    if (d && isDayFullyBlocked(d)) return;
+                    setSelectedDate(d);
+                  }}
+                  disabled={(date) =>
+                    isBefore(startOfDay(date), startOfDay(new Date())) ||
+                    isDayFullyBlocked(date)
+                  }
+                  modifiers={{
+                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "free",
+                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "partial",
+                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
+                  }}
+                  modifiersStyles={{
+                    dayFree: { backgroundColor: "#dcfce7", color: "#166534", borderRadius: "8px", fontWeight: 600 },
+                    dayPartial: { backgroundColor: "#fef9c3", color: "#854d0e", borderRadius: "8px", fontWeight: 600 },
+                    dayFull: { backgroundColor: "#fee2e2", color: "#991b1b", borderRadius: "8px", fontWeight: 600 },
+                  }}
                   className="rounded-xl w-full"
                 />
               </div>
