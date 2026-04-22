@@ -18,10 +18,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
 
   const { data: session, isLoading, error } = useGetAdminMe({
-    query: {
-      retry: false,
-    }
-  });
+query: {
+  queryKey: ["admin-me"],
+  retry: false,
+}  });
 
   const logoutMutation = useAdminLogout({
     mutation: {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = !!session?.authenticated;
 
   return (
-    <AuthContext.Provider value={{ isAdmin, isLoading, logout: () => logoutMutation.mutate({}) }}>
+    <AuthContext.Provider value={{ isAdmin, isLoading, logout: () => logoutMutation.mutate() }}>
       {children}
     </AuthContext.Provider>
   );

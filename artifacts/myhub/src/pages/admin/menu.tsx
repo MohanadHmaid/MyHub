@@ -48,7 +48,7 @@ export default function AdminMenu() {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [search, setSearch] = useState("");
 
-  const { data: products, isLoading } = useGetProducts({
+  const { data: products, isLoading } = useGetProducts(undefined, { 
     query: { queryKey: getGetProductsQueryKey() }
   });
 
