@@ -1,4 +1,5 @@
 import express, { type Express } from "express";
+import type { ErrorRequestHandler } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
@@ -44,5 +45,12 @@ app.use(
 );
 
 app.use("/api", router);
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: err.message });
+};
+
+app.use(errorHandler);
 
 export default app;
