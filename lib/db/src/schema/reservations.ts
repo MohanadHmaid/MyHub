@@ -6,6 +6,8 @@ export const reservationsTable = pgTable("reservations", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   phone: text("phone").notNull(),
+  email: text("email"),
+  customerId: integer("customer_id"),
   dateTime: timestamp("date_time").notNull(),
   code: text("code").notNull().unique(),
   status: text("status").notNull().default("pending"),

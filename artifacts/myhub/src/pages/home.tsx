@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useGetTables } from "@workspace/api-client-react";
+import { useAuth } from "@/hooks/use-auth";
 import CustomerLayout from "@/components/layout/customer-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "wouter";
-import { Monitor, Users, Wifi, Clock, QrCode, CalendarCheck, ExternalLink, Copy } from "lucide-react";
+import { Monitor, Users, Wifi, Clock, QrCode, CalendarCheck, ExternalLink, Copy, UserCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QRCodeSVG } from "qrcode.react";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +26,7 @@ function getTableUrl(tableId: number): string {
 
 export default function Home() {
   const { data: tables, isLoading } = useGetTables();
+  const { isLoggedIn, customer } = useAuth();
   const { toast } = useToast();
   const [qrTable, setQrTable] = useState<TableItem | null>(null);
 
@@ -62,8 +64,23 @@ export default function Home() {
                 Reserve a Table
               </Button>
             </Link>
+            {isLoggedIn ? (
+              <Link href="/my-reservations">
+                <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold">
+                  <UserCircle className="w-4 h-4 mr-2" />
+                  My Reservations
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold">
+                  <UserCircle className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
             <a href="#tables">
-              <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold">
+              <Button size="lg" variant="ghost" className="h-12 px-8 text-base font-semibold">
                 View Tables
               </Button>
             </a>

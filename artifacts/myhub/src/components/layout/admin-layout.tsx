@@ -9,20 +9,20 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { isAdmin, isLoading, logout } = useAuth();
+  const { isAdmin, isAdminLoading, logout } = useAuth();
   const [location, setLocation] = useLocation();
 
   useEffect(() => {
-    if (!isLoading && !isAdmin && location !== "/admin/login") {
-      setLocation("/admin/login");
+    if (!isAdminLoading && !isAdmin) {
+      setLocation("/login");
     }
-  }, [isAdmin, isLoading, location, setLocation]);
+  }, [isAdmin, isAdminLoading, location, setLocation]);
 
-  if (isLoading) {
+  if (isAdminLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
   }
 
-  if (!isAdmin && location !== "/admin/login") {
+  if (!isAdmin) {
     return null;
   }
 

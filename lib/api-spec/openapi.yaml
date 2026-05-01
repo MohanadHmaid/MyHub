@@ -502,6 +502,89 @@ paths:
                 items:
                   $ref: "#/components/schemas/OrderWithItems"
 
+  /auth/register:
+    post:
+      operationId: customerRegister
+      tags: [auth]
+      summary: Register a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerRegisterBody"
+      responses:
+        "200":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerAuthResponse"
+        "409":
+          description: Email already registered
+
+  /auth/login:
+    post:
+      operationId: customerLogin
+      tags: [auth]
+      summary: Login as a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerLoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerAuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: customerLogout
+      tags: [auth]
+      summary: Logout customer
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/me:
+    get:
+      operationId: getCustomerMe
+      tags: [auth]
+      summary: Get current customer session
+      responses:
+        "200":
+          description: Session info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerMeResponse"
+
+  /auth/my-reservations:
+    get:
+      operationId: getMyReservations
+      tags: [auth]
+      summary: Get reservations for logged-in customer
+      responses:
+        "200":
+          description: Customer reservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reservation"
+
 components:
   schemas:
     HealthStatus:
@@ -754,6 +837,12 @@ components:
           type: string
         phone:
           type: string
+        email:
+          type: string
+          nullable: true
+        customerId:
+          type: integer
+          nullable: true
         dateTime:
           type: string
         code:
@@ -782,6 +871,10 @@ components:
           type: string
         phone:
           type: string
+        email:
+          type: string
+        customerId:
+          type: integer
         dateTime:
           type: string
         partySize:
@@ -888,3 +981,69 @@ components:
         - totalReservations
         - pendingReservations
         - confirmedReservations
+
+    CustomerRegisterBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+      required:
+        - name
+        - email
+        - password
+
+    CustomerLoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    CustomerProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+        - email
+
+    CustomerAuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        customer:
+          $ref: "#/components/schemas/CustomerProfile"
+      required:
+        - success
+        - customer
+
+    CustomerMeResponse:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+        customer:
+          $ref: "#/components/schemas/CustomerProfile"
+          nullable: true
+      required:
+        - authenticated

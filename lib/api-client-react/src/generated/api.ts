@@ -24,6 +24,10 @@ import type {
   CreateProductBody,
   CreateReservationBody,
   CreateTableBody,
+  CustomerAuthResponse,
+  CustomerLoginBody,
+  CustomerMeResponse,
+  CustomerRegisterBody,
   DashboardSummary,
   GetOrdersParams,
   GetProductsParams,
@@ -2148,6 +2152,409 @@ export function useGetRecentOrders<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetRecentOrdersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Register a new customer
+ */
+export const getCustomerRegisterUrl = () => {
+  return `/api/auth/register`;
+};
+
+export const customerRegister = async (
+  customerRegisterBody: CustomerRegisterBody,
+  options?: RequestInit,
+): Promise<CustomerAuthResponse> => {
+  return customFetch<CustomerAuthResponse>(getCustomerRegisterUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(customerRegisterBody),
+  });
+};
+
+export const getCustomerRegisterMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof customerRegister>>,
+    TError,
+    { data: BodyType<CustomerRegisterBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof customerRegister>>,
+  TError,
+  { data: BodyType<CustomerRegisterBody> },
+  TContext
+> => {
+  const mutationKey = ["customerRegister"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof customerRegister>>,
+    { data: BodyType<CustomerRegisterBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return customerRegister(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CustomerRegisterMutationResult = NonNullable<
+  Awaited<ReturnType<typeof customerRegister>>
+>;
+export type CustomerRegisterMutationBody = BodyType<CustomerRegisterBody>;
+export type CustomerRegisterMutationError = ErrorType<void>;
+
+/**
+ * @summary Register a new customer
+ */
+export const useCustomerRegister = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof customerRegister>>,
+    TError,
+    { data: BodyType<CustomerRegisterBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof customerRegister>>,
+  TError,
+  { data: BodyType<CustomerRegisterBody> },
+  TContext
+> => {
+  return useMutation(getCustomerRegisterMutationOptions(options));
+};
+
+/**
+ * @summary Login as a customer
+ */
+export const getCustomerLoginUrl = () => {
+  return `/api/auth/login`;
+};
+
+export const customerLogin = async (
+  customerLoginBody: CustomerLoginBody,
+  options?: RequestInit,
+): Promise<CustomerAuthResponse> => {
+  return customFetch<CustomerAuthResponse>(getCustomerLoginUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(customerLoginBody),
+  });
+};
+
+export const getCustomerLoginMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof customerLogin>>,
+    TError,
+    { data: BodyType<CustomerLoginBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof customerLogin>>,
+  TError,
+  { data: BodyType<CustomerLoginBody> },
+  TContext
+> => {
+  const mutationKey = ["customerLogin"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof customerLogin>>,
+    { data: BodyType<CustomerLoginBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return customerLogin(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CustomerLoginMutationResult = NonNullable<
+  Awaited<ReturnType<typeof customerLogin>>
+>;
+export type CustomerLoginMutationBody = BodyType<CustomerLoginBody>;
+export type CustomerLoginMutationError = ErrorType<void>;
+
+/**
+ * @summary Login as a customer
+ */
+export const useCustomerLogin = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof customerLogin>>,
+    TError,
+    { data: BodyType<CustomerLoginBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof customerLogin>>,
+  TError,
+  { data: BodyType<CustomerLoginBody> },
+  TContext
+> => {
+  return useMutation(getCustomerLoginMutationOptions(options));
+};
+
+/**
+ * @summary Logout customer
+ */
+export const getCustomerLogoutUrl = () => {
+  return `/api/auth/logout`;
+};
+
+export const customerLogout = async (
+  options?: RequestInit,
+): Promise<SuccessResponse> => {
+  return customFetch<SuccessResponse>(getCustomerLogoutUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getCustomerLogoutMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof customerLogout>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof customerLogout>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["customerLogout"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof customerLogout>>,
+    void
+  > = () => {
+    return customerLogout(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CustomerLogoutMutationResult = NonNullable<
+  Awaited<ReturnType<typeof customerLogout>>
+>;
+
+export type CustomerLogoutMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Logout customer
+ */
+export const useCustomerLogout = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof customerLogout>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof customerLogout>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getCustomerLogoutMutationOptions(options));
+};
+
+/**
+ * @summary Get current customer session
+ */
+export const getGetCustomerMeUrl = () => {
+  return `/api/auth/me`;
+};
+
+export const getCustomerMe = async (
+  options?: RequestInit,
+): Promise<CustomerMeResponse> => {
+  return customFetch<CustomerMeResponse>(getGetCustomerMeUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetCustomerMeQueryKey = () => {
+  return [`/api/auth/me`] as const;
+};
+
+export const getGetCustomerMeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getCustomerMe>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getCustomerMe>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetCustomerMeQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCustomerMe>>> = ({
+    signal,
+  }) => getCustomerMe({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getCustomerMe>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetCustomerMeQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getCustomerMe>>
+>;
+export type GetCustomerMeQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get current customer session
+ */
+
+export function useGetCustomerMe<
+  TData = Awaited<ReturnType<typeof getCustomerMe>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getCustomerMe>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetCustomerMeQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get reservations for logged-in customer
+ */
+export const getGetMyReservationsUrl = () => {
+  return `/api/auth/my-reservations`;
+};
+
+export const getMyReservations = async (
+  options?: RequestInit,
+): Promise<Reservation[]> => {
+  return customFetch<Reservation[]>(getGetMyReservationsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMyReservationsQueryKey = () => {
+  return [`/api/auth/my-reservations`] as const;
+};
+
+export const getGetMyReservationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyReservations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getMyReservations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMyReservationsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMyReservations>>
+  > = ({ signal }) => getMyReservations({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyReservations>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetMyReservationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyReservations>>
+>;
+export type GetMyReservationsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get reservations for logged-in customer
+ */
+
+export function useGetMyReservations<
+  TData = Awaited<ReturnType<typeof getMyReservations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getMyReservations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetMyReservationsQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

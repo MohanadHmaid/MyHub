@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
-import { useLocation } from "wouter";
+import { useState, useMemo, useEffect } from "react";
+import { useLocation, Link } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 import { useGetTables, useCreateReservation, useGetReservations, getGetReservationsQueryKey } from "@workspace/api-client-react";
 import CustomerLayout from "@/components/layout/customer-layout";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format, isBefore, startOfDay } from "date-fns";
 import {
   CalendarCheck, Clock, Monitor, Users, User, Phone, Mail,
-  ChevronRight, ChevronLeft, CheckCircle2, CreditCard
+  ChevronRight, ChevronLeft, CheckCircle2, CreditCard, UserPlus
 } from "lucide-react";
 
 const TIME_SLOTS = [
@@ -59,6 +60,7 @@ function StepIndicator({ current }: { current: number }) {
 export default function Reservation() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { customer, isLoggedIn } = useAuth();
 
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -69,6 +71,14 @@ export default function Reservation() {
   const [email, setEmail] = useState("");
   const [partySize, setPartySize] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (customer) {
+      if (!name) setName(customer.name);
+      if (!email) setEmail(customer.email);
+      if (!phone && customer.phone) setPhone(customer.phone);
+    }
+  }, [customer]);
 
   const { data: tables, isLoading: tablesLoading } = useGetTables();
   const { data: allReservations } = useGetReservations({
@@ -155,6 +165,8 @@ export default function Reservation() {
       data: {
         name: name.trim(),
         phone: phone.trim(),
+        email: email.trim() || undefined,
+        customerId: customer?.id ?? undefined,
         dateTime: dt.toISOString(),
         partySize,
       },
@@ -358,6 +370,22 @@ export default function Reservation() {
               <User className="w-5 h-5 text-primary" />
               Your Information
             </div>
+
+            {!isLoggedIn && (
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <UserPlus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-semibold text-foreground">Save your reservation history</p>
+                  <p className="text-muted-foreground mt-0.5">
+                    <Link href="/register" className="text-primary font-medium hover:underline">Create a free account</Link>{" "}
+                    or{" "}
+                    <Link href="/login" className="text-primary font-medium hover:underline">sign in</Link>{" "}
+                    to access all your bookings anytime.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="name">Full Name <span className="text-destructive">*</span></Label>

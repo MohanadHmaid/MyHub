@@ -173,6 +173,8 @@ export interface Reservation {
   id: number;
   name: string;
   phone: string;
+  email?: string | null;
+  customerId?: number | null;
   dateTime: string;
   code: string;
   status: ReservationStatus;
@@ -183,6 +185,8 @@ export interface Reservation {
 export interface CreateReservationBody {
   name: string;
   phone: string;
+  email?: string;
+  customerId?: number;
   dateTime: string;
   partySize: number;
 }
@@ -238,6 +242,35 @@ export interface DashboardSummary {
   totalReservations: number;
   pendingReservations: number;
   confirmedReservations: number;
+}
+
+export interface CustomerRegisterBody {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
+
+export interface CustomerLoginBody {
+  email: string;
+  password: string;
+}
+
+export interface CustomerProfile {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+}
+
+export interface CustomerAuthResponse {
+  success: boolean;
+  customer: CustomerProfile;
+}
+
+export interface CustomerMeResponse {
+  authenticated: boolean;
+  customer?: CustomerProfile | null;
 }
 
 export type GetTrafficHeatmapParams = {

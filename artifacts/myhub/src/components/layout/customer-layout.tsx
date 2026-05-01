@@ -1,6 +1,15 @@
 import { ReactNode } from "react";
 import { Link } from "wouter";
-import { Monitor, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Monitor, Facebook, Twitter, Instagram, Mail, Phone, MapPin, UserCircle, LogOut, CalendarCheck } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface CustomerLayoutProps {
   children: ReactNode;
@@ -8,6 +17,8 @@ interface CustomerLayoutProps {
 }
 
 export default function CustomerLayout({ children, minimal = false }: CustomerLayoutProps) {
+  const { customer, isLoggedIn, customerLogout } = useAuth();
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -23,7 +34,36 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
               <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Home</Link>
               <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Reserve a Table</Link>
               <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Contact</a>
-              <a href="#about" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">About</a>
+              {isLoggedIn ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="ml-2 gap-2 h-9">
+                      <UserCircle className="w-4 h-4" />
+                      <span className="hidden sm:inline">{customer?.name?.split(" ")[0]}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <div className="px-2 py-1.5 text-xs text-muted-foreground">{customer?.email}</div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/my-reservations" className="flex items-center gap-2 cursor-pointer">
+                        <CalendarCheck className="w-4 h-4" /> My Reservations
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={customerLogout} className="text-destructive gap-2 cursor-pointer">
+                      <LogOut className="w-4 h-4" /> Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link href="/login">
+                  <Button size="sm" className="ml-2 h-9 gap-2">
+                    <UserCircle className="w-4 h-4" />
+                    <span>Sign In</span>
+                  </Button>
+                </Link>
+              )}
             </nav>
           )}
         </div>

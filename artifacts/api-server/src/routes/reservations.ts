@@ -27,6 +27,8 @@ function formatReservation(r: typeof reservationsTable.$inferSelect) {
     id: r.id,
     name: r.name,
     phone: r.phone,
+    email: r.email ?? null,
+    customerId: r.customerId ?? null,
     dateTime: r.dateTime.toISOString(),
     code: r.code,
     status: r.status,
@@ -51,6 +53,8 @@ router.post("/reservations", async (req, res): Promise<void> => {
   const [reservation] = await db.insert(reservationsTable).values({
     name: parsed.data.name,
     phone: parsed.data.phone,
+    email: parsed.data.email ?? null,
+    customerId: parsed.data.customerId ?? null,
     dateTime: new Date(parsed.data.dateTime),
     code,
     status: "pending",

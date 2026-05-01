@@ -295,6 +295,8 @@ export const GetReservationsResponseItem = zod.object({
   id: zod.number(),
   name: zod.string(),
   phone: zod.string(),
+  email: zod.string().nullish(),
+  customerId: zod.number().nullish(),
   dateTime: zod.string(),
   code: zod.string(),
   status: zod.enum(["pending", "confirmed", "cancelled"]),
@@ -309,6 +311,8 @@ export const GetReservationsResponse = zod.array(GetReservationsResponseItem);
 export const CreateReservationBody = zod.object({
   name: zod.string(),
   phone: zod.string(),
+  email: zod.string().optional(),
+  customerId: zod.number().optional(),
   dateTime: zod.string(),
   partySize: zod.number(),
 });
@@ -324,6 +328,8 @@ export const GetReservationByCodeResponse = zod.object({
   id: zod.number(),
   name: zod.string(),
   phone: zod.string(),
+  email: zod.string().nullish(),
+  customerId: zod.number().nullish(),
   dateTime: zod.string(),
   code: zod.string(),
   status: zod.enum(["pending", "confirmed", "cancelled"]),
@@ -346,6 +352,8 @@ export const UpdateReservationStatusResponse = zod.object({
   id: zod.number(),
   name: zod.string(),
   phone: zod.string(),
+  email: zod.string().nullish(),
+  customerId: zod.number().nullish(),
   dateTime: zod.string(),
   code: zod.string(),
   status: zod.enum(["pending", "confirmed", "cancelled"]),
@@ -433,3 +441,83 @@ export const GetRecentOrdersResponseItem = zod.object({
   createdAt: zod.string(),
 });
 export const GetRecentOrdersResponse = zod.array(GetRecentOrdersResponseItem);
+
+/**
+ * @summary Register a new customer
+ */
+export const CustomerRegisterBody = zod.object({
+  name: zod.string(),
+  email: zod.string(),
+  password: zod.string(),
+  phone: zod.string().optional(),
+});
+
+export const CustomerRegisterResponse = zod.object({
+  success: zod.boolean(),
+  customer: zod.object({
+    id: zod.number(),
+    name: zod.string(),
+    email: zod.string(),
+    phone: zod.string().nullish(),
+  }),
+});
+
+/**
+ * @summary Login as a customer
+ */
+export const CustomerLoginBody = zod.object({
+  email: zod.string(),
+  password: zod.string(),
+});
+
+export const CustomerLoginResponse = zod.object({
+  success: zod.boolean(),
+  customer: zod.object({
+    id: zod.number(),
+    name: zod.string(),
+    email: zod.string(),
+    phone: zod.string().nullish(),
+  }),
+});
+
+/**
+ * @summary Logout customer
+ */
+export const CustomerLogoutResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
+/**
+ * @summary Get current customer session
+ */
+export const GetCustomerMeResponse = zod.object({
+  authenticated: zod.boolean(),
+  customer: zod
+    .object({
+      id: zod.number(),
+      name: zod.string(),
+      email: zod.string(),
+      phone: zod.string().nullish(),
+    })
+    .nullish(),
+});
+
+/**
+ * @summary Get reservations for logged-in customer
+ */
+export const GetMyReservationsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  phone: zod.string(),
+  email: zod.string().nullish(),
+  customerId: zod.number().nullish(),
+  dateTime: zod.string(),
+  code: zod.string(),
+  status: zod.enum(["pending", "confirmed", "cancelled"]),
+  partySize: zod.number(),
+  createdAt: zod.string(),
+});
+export const GetMyReservationsResponse = zod.array(
+  GetMyReservationsResponseItem,
+);

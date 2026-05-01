@@ -11,6 +11,8 @@ export interface Reservation {
   id: number;
   name: string;
   phone: string;
+  email?: string | null;
+  customerId?: number | null;
   dateTime: string;
   code: string;
   status: ReservationStatus;

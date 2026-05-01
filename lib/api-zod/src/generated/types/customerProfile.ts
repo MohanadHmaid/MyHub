@@ -6,11 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface CreateReservationBody {
+export interface CustomerProfile {
+  id: number;
   name: string;
-  phone: string;
-  email?: string;
-  customerId?: number;
-  dateTime: string;
-  partySize: number;
+  email: string;
+  phone?: string | null;
 }
