@@ -12,5 +12,6 @@ export interface Table {
   name: string;
   status: TableStatus;
   capacity: number;
+  reservationId?: number | null;
   createdAt: string;
 }

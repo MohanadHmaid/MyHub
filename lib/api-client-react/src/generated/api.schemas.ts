@@ -19,6 +19,7 @@ export type TableStatus = (typeof TableStatus)[keyof typeof TableStatus];
 export const TableStatus = {
   available: "available",
   occupied: "occupied",
+  reserved: "reserved",
 } as const;
 
 export interface Table {
@@ -26,6 +27,7 @@ export interface Table {
   name: string;
   status: TableStatus;
   capacity: number;
+  reservationId?: number | null;
   createdAt: string;
 }
 
@@ -40,12 +42,24 @@ export type UpdateTableBodyStatus =
 export const UpdateTableBodyStatus = {
   available: "available",
   occupied: "occupied",
+  reserved: "reserved",
 } as const;
 
 export interface UpdateTableBody {
   name?: string;
   status?: UpdateTableBodyStatus;
   capacity?: number;
+  reservationId?: number | null;
+}
+
+export interface VerifyReservationBody {
+  code: string;
+}
+
+export interface TrafficHeatmapEntry {
+  hour: string;
+  count: number;
+  dayOfWeek: number;
 }
 
 export interface Product {
@@ -225,6 +239,10 @@ export interface DashboardSummary {
   pendingReservations: number;
   confirmedReservations: number;
 }
+
+export type GetTrafficHeatmapParams = {
+  date?: string;
+};
 
 export type GetProductsParams = {
   category?: string;

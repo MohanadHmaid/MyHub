@@ -11,4 +11,5 @@ export interface UpdateTableBody {
   name?: string;
   status?: UpdateTableBodyStatus;
   capacity?: number;
+  reservationId?: number | null;
 }

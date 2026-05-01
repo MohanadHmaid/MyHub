@@ -29,7 +29,7 @@ export default function Home() {
   const [qrTable, setQrTable] = useState<TableItem | null>(null);
 
   const handleTableClick = (table: TableItem) => {
-    if (table.status === "available") {
+    if (table.status === "available" || table.status === "reserved") {
       setQrTable(table);
     }
   };
@@ -108,7 +108,7 @@ export default function Home() {
           <div>
             <h2 className="text-3xl font-bold tracking-tight mb-1">Live Table Status</h2>
             <p className="text-muted-foreground">
-              Click an <span className="text-emerald-600 font-medium">available</span> table to get its QR code and order link.
+              Click an <span className="text-emerald-600 font-medium">available</span> or <span className="text-amber-500 font-medium">reserved</span> table to get its QR code and order link.
             </p>
           </div>
           <Link href="/reservation">
@@ -131,25 +131,32 @@ export default function Home() {
           ) : (
             tables?.map((table) => {
               const isAvailable = table.status === "available";
+              const isReserved = table.status === "reserved";
+              const isOccupied = table.status === "occupied";
+              const isClickable = isAvailable || isReserved;
               return (
                 <button
                   key={table.id}
                   onClick={() => handleTableClick(table as TableItem)}
-                  disabled={!isAvailable}
+                  disabled={isOccupied}
                   className={`text-left w-full transition-all duration-200 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
                     isAvailable
                       ? "hover:border-primary hover:shadow-lg cursor-pointer border-border bg-card"
+                      : isReserved
+                      ? "hover:border-amber-400 hover:shadow-lg cursor-pointer border-amber-300 bg-amber-50"
                       : "opacity-60 border-destructive/20 bg-destructive/5 cursor-not-allowed"
                   }`}
                 >
                   <Card className="border-0 shadow-none bg-transparent h-full rounded-2xl">
                     <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
                       <CardTitle className="text-lg font-bold">{table.name}</CardTitle>
-                      <div className={`w-3 h-3 rounded-full ${isAvailable ? "bg-emerald-500" : "bg-red-500"}`} />
+                      <div className={`w-3 h-3 rounded-full ${
+                        isAvailable ? "bg-emerald-500" : isReserved ? "bg-amber-400" : "bg-red-500"
+                      }`} />
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1 mb-4">
-                        <Monitor className={`w-4 h-4 ${isAvailable ? "text-primary" : "text-muted-foreground"}`} />
+                        <Monitor className={`w-4 h-4 ${isAvailable ? "text-primary" : isReserved ? "text-amber-500" : "text-muted-foreground"}`} />
                         <span>PC Terminal</span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -161,11 +168,13 @@ export default function Home() {
                           className={
                             isAvailable
                               ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200"
+                              : isReserved
+                              ? "bg-amber-100 text-amber-700 hover:bg-amber-100 border-amber-200"
                               : "bg-red-100 text-red-700 hover:bg-red-100 border-red-200"
                           }
                           variant="outline"
                         >
-                          {isAvailable ? "Available" : "Occupied"}
+                          {isAvailable ? "Available" : isReserved ? "Reserved" : "Occupied"}
                         </Badge>
                       </div>
                     </CardContent>
@@ -182,26 +191,33 @@ export default function Home() {
         <DialogContent className="max-w-sm text-center">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
-              {qrTable?.name} — QR Code
+              {qrTable?.name} — {qrTable?.status === "reserved" ? "Reserved Table" : "QR Code"}
             </DialogTitle>
           </DialogHeader>
 
           {qrTable && (() => {
             const url = getTableUrl(qrTable.id);
+            const isReserved = qrTable.status === "reserved";
             return (
               <div className="flex flex-col items-center gap-5 py-2">
+                {isReserved && (
+                  <div className="w-full bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 text-left flex items-start gap-2">
+                    <span className="mt-0.5">🔐</span>
+                    <span>This table is <strong>reserved</strong>. Scan the QR code and enter your reservation code to unlock it.</span>
+                  </div>
+                )}
                 <div className="bg-white p-4 rounded-2xl border border-border shadow-sm">
                   <QRCodeSVG
                     value={url}
                     size={200}
                     level="H"
                     includeMargin={false}
-                    fgColor="#134e4a"
+                    fgColor={isReserved ? "#92400e" : "#134e4a"}
                   />
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  Scan to open the order page for this table
+                  {isReserved ? "Scan to go to this table's check-in page" : "Scan to open the order page for this table"}
                 </p>
 
                 <div className="w-full bg-secondary/60 rounded-xl border border-border px-4 py-3 flex items-center gap-2">

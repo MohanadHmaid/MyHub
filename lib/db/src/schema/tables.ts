@@ -5,8 +5,9 @@ import { z } from "zod/v4";
 export const tablesTable = pgTable("tables", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  status: text("status").notNull().default("available"),
+  status: text("status", { enum: ["available", "occupied", "reserved"] }).notNull().default("available"),
   capacity: integer("capacity").notNull().default(4),
+  reservationId: integer("reservation_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

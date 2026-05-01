@@ -27,17 +27,20 @@ import type {
   DashboardSummary,
   GetOrdersParams,
   GetProductsParams,
+  GetTrafficHeatmapParams,
   HealthStatus,
   OrderWithItems,
   Product,
   Reservation,
   SuccessResponse,
   Table,
+  TrafficHeatmapEntry,
   UpdateOrderPaymentBody,
   UpdateOrderStatusBody,
   UpdateProductBody,
   UpdateReservationStatusBody,
   UpdateTableBody,
+  VerifyReservationBody,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -530,6 +533,194 @@ export const useDeleteTable = <
 > => {
   return useMutation(getDeleteTableMutationOptions(options));
 };
+
+/**
+ * @summary Verify a reservation code for a reserved table
+ */
+export const getVerifyTableReservationUrl = (id: number) => {
+  return `/api/tables/${id}/verify-reservation`;
+};
+
+export const verifyTableReservation = async (
+  id: number,
+  verifyReservationBody: VerifyReservationBody,
+  options?: RequestInit,
+): Promise<SuccessResponse> => {
+  return customFetch<SuccessResponse>(getVerifyTableReservationUrl(id), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(verifyReservationBody),
+  });
+};
+
+export const getVerifyTableReservationMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyTableReservation>>,
+    TError,
+    { id: number; data: BodyType<VerifyReservationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyTableReservation>>,
+  TError,
+  { id: number; data: BodyType<VerifyReservationBody> },
+  TContext
+> => {
+  const mutationKey = ["verifyTableReservation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyTableReservation>>,
+    { id: number; data: BodyType<VerifyReservationBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return verifyTableReservation(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VerifyTableReservationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof verifyTableReservation>>
+>;
+export type VerifyTableReservationMutationBody =
+  BodyType<VerifyReservationBody>;
+export type VerifyTableReservationMutationError = ErrorType<void>;
+
+/**
+ * @summary Verify a reservation code for a reserved table
+ */
+export const useVerifyTableReservation = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyTableReservation>>,
+    TError,
+    { id: number; data: BodyType<VerifyReservationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof verifyTableReservation>>,
+  TError,
+  { id: number; data: BodyType<VerifyReservationBody> },
+  TContext
+> => {
+  return useMutation(getVerifyTableReservationMutationOptions(options));
+};
+
+/**
+ * @summary Get reservation traffic heatmap data
+ */
+export const getGetTrafficHeatmapUrl = (params?: GetTrafficHeatmapParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/dashboard/traffic-heatmap?${stringifiedParams}`
+    : `/api/dashboard/traffic-heatmap`;
+};
+
+export const getTrafficHeatmap = async (
+  params?: GetTrafficHeatmapParams,
+  options?: RequestInit,
+): Promise<TrafficHeatmapEntry[]> => {
+  return customFetch<TrafficHeatmapEntry[]>(getGetTrafficHeatmapUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetTrafficHeatmapQueryKey = (
+  params?: GetTrafficHeatmapParams,
+) => {
+  return [
+    `/api/dashboard/traffic-heatmap`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetTrafficHeatmapQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTrafficHeatmap>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetTrafficHeatmapParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getTrafficHeatmap>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetTrafficHeatmapQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getTrafficHeatmap>>
+  > = ({ signal }) => getTrafficHeatmap(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTrafficHeatmap>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetTrafficHeatmapQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTrafficHeatmap>>
+>;
+export type GetTrafficHeatmapQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get reservation traffic heatmap data
+ */
+
+export function useGetTrafficHeatmap<
+  TData = Awaited<ReturnType<typeof getTrafficHeatmap>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetTrafficHeatmapParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getTrafficHeatmap>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTrafficHeatmapQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary List all products

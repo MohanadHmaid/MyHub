@@ -20,8 +20,9 @@ export const HealthCheckResponse = zod.object({
 export const GetTablesResponseItem = zod.object({
   id: zod.number(),
   name: zod.string(),
-  status: zod.enum(["available", "occupied"]),
+  status: zod.enum(["available", "occupied", "reserved"]),
   capacity: zod.number(),
+  reservationId: zod.number().nullish(),
   createdAt: zod.string(),
 });
 export const GetTablesResponse = zod.array(GetTablesResponseItem);
@@ -44,8 +45,9 @@ export const GetTableParams = zod.object({
 export const GetTableResponse = zod.object({
   id: zod.number(),
   name: zod.string(),
-  status: zod.enum(["available", "occupied"]),
+  status: zod.enum(["available", "occupied", "reserved"]),
   capacity: zod.number(),
+  reservationId: zod.number().nullish(),
   createdAt: zod.string(),
 });
 
@@ -58,15 +60,17 @@ export const UpdateTableParams = zod.object({
 
 export const UpdateTableBody = zod.object({
   name: zod.string().optional(),
-  status: zod.enum(["available", "occupied"]).optional(),
+  status: zod.enum(["available", "occupied", "reserved"]).optional(),
   capacity: zod.number().optional(),
+  reservationId: zod.number().nullish(),
 });
 
 export const UpdateTableResponse = zod.object({
   id: zod.number(),
   name: zod.string(),
-  status: zod.enum(["available", "occupied"]),
+  status: zod.enum(["available", "occupied", "reserved"]),
   capacity: zod.number(),
+  reservationId: zod.number().nullish(),
   createdAt: zod.string(),
 });
 
@@ -81,6 +85,38 @@ export const DeleteTableResponse = zod.object({
   success: zod.boolean(),
   message: zod.string().optional(),
 });
+
+/**
+ * @summary Verify a reservation code for a reserved table
+ */
+export const VerifyTableReservationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const VerifyTableReservationBody = zod.object({
+  code: zod.string(),
+});
+
+export const VerifyTableReservationResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string().optional(),
+});
+
+/**
+ * @summary Get reservation traffic heatmap data
+ */
+export const GetTrafficHeatmapQueryParams = zod.object({
+  date: zod.coerce.string().optional(),
+});
+
+export const GetTrafficHeatmapResponseItem = zod.object({
+  hour: zod.string(),
+  count: zod.number(),
+  dayOfWeek: zod.number(),
+});
+export const GetTrafficHeatmapResponse = zod.array(
+  GetTrafficHeatmapResponseItem,
+);
 
 /**
  * @summary List all products

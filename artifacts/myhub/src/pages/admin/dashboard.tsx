@@ -2,14 +2,18 @@ import AdminLayout from "@/components/layout/admin-layout";
 import { 
   useGetDashboardSummary, getGetDashboardSummaryQueryKey, 
   useGetRecentOrders, getGetRecentOrdersQueryKey,
-  useHealthCheck, getHealthCheckQueryKey
+  useHealthCheck, getHealthCheckQueryKey,
+  useGetTrafficHeatmap, getGetTrafficHeatmapQueryKey
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Monitor, Receipt, DollarSign, Calendar, Clock, ChevronRight, UtensilsCrossed } from "lucide-react";
+import { Monitor, Receipt, DollarSign, Calendar, Clock, ChevronRight, UtensilsCrossed, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+
+const HOURS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"];
+const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 export default function AdminDashboard() {
   const { data: summary, isLoading: isLoadingSummary } = useGetDashboardSummary({
@@ -32,6 +36,27 @@ export default function AdminDashboard() {
       refetchInterval: 60000,
     }
   });
+
+  const { data: heatmapData } = useGetTrafficHeatmap(undefined, {
+    query: { queryKey: getGetTrafficHeatmapQueryKey() }
+  });
+
+  // Build heatmap lookup: dayOfWeek-hour → count
+  const heatmap: Record<string, number> = {};
+  let maxCount = 1;
+  for (const entry of heatmapData ?? []) {
+    const key = `${entry.dayOfWeek}-${entry.hour}`;
+    heatmap[key] = entry.count;
+    if (entry.count > maxCount) maxCount = entry.count;
+  }
+
+  function heatColor(count: number): string {
+    if (!count) return "bg-secondary";
+    const pct = count / maxCount;
+    if (pct < 0.33) return "bg-emerald-200 text-emerald-900";
+    if (pct < 0.66) return "bg-amber-300 text-amber-900";
+    return "bg-red-400 text-white";
+  }
 
 
   const statsCards = summary ? [
@@ -207,6 +232,51 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+        {/* Traffic Heatmap */}
+        <Card className="border-border/50 shadow-sm mt-6">
+          <CardHeader className="border-b border-border/50 pb-4">
+            <div className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-primary" />
+              <CardTitle>Reservation Traffic Heatmap</CardTitle>
+            </div>
+            <CardDescription>Busiest hours by day of week (all-time). Green = quiet, yellow = moderate, red = peak.</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 overflow-x-auto">
+            <div className="min-w-[600px]">
+              {/* Header row: hours */}
+              <div className="flex gap-1 mb-1 pl-10">
+                {HOURS.map(h => (
+                  <div key={h} className="flex-1 text-center text-[10px] text-muted-foreground font-medium">{h.replace(":00","")}</div>
+                ))}
+              </div>
+              {/* Data rows: days */}
+              {DAYS.map((day, dayIdx) => (
+                <div key={day} className="flex gap-1 mb-1 items-center">
+                  <div className="w-9 text-xs text-muted-foreground font-medium shrink-0">{day}</div>
+                  {HOURS.map(hour => {
+                    const count = heatmap[`${dayIdx}-${hour}`] ?? 0;
+                    return (
+                      <div
+                        key={hour}
+                        className={`flex-1 h-8 rounded-md text-[10px] font-semibold flex items-center justify-center transition-colors ${heatColor(count)}`}
+                        title={`${day} ${hour}: ${count} reservation${count !== 1 ? "s" : ""}`}
+                      >
+                        {count > 0 ? count : ""}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+              {/* Legend */}
+              <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-secondary inline-block border" /> None</div>
+                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-emerald-200 inline-block" /> Low</div>
+                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-amber-300 inline-block" /> Moderate</div>
+                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-red-400 inline-block" /> Peak</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </AdminLayout>
   );

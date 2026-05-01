@@ -89,7 +89,56 @@ export default function AdminOrders() {
         </Tabs>
       </div>
 
-      <div className="border border-border/50 rounded-xl overflow-hidden bg-card shadow-sm">
+      {/* Mobile card view */}
+      <div className="md:hidden flex flex-col gap-3">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36 w-full rounded-xl" />)
+        ) : orders?.length === 0 ? (
+          <div className="py-16 text-center text-muted-foreground border border-dashed rounded-xl">No orders found.</div>
+        ) : (
+          orders?.map((order) => (
+            <div key={order.id} className="rounded-xl border border-border/50 bg-card p-4 space-y-3 shadow-sm">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="font-bold text-base">{order.tableName}</span>
+                  <span className="text-muted-foreground text-xs ml-2">#{order.id}</span>
+                </div>
+                <span className="font-bold text-lg">${order.totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="text-sm text-muted-foreground space-y-0.5">
+                {order.items.map(item => (
+                  <div key={item.id}><span className="font-semibold">{item.quantity}x</span> {item.productName}</div>
+                ))}
+              </div>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                    order.status === 'pending' ? 'bg-amber-500/10 text-amber-500' :
+                    order.status === 'preparing' ? 'bg-blue-500/10 text-blue-500' :
+                    'bg-green-500/10 text-green-500'
+                  }`}>{order.status}</span>
+                  <button
+                    onClick={() => handlePaymentChange(order.id, order.paymentStatus === 'paid' ? 'unpaid' : 'paid')}
+                    className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                      order.paymentStatus === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-destructive/10 text-destructive'
+                    }`}
+                  >
+                    {order.paymentStatus}
+                  </button>
+                </div>
+                {order.status !== 'completed' && (
+                  <Button size="sm" className="h-8 text-xs" onClick={() => handleStatusChange(order.id, order.status === 'pending' ? 'preparing' : 'completed')}>
+                    {order.status === 'pending' ? 'Start' : 'Finish'} <CheckCircle2 className="w-3.5 h-3.5 ml-1" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block border border-border/50 rounded-xl overflow-hidden bg-card shadow-sm">
         <Table>
           <TableHeader className="bg-secondary/50">
             <TableRow>

@@ -11,4 +11,5 @@ export type TableStatus = (typeof TableStatus)[keyof typeof TableStatus];
 export const TableStatus = {
   available: "available",
   occupied: "occupied",
+  reserved: "reserved",
 } as const;

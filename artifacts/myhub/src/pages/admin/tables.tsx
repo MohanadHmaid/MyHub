@@ -188,7 +188,9 @@ export default function AdminTables() {
         ) : (
           tables?.map((table) => (
             <Card key={table.id} className={`flex flex-col transition-colors border-2 ${
-              table.status === 'available' ? 'border-border/50' : 'border-primary/30 bg-primary/5'
+              table.status === 'available' ? 'border-border/50' :
+              table.status === 'reserved' ? 'border-amber-300 bg-amber-50' :
+              'border-primary/30 bg-primary/5'
             }`}>
               <CardHeader className="pb-3 border-b border-border/50">
                 <div className="flex justify-between items-start">
@@ -198,14 +200,26 @@ export default function AdminTables() {
                       <Users className="w-3.5 h-3.5 mr-1" /> Capacity: {table.capacity}
                     </div>
                   </div>
-                  <Monitor className={`w-5 h-5 ${table.status === 'available' ? 'text-muted-foreground' : 'text-primary'}`} />
+                  <Monitor className={`w-5 h-5 ${
+                    table.status === 'available' ? 'text-muted-foreground' :
+                    table.status === 'reserved' ? 'text-amber-500' :
+                    'text-primary'
+                  }`} />
                 </div>
               </CardHeader>
               <CardContent className="py-4 flex-1 flex flex-col justify-center">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm font-medium">Status</span>
-                  <Badge variant={table.status === 'available' ? 'outline' : 'default'} className="cursor-pointer" onClick={() => toggleStatus(table.id, table.status)}>
-                    {table.status === 'available' ? 'Available' : 'Occupied'}
+                  <Badge
+                    variant="outline"
+                    className={`cursor-pointer ${
+                      table.status === 'available' ? '' :
+                      table.status === 'reserved' ? 'bg-amber-100 text-amber-700 border-amber-300' :
+                      'bg-primary text-primary-foreground border-primary'
+                    }`}
+                    onClick={() => table.status !== 'reserved' && toggleStatus(table.id, table.status)}
+                  >
+                    {table.status === 'available' ? 'Available' : table.status === 'reserved' ? 'Reserved' : 'Occupied'}
                   </Badge>
                 </div>
                 <div className="flex justify-between gap-2 mt-auto">

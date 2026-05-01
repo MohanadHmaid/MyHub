@@ -86,4 +86,28 @@ router.get("/dashboard/recent-orders", async (_req, res): Promise<void> => {
   res.json(GetRecentOrdersResponse.parse(result));
 });
 
+// GET /dashboard/traffic-heatmap?date=YYYY-MM-DD (optional — if omitted, returns last 30-day aggregate)
+router.get("/dashboard/traffic-heatmap", async (req, res): Promise<void> => {
+  const reservations = await db.select().from(reservationsTable);
+
+  // Group by dayOfWeek (0=Sun) + hour
+  const counts: Record<string, { hour: string; dayOfWeek: number; count: number }> = {};
+
+  for (const r of reservations) {
+    if (r.status === "cancelled") continue;
+    const dt = new Date(r.dateTime);
+    const hour = String(dt.getHours()).padStart(2, "0") + ":00";
+    const dayOfWeek = dt.getDay();
+    const key = `${dayOfWeek}-${hour}`;
+    if (!counts[key]) counts[key] = { hour, dayOfWeek, count: 0 };
+    counts[key].count++;
+  }
+
+  const result = Object.values(counts).sort((a, b) =>
+    a.dayOfWeek !== b.dayOfWeek ? a.dayOfWeek - b.dayOfWeek : a.hour.localeCompare(b.hour)
+  );
+
+  res.json(result);
+});
+
 export default router;

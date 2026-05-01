@@ -12,4 +12,5 @@ export type UpdateTableBodyStatus =
 export const UpdateTableBodyStatus = {
   available: "available",
   occupied: "occupied",
+  reserved: "reserved",
 } as const;

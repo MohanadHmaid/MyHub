@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useParams } from "wouter";
-import { useGetTable, getGetTableQueryKey, useGetProducts, useCreateOrder, getGetOrdersQueryKey, Product } from "@workspace/api-client-react";
+import { useGetTable, getGetTableQueryKey, useGetProducts, useCreateOrder, getGetOrdersQueryKey, useVerifyTableReservation, Product } from "@workspace/api-client-react";
 import CustomerLayout from "@/components/layout/customer-layout";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,7 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ShoppingCart, Plus, Minus, Trash2, CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ShoppingCart, Plus, Minus, Trash2, CheckCircle2, KeyRound, Lock } from "lucide-react";
 
 export default function TableOrder() {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +20,9 @@ export default function TableOrder() {
   const queryClient = useQueryClient();
 
   const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+  const [isVerified, setIsVerified] = useState(false);
+  const [verifyCode, setVerifyCode] = useState("");
+  const [verifyError, setVerifyError] = useState("");
 
   const { data: table, isLoading: isTableLoading } = useGetTable(tableId, {
     query: {
@@ -49,6 +53,29 @@ export default function TableOrder() {
       }
     }
   });
+
+  const verifyReservation = useVerifyTableReservation({
+    mutation: {
+      onSuccess: () => {
+        setIsVerified(true);
+        setVerifyError("");
+        queryClient.invalidateQueries({ queryKey: getGetTableQueryKey(tableId) });
+        toast({ title: "Reservation verified!", description: "Welcome to MyHUB. Your table is ready." });
+      },
+      onError: (err: any) => {
+        const msg = err?.response?.data?.error || err?.message || "Invalid reservation code.";
+        setVerifyError(msg);
+      }
+    }
+  });
+
+  const handleVerify = () => {
+    if (!verifyCode.trim()) {
+      setVerifyError("Please enter your reservation code.");
+      return;
+    }
+    verifyReservation.mutate({ id: tableId, data: { code: verifyCode.trim() } });
+  };
 
   const categories = useMemo(() => {
     if (!products) return [];
@@ -125,6 +152,55 @@ export default function TableOrder() {
           </div>
           <h2 className="text-2xl font-bold mb-2">Table Not Found</h2>
           <p className="text-muted-foreground">The table you are trying to order from does not exist.</p>
+        </div>
+      </CustomerLayout>
+    );
+  }
+
+  // Show reservation code verification screen if table is reserved and not yet verified
+  if (table.status === "reserved" && !isVerified) {
+    return (
+      <CustomerLayout minimal>
+        <div className="min-h-[80vh] flex items-center justify-center px-4">
+          <div className="w-full max-w-md">
+            <div className="bg-card border border-amber-200 rounded-3xl p-8 shadow-lg text-center">
+              <div className="bg-amber-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Lock className="w-10 h-10 text-amber-600" />
+              </div>
+              <h1 className="text-2xl font-bold mb-2">{table.name} — Reserved</h1>
+              <p className="text-muted-foreground text-sm mb-8">
+                This table is reserved. Enter the 8-character code from your reservation confirmation to check in.
+              </p>
+
+              <div className="space-y-4">
+                <Input
+                  value={verifyCode}
+                  onChange={(e) => { setVerifyCode(e.target.value.toUpperCase()); setVerifyError(""); }}
+                  placeholder="Enter reservation code (e.g. ABC12345)"
+                  className="text-center text-lg font-mono tracking-widest h-14 border-2 uppercase"
+                  maxLength={8}
+                  onKeyDown={(e) => e.key === "Enter" && handleVerify()}
+                />
+
+                {verifyError && (
+                  <p className="text-sm text-destructive font-medium">{verifyError}</p>
+                )}
+
+                <Button
+                  className="w-full h-12 text-base font-semibold"
+                  onClick={handleVerify}
+                  disabled={verifyReservation.isPending}
+                >
+                  <KeyRound className="w-5 h-5 mr-2" />
+                  {verifyReservation.isPending ? "Verifying..." : "Verify & Check In"}
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground mt-6">
+                Don't have a code? <a href="/reservation" className="text-primary underline">Make a reservation</a>
+              </p>
+            </div>
+          </div>
         </div>
       </CustomerLayout>
     );
