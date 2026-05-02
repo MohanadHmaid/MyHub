@@ -11,6 +11,7 @@ export interface CreateReservationBody {
   phone: string;
   email?: string;
   customerId?: number;
+  tableId?: number;
   dateTime: string;
   partySize: number;
 }

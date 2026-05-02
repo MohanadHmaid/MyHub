@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
-import { db, reservationsTable } from "@workspace/db";
+import { db, reservationsTable, tablesTable } from "@workspace/db";
 import {
   GetReservationsResponse,
   CreateReservationBody,
@@ -50,18 +50,37 @@ router.post("/reservations", async (req, res): Promise<void> => {
   }
 
   const code = generateCode();
-  const [reservation] = await db.insert(reservationsTable).values({
-    name: parsed.data.name,
-    phone: parsed.data.phone,
-    email: parsed.data.email ?? null,
-    customerId: parsed.data.customerId ?? null,
-    dateTime: new Date(parsed.data.dateTime),
-    code,
-    status: "pending",
-    partySize: parsed.data.partySize,
-  }).returning();
+  const { tableId, ...reservationData } = parsed.data;
 
-  res.status(201).json(formatReservation(reservation));
+  try {
+    await db.transaction(async (tx) => {
+      const [reservation] = await tx.insert(reservationsTable).values({
+        name: reservationData.name,
+        phone: reservationData.phone,
+        email: reservationData.email ?? null,
+        customerId: reservationData.customerId ?? null,
+        dateTime: new Date(reservationData.dateTime),
+        code,
+        status: "pending",
+        partySize: reservationData.partySize,
+      }).returning();
+
+      if (tableId) {
+        const [table] = await tx.select().from(tablesTable).where(eq(tablesTable.id, tableId));
+        if (!table || table.status !== "available") {
+          throw new Error("Table is not available for reservation.");
+        }
+        await tx.update(tablesTable)
+          .set({ status: "reserved", reservationId: reservation.id })
+          .where(eq(tablesTable.id, tableId));
+      }
+
+      res.status(201).json(formatReservation(reservation));
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to create reservation";
+    res.status(409).json({ error: message });
+  }
 });
 
 router.get("/reservations/:code", async (req, res): Promise<void> => {

@@ -313,6 +313,7 @@ export const CreateReservationBody = zod.object({
   phone: zod.string(),
   email: zod.string().optional(),
   customerId: zod.number().optional(),
+  tableId: zod.number().optional(),
   dateTime: zod.string(),
   partySize: zod.number(),
 });

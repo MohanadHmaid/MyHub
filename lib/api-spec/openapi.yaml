@@ -875,6 +875,8 @@ components:
           type: string
         customerId:
           type: integer
+        tableId:
+          type: integer
         dateTime:
           type: string
         partySize:
