@@ -1,0 +1,156 @@
+From 433e73e7b5043617f641654ef1fdd1ef10d4e0eb Mon Sep 17 00:00:00 2001
+From: mohanadhmaid4 <27385615-mohanadhmaid4@users.noreply.replit.com>
+Date: Sat, 2 May 2026 18:25:25 +0000
+Subject: [PATCH] Add error handling and atomic table reservation functionality
+
+Add an error handling middleware to the API server and implement atomic table reservation logic including a tableId parameter in the API schema and route.
+
+Replit-Commit-Author: Agent
+Replit-Commit-Session-Id: 8229b1c8-36b3-45f6-bd6b-ad1c3298313f
+Replit-Commit-Checkpoint-Type: full_checkpoint
+Replit-Commit-Event-Id: 05a0f15c-0d41-4169-a4af-c5e7e4a70159
+Replit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/7d000964-9924-42e2-a32d-903c3b41130a/8229b1c8-36b3-45f6-bd6b-ad1c3298313f/4xkPn1t
+Replit-Helium-Checkpoint-Created: true
+---
+ artifacts/api-server/src/app.ts               |  8 +++-
+ .../api-server/src/routes/reservations.ts     | 43 +++++++++++++------
+ .../src/generated/api.schemas.ts              |  1 +
+ lib/api-spec/openapi.yaml                     |  2 +
+ lib/api-zod/src/generated/api.ts              |  1 +
+ .../generated/types/createReservationBody.ts  |  1 +
+ 6 files changed, 43 insertions(+), 13 deletions(-)
+
+diff --git a/artifacts/api-server/src/app.ts b/artifacts/api-server/src/app.ts
+index 859b90a..ff0b863 100644
+--- a/artifacts/api-server/src/app.ts
++++ b/artifacts/api-server/src/app.ts
+@@ -1,4 +1,4 @@
+-import express, { type Express } from "express";
++import express, { type Express, type ErrorRequestHandler } from "express";
+ import cors from "cors";
+ import pinoHttp from "pino-http";
+ import session from "express-session";
+@@ -45,4 +45,10 @@ app.use(
+ 
+ app.use("/api", router);
+ 
++const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
++  logger.error(err, "Unhandled error");
++  res.status(500).json({ error: err.message ?? "Internal server error" });
++};
++app.use(errorHandler);
++
+ export default app;
+diff --git a/artifacts/api-server/src/routes/reservations.ts b/artifacts/api-server/src/routes/reservations.ts
+index 864fca6..1de4964 100644
+--- a/artifacts/api-server/src/routes/reservations.ts
++++ b/artifacts/api-server/src/routes/reservations.ts
+@@ -1,6 +1,6 @@
+ import { Router, type IRouter } from "express";
+ import { eq } from "drizzle-orm";
+-import { db, reservationsTable } from "@workspace/db";
++import { db, reservationsTable, tablesTable } from "@workspace/db";
+ import {
+   GetReservationsResponse,
+   CreateReservationBody,
+@@ -50,18 +50,37 @@ router.post("/reservations", async (req, res): Promise<void> => {
+   }
+ 
+   const code = generateCode();
+-  const [reservation] = await db.insert(reservationsTable).values({
+-    name: parsed.data.name,
+-    phone: parsed.data.phone,
+-    email: parsed.data.email ?? null,
+-    customerId: parsed.data.customerId ?? null,
+-    dateTime: new Date(parsed.data.dateTime),
+-    code,
+-    status: "pending",
+-    partySize: parsed.data.partySize,
+-  }).returning();
++  const { tableId, ...reservationData } = parsed.data;
+ 
+-  res.status(201).json(formatReservation(reservation));
++  try {
++    await db.transaction(async (tx) => {
++      const [reservation] = await tx.insert(reservationsTable).values({
++        name: reservationData.name,
++        phone: reservationData.phone,
++        email: reservationData.email ?? null,
++        customerId: reservationData.customerId ?? null,
++        dateTime: new Date(reservationData.dateTime),
++        code,
++        status: "pending",
++        partySize: reservationData.partySize,
++      }).returning();
++
++      if (tableId) {
++        const [table] = await tx.select().from(tablesTable).where(eq(tablesTable.id, tableId));
++        if (!table || table.status !== "available") {
++          throw new Error("Table is not available for reservation.");
++        }
++        await tx.update(tablesTable)
++          .set({ status: "reserved", reservationId: reservation.id })
++          .where(eq(tablesTable.id, tableId));
++      }
++
++      res.status(201).json(formatReservation(reservation));
++    });
++  } catch (error) {
++    const message = error instanceof Error ? error.message : "Failed to create reservation";
++    res.status(409).json({ error: message });
++  }
+ });
+ 
+ router.get("/reservations/:code", async (req, res): Promise<void> => {
+diff --git a/lib/api-client-react/src/generated/api.schemas.ts b/lib/api-client-react/src/generated/api.schemas.ts
+index 60f8469..c9276e3 100644
+--- a/lib/api-client-react/src/generated/api.schemas.ts
++++ b/lib/api-client-react/src/generated/api.schemas.ts
+@@ -187,6 +187,7 @@ export interface CreateReservationBody {
+   phone: string;
+   email?: string;
+   customerId?: number;
++  tableId?: number;
+   dateTime: string;
+   partySize: number;
+ }
+diff --git a/lib/api-spec/openapi.yaml b/lib/api-spec/openapi.yaml
+index c41279f..a1bad6b 100644
+--- a/lib/api-spec/openapi.yaml
++++ b/lib/api-spec/openapi.yaml
+@@ -875,6 +875,8 @@ components:
+           type: string
+         customerId:
+           type: integer
++        tableId:
++          type: integer
+         dateTime:
+           type: string
+         partySize:
+diff --git a/lib/api-zod/src/generated/api.ts b/lib/api-zod/src/generated/api.ts
+index 0053ddd..5a0f4e1 100644
+--- a/lib/api-zod/src/generated/api.ts
++++ b/lib/api-zod/src/generated/api.ts
+@@ -313,6 +313,7 @@ export const CreateReservationBody = zod.object({
+   phone: zod.string(),
+   email: zod.string().optional(),
+   customerId: zod.number().optional(),
++  tableId: zod.number().optional(),
+   dateTime: zod.string(),
+   partySize: zod.number(),
+ });
+diff --git a/lib/api-zod/src/generated/types/createReservationBody.ts b/lib/api-zod/src/generated/types/createReservationBody.ts
+index 654e362..fd13240 100644
+--- a/lib/api-zod/src/generated/types/createReservationBody.ts
++++ b/lib/api-zod/src/generated/types/createReservationBody.ts
+@@ -11,6 +11,7 @@ export interface CreateReservationBody {
+   phone: string;
+   email?: string;
+   customerId?: number;
++  tableId?: number;
+   dateTime: string;
+   partySize: number;
+ }
+-- 
+2.50.1
+

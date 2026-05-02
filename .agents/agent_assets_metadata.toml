@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "uEAUrSXwGsG3DJEui_3kB"
+uri = "file://433e73e.txt"
+type = "text"
+title = "433e73e — patch file"
