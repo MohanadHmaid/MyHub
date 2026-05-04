@@ -100,9 +100,10 @@ function AdminLoginForm() {
 
   const loginMutation = useAdminLogin({
     mutation: {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         if (data.success) {
-          queryClient.invalidateQueries();
+          // Force a refetch of the admin session to ensure isAdmin is true
+          await queryClient.invalidateQueries({ queryKey: ["/api/admin/me"] });
           toast({ title: "Admin access granted" });
           setLocation("/admin/dashboard");
         }

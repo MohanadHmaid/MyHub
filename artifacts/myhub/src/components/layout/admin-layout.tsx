@@ -13,10 +13,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [location, setLocation] = useLocation();
 
   useEffect(() => {
+    // Only redirect if we are sure the user is not an admin
+    // We add a small delay or check if the query is actually finished
     if (!isAdminLoading && !isAdmin) {
-      setLocation("/login");
+      const timer = setTimeout(() => {
+        if (!isAdmin) {
+          setLocation("/login");
+        }
+      }, 500); // 500ms grace period for state sync
+      return () => clearTimeout(timer);
     }
-  }, [isAdmin, isAdminLoading, location, setLocation]);
+  }, [isAdmin, isAdminLoading, setLocation]);
 
   if (isAdminLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
