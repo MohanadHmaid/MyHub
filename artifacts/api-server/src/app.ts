@@ -7,6 +7,9 @@ import { logger } from "./lib/logger";
 
 const app: Express = express();
 
+// Trust proxy is required for secure cookies on platforms like Render
+app.set("trust proxy", 1);
+
 app.use(
   pinoHttp({
     logger,
@@ -26,7 +29,19 @@ app.use(
     },
   }),
 );
-app.use(cors({ origin: true, credentials: true }));
+// In production, we need to be explicit about the origin for credentials to work
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      // In production, you should ideally list your Vercel domains here
+      // For now, we allow all origins but explicitly for credentials
+      callback(null, true);
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
