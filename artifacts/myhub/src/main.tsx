@@ -1,15 +1,15 @@
 import { createRoot } from "react-dom/client";
-import { setBaseUrl } from "@workspace/api-client-react";
+import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
+import { supabase } from "./lib/supabase";
+import App from "./App";
+import "./index.css";
 
-// Use environment variable for API URL, fallback to localhost for development
 const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 setBaseUrl(apiUrl);
 
-import App from "./App";
-import { setBaseUrl } from "@workspace/api-client-react";
-
-setBaseUrl(import.meta.env.VITE_API_URL || null);
-
-import "./index.css";
+setAuthTokenGetter(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token ?? null;
+});
 
 createRoot(document.getElementById("root")!).render(<App />);

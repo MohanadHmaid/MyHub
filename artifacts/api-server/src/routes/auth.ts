@@ -2,103 +2,60 @@ import { Router, type IRouter, type Request } from "express";
 import { eq } from "drizzle-orm";
 import { db, customersTable, reservationsTable } from "@workspace/db";
 import {
-  CustomerRegisterBody,
-  CustomerRegisterResponse,
-  CustomerLoginBody,
-  CustomerLoginResponse,
-  CustomerLogoutResponse,
   GetCustomerMeResponse,
 } from "@workspace/api-zod";
-import { createHash } from "crypto";
+import { createClient } from '@supabase/supabase-js';
 
 const router: IRouter = Router();
 
-function hashPassword(password: string): string {
-  return createHash("sha256").update(password + "myhub-customer-salt").digest("hex");
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Middleware to verify Supabase JWT
+async function getSupabaseUser(req: Request) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return null;
+
+  const token = authHeader.split(' ')[1];
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  
+  if (error || !user) return null;
+  return user;
 }
-
-declare module "express-session" {
-  interface SessionData {
-    customerId?: number;
-    customerEmail?: string;
-    customerName?: string;
-  }
-}
-
-router.post("/auth/register", async (req, res): Promise<void> => {
-  const parsed = CustomerRegisterBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-
-  const { name, email, password, phone } = parsed.data;
-
-  const existing = await db.select().from(customersTable).where(eq(customersTable.email, email));
-  if (existing.length > 0) {
-    res.status(409).json({ error: "Email already registered" });
-    return;
-  }
-
-  const passwordHash = hashPassword(password);
-  const [customer] = await db.insert(customersTable).values({ name, email, passwordHash, phone }).returning();
-
-  req.session.customerId = customer.id;
-  req.session.customerEmail = customer.email;
-  req.session.customerName = customer.name;
-
-  res.json(CustomerRegisterResponse.parse({
-    success: true,
-    customer: { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone ?? null },
-  }));
-});
-
-router.post("/auth/login", async (req, res): Promise<void> => {
-  const parsed = CustomerLoginBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-
-  const { email, password } = parsed.data;
-  const passwordHash = hashPassword(password);
-
-  const [customer] = await db.select().from(customersTable).where(eq(customersTable.email, email));
-
-  if (!customer || customer.passwordHash !== passwordHash) {
-    res.status(401).json({ success: false });
-    return;
-  }
-
-  req.session.customerId = customer.id;
-  req.session.customerEmail = customer.email;
-  req.session.customerName = customer.name;
-
-  res.json(CustomerLoginResponse.parse({
-    success: true,
-    customer: { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone ?? null },
-  }));
-});
-
-router.post("/auth/logout", async (req, res): Promise<void> => {
-  req.session.customerId = undefined;
-  req.session.customerEmail = undefined;
-  req.session.customerName = undefined;
-  req.session.save(() => {
-    res.json(CustomerLogoutResponse.parse({ success: true, message: "Logged out" }));
-  });
-});
 
 router.get("/auth/me", async (req: Request, res): Promise<void> => {
-  if (!req.session.customerId) {
+  const supabaseUser = await getSupabaseUser(req);
+  
+  if (!supabaseUser) {
     res.json(GetCustomerMeResponse.parse({ authenticated: false, customer: null }));
     return;
   }
-  const [customer] = await db.select().from(customersTable).where(eq(customersTable.id, req.session.customerId));
+
+  // Find or create customer in our DB linked to Supabase ID
+  let [customer] = await db.select().from(customersTable).where(eq(customersTable.supabaseId, supabaseUser.id));
+
   if (!customer) {
-    res.json(GetCustomerMeResponse.parse({ authenticated: false, customer: null }));
-    return;
+    // Check if customer exists by email (for migration)
+    const [existingByEmail] = await db.select().from(customersTable).where(eq(customersTable.email, supabaseUser.email!));
+    
+    if (existingByEmail) {
+      // Link existing customer to Supabase ID
+      [customer] = await db.update(customersTable)
+        .set({ supabaseId: supabaseUser.id })
+        .where(eq(customersTable.id, existingByEmail.id))
+        .returning();
+    } else {
+      // Create new customer
+      [customer] = await db.insert(customersTable).values({
+        supabaseId: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: supabaseUser.user_metadata.full_name || 'New User',
+        phone: supabaseUser.user_metadata.phone || null,
+      }).returning();
+    }
   }
+
   res.json(GetCustomerMeResponse.parse({
     authenticated: true,
     customer: { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone ?? null },
@@ -106,17 +63,33 @@ router.get("/auth/me", async (req: Request, res): Promise<void> => {
 });
 
 router.get("/auth/my-reservations", async (req: Request, res): Promise<void> => {
-  if (!req.session.customerId) {
+  const supabaseUser = await getSupabaseUser(req);
+  
+  if (!supabaseUser) {
     res.status(401).json({ error: "Not authenticated" });
     return;
   }
+
+  const [customer] = await db.select().from(customersTable).where(eq(customersTable.supabaseId, supabaseUser.id));
+  
+  if (!customer) {
+    res.status(404).json({ error: "Customer not found" });
+    return;
+  }
+
   const reservations = await db.select().from(reservationsTable)
-    .where(eq(reservationsTable.customerId, req.session.customerId));
+    .where(eq(reservationsTable.customerId, customer.id));
+
   res.json(reservations.map(r => ({
     ...r,
     dateTime: r.dateTime.toISOString(),
     createdAt: r.createdAt.toISOString(),
   })));
 });
+
+// Legacy routes kept for compatibility but disabled/redirected
+router.post("/auth/register", (req, res) => res.status(410).json({ error: "Use Supabase Auth" }));
+router.post("/auth/login", (req, res) => res.status(410).json({ error: "Use Supabase Auth" }));
+router.post("/auth/logout", (req, res) => res.json({ success: true }));
 
 export default router;

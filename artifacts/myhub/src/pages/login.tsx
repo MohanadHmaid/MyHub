@@ -3,17 +3,25 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocation, Link } from "wouter";
-import { useAdminLogin, useCustomerLogin } from "@workspace/api-client-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { Monitor, Lock, User, Mail, ShieldCheck } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAdminLogin } from "@workspace/api-client-react";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, Lock, ShieldCheck, Monitor, Mail } from "lucide-react";
 
 const customerSchema = z.object({
-  email: z.string().email("Enter a valid email"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -25,6 +33,7 @@ const adminSchema = z.object({
 function CustomerLoginForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof customerSchema>>({
@@ -32,31 +41,40 @@ function CustomerLoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
-  const loginMutation = useCustomerLogin({
-    mutation: {
-      onSuccess: (data) => {
-        if (data.success) {
-          queryClient.invalidateQueries();
-          toast({ title: `Welcome back, ${data.customer.name}!` });
-          setLocation("/my-reservations");
-        }
-      },
-      onError: () => {
-        toast({ title: "Login failed", description: "Invalid email or password", variant: "destructive" });
-      },
-    },
-  });
+  const onSubmit = async (data: z.infer<typeof customerSchema>) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) throw error;
+
+      await queryClient.invalidateQueries();
+      toast({ title: "Welcome back!" });
+      setLocation("/");
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((d) => loginMutation.mutate({ data: d }))} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField control={form.control} name="email" render={({ field }) => (
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl>
               <div className="relative">
                 <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input type="email" placeholder="you@example.com" className="pl-9 h-11" {...field} />
+                <Input placeholder="john@example.com" className="pl-9 h-11" {...field} />
               </div>
             </FormControl>
             <FormMessage />
@@ -64,7 +82,12 @@ function CustomerLoginForm() {
         )} />
         <FormField control={form.control} name="password" render={({ field }) => (
           <FormItem>
-            <FormLabel>Password</FormLabel>
+            <div className="flex items-center justify-between">
+              <FormLabel>Password</FormLabel>
+              <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
+                Forgot password?
+              </Link>
+            </div>
             <FormControl>
               <div className="relative">
                 <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -74,8 +97,8 @@ function CustomerLoginForm() {
             <FormMessage />
           </FormItem>
         )} />
-        <Button type="submit" className="w-full h-11 font-semibold" disabled={loginMutation.isPending}>
-          {loginMutation.isPending ? "Signing in…" : "Sign In"}
+        <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
+          {isLoading ? "Signing in..." : "Sign In"}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           No account?{" "}
@@ -92,7 +115,6 @@ function AdminLoginForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
   const form = useForm<z.infer<typeof adminSchema>>({
     resolver: zodResolver(adminSchema),
     defaultValues: { username: "", password: "" },
@@ -102,7 +124,6 @@ function AdminLoginForm() {
     mutation: {
       onSuccess: async (data) => {
         if (data.success) {
-          // Force a refetch of the admin session to ensure isAdmin is true
           await queryClient.invalidateQueries({ queryKey: ["/api/admin/me"] });
           toast({ title: "Admin access granted" });
           setLocation("/admin/dashboard");
@@ -142,7 +163,7 @@ function AdminLoginForm() {
           </FormItem>
         )} />
         <Button type="submit" className="w-full h-11 font-semibold" disabled={loginMutation.isPending}>
-          {loginMutation.isPending ? "Authenticating…" : "Sign In as Admin"}
+          {loginMutation.isPending ? "Authenticating..." : "Sign In as Admin"}
         </Button>
       </form>
     </Form>
@@ -160,7 +181,6 @@ export default function LoginPage() {
         </div>
         <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
       </Link>
-
       <div className="w-full max-w-md bg-card border border-border/50 rounded-2xl shadow-xl p-8">
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="w-full mb-6">
@@ -171,7 +191,6 @@ export default function LoginPage() {
               <ShieldCheck className="w-4 h-4" /> Admin
             </TabsTrigger>
           </TabsList>
-
           <TabsContent value="customer">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -179,7 +198,6 @@ export default function LoginPage() {
             </div>
             <CustomerLoginForm />
           </TabsContent>
-
           <TabsContent value="admin">
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold">Admin Access</h1>

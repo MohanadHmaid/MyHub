@@ -1,13 +1,10 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import {
-  useGetAdminMe,
-  useAdminLogout,
-  useGetCustomerMe,
-  useCustomerLogout,
-} from "@workspace/api-client-react";
+import { supabase } from "@/lib/supabase";
+import { User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetAdminMe, useAdminLogout, useGetCustomerMe } from "@workspace/api-client-react";
 
 interface CustomerProfile {
   id: number;
@@ -22,6 +19,7 @@ interface AuthContextType {
   customer: CustomerProfile | null;
   isCustomerLoading: boolean;
   isLoggedIn: boolean;
+  user: User | null;
   logout: () => void;
   customerLogout: () => void;
 }
@@ -32,14 +30,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [user, setUser] = useState<User | null>(null);
+  const [isSupabaseLoading, setIsSupabaseLoading] = useState(true);
 
   const { data: adminSession, isLoading: isAdminLoading } = useGetAdminMe({
     query: { retry: false },
   });
 
   const { data: customerSession, isLoading: isCustomerLoading } = useGetCustomerMe({
-    query: { retry: false },
+    query: { 
+      retry: false,
+      enabled: !!user 
+    },
   });
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setIsSupabaseLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (_event === 'SIGNED_OUT') {
+        queryClient.clear();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [queryClient]);
 
   const adminLogoutMutation = useAdminLogout({
     mutation: {
@@ -51,19 +70,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const customerLogoutMutation = useCustomerLogout({
-    mutation: {
-      onSuccess: () => {
-        queryClient.invalidateQueries();
-        setLocation("/");
-        toast({ title: "Signed out" });
-      },
-    },
-  });
+  const customerLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({ title: "Error signing out", description: error.message, variant: "destructive" });
+    } else {
+      queryClient.clear();
+      setLocation("/");
+      toast({ title: "Signed out" });
+    }
+  };
 
   const isAdmin = !!adminSession?.authenticated;
   const customer = customerSession?.authenticated ? (customerSession.customer as CustomerProfile ?? null) : null;
-  const isLoggedIn = !!customer;
+  const isLoggedIn = !!user;
 
   return (
     <AuthContext.Provider
@@ -71,10 +91,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin,
         isAdminLoading,
         customer,
-        isCustomerLoading,
+        isCustomerLoading: isCustomerLoading || isSupabaseLoading,
         isLoggedIn,
+        user,
         logout: () => adminLogoutMutation.mutate({}),
-        customerLogout: () => customerLogoutMutation.mutate({}),
+        customerLogout,
       }}
     >
       {children}

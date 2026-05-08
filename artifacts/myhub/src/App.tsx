@@ -1,27 +1,24 @@
-import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
-
-// Public Pages
+import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
+import ForgotPasswordPage from "@/pages/forgot-password";
+import ResetPasswordPage from "@/pages/reset-password";
+import AuthCallbackPage from "@/pages/auth-callback";
+import ReservationPage from "@/pages/reservation";
+import ReservationSuccessPage from "@/pages/reservation-success";
 import MyReservationsPage from "@/pages/my-reservations";
-import TableOrder from "@/pages/table-order";
-import Reservation from "@/pages/reservation";
-import ReservationSuccess from "@/pages/reservation-success";
-import NotFound from "@/pages/not-found";
-
-// Admin Pages
+import TableOrderPage from "@/pages/table-order";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminTables from "@/pages/admin/tables";
 import AdminOrders from "@/pages/admin/orders";
-import AdminReservations from "@/pages/admin/reservations";
 import AdminMenu from "@/pages/admin/menu";
-
-const queryClient = new QueryClient();
+import AdminReservations from "@/pages/admin/reservations";
 
 function Router() {
   return (
@@ -29,21 +26,18 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/reset-password" component={ResetPasswordPage} />
+      <Route path="/auth/callback" component={AuthCallbackPage} />
+      <Route path="/reservation" component={ReservationPage} />
+      <Route path="/reservation-success/:id" component={ReservationSuccessPage} />
       <Route path="/my-reservations" component={MyReservationsPage} />
-      <Route path="/table/:id" component={TableOrder} />
-      <Route path="/reservation" component={Reservation} />
-      <Route path="/success" component={ReservationSuccess} />
-
-      <Route path="/admin/login">
-        <Redirect to="/login" />
-      </Route>
-
+      <Route path="/table/:id" component={TableOrderPage} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path="/admin/tables" component={AdminTables} />
       <Route path="/admin/orders" component={AdminOrders} />
-      <Route path="/admin/reservations" component={AdminReservations} />
       <Route path="/admin/menu" component={AdminMenu} />
-
+      <Route path="/admin/reservations" component={AdminReservations} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -52,14 +46,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <AuthProvider>
-            <Router />
-          </AuthProvider>
-        </WouterRouter>
+      <AuthProvider>
+        <Router />
         <Toaster />
-      </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
