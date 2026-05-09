@@ -33,13 +33,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isSupabaseLoading, setIsSupabaseLoading] = useState(true);
 
-  const { data: adminSession, isLoading: isAdminLoading } = useGetAdminMe({
-    query: { retry: false },
-  });
+  const { data: adminSession, isLoading: isAdminLoading } = useGetAdminMe();
 
   const { data: customerSession, isLoading: isCustomerLoading } = useGetCustomerMe({
     query: { 
-      retry: false,
       enabled: !!user 
     },
   });
@@ -94,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isCustomerLoading: isCustomerLoading || isSupabaseLoading,
         isLoggedIn,
         user,
-        logout: () => adminLogoutMutation.mutate({}),
+        logout: () => adminLogoutMutation.mutate({ data: {} }),
         customerLogout,
       }}
     >
