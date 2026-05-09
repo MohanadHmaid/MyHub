@@ -19,7 +19,10 @@ export default function MyReservationsPage() {
   const [, setLocation] = useLocation();
 
   const { data: reservations, isLoading } = useGetMyReservations({
-    query: { enabled: !!customer },
+    query: { 
+      queryKey: ["getMyReservations", customer?.id],
+      enabled: !!customer 
+    },
   });
 
   if (isCustomerLoading) {

@@ -48,7 +48,7 @@ export default function AdminMenu() {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [search, setSearch] = useState("");
 
-  const { data: products, isLoading } = useGetProducts({
+  const { data: products, isLoading } = (useGetProducts as any)({
     query: { queryKey: getGetProductsQueryKey() }
   });
 
@@ -117,7 +117,7 @@ export default function AdminMenu() {
 
   const categories = useMemo(() => {
     if (!products) return ["all"];
-    const cats = Array.from(new Set(products.map(p => p.category)));
+    const cats = Array.from(new Set((products as any[]).map((p: any) => p.category)));
     return ["all", ...cats];
   }, [products]);
 
@@ -125,7 +125,7 @@ export default function AdminMenu() {
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
-    return products.filter(p => {
+    return (products as any[]).filter((p: any) => {
       const matchCat = activeCategory === "all" || p.category === activeCategory;
       const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
       return matchCat && matchSearch;

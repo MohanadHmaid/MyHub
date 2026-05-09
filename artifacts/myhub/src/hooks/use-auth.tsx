@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const { data: customerSession, isLoading: isCustomerLoading } = useGetCustomerMe({
     query: { 
+      queryKey: ["getCustomerMe", user?.id],
       enabled: !!user 
     },
   });
@@ -91,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isCustomerLoading: isCustomerLoading || isSupabaseLoading,
         isLoggedIn,
         user,
-        logout: () => adminLogoutMutation.mutate({ data: {} }),
+        logout: () => adminLogoutMutation.mutate(),
         customerLogout,
       }}
     >
