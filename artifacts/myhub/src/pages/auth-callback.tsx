@@ -9,17 +9,42 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      const { error } = await supabase.auth.getSession();
-      if (error) {
-        toast({
-          title: "Authentication error",
-          description: error.message,
-          variant: "destructive",
-        });
-        setLocation("/login");
+      // Get the code from the URL
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const next = params.get("next") || "/";
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) {
+          toast({
+            title: "Authentication error",
+            description: error.message,
+            variant: "destructive",
+          });
+          setLocation("/login");
+        } else {
+          toast({ title: "Email verified successfully!" });
+          setLocation(next);
+        }
       } else {
-        toast({ title: "Email verified successfully!" });
-        setLocation("/");
+        // If no code, check if we already have a session
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
+          // Check for error in hash (common in older Supabase flows)
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const errorMsg = hashParams.get("error_description");
+          if (errorMsg) {
+            toast({
+              title: "Authentication error",
+              description: errorMsg.replace(/\+/g, ' '),
+              variant: "destructive",
+            });
+          }
+          setLocation("/login");
+        } else {
+          setLocation("/");
+        }
       }
     };
 
