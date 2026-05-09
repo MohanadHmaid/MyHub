@@ -49,11 +49,14 @@ export default function RegisterPage() {
             full_name: data.name,
             phone: data.phone,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase signUp error:", error);
+        throw error;
+      }
 
       setIsEmailSent(true);
       toast({
