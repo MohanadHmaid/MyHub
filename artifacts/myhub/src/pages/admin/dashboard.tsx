@@ -7,7 +7,7 @@ import {
 } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Monitor, Receipt, DollarSign, Calendar, Clock, ChevronRight, UtensilsCrossed, Activity } from "lucide-react";
+import { Monitor, Receipt, DollarSign, Calendar, Clock, ChevronRight, UtensilsCrossed, Activity, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -97,11 +97,94 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="flex flex-col space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
-          <p className="text-muted-foreground mt-1">Monitor your café's live status and daily performance.</p>
+        {/* Hero Section with Analysis Board */}
+        <div className="bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-border/50 rounded-2xl p-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+            <p className="text-muted-foreground mt-1">Monitor your café's live status and daily performance.</p>
+          </div>
+
+          {/* Quick Analysis Board */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {isLoadingSummary ? (
+              <>
+                <Skeleton className="h-24 rounded-lg" />
+                <Skeleton className="h-24 rounded-lg" />
+                <Skeleton className="h-24 rounded-lg" />
+              </>
+            ) : summary ? (
+              <>
+                {/* Utilization Rate */}
+                <div className="bg-card border border-border/50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Table Utilization</span>
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="text-2xl font-bold">
+                    {summary.totalTables > 0 ? Math.round((summary.occupiedTables / summary.totalTables) * 100) : 0}%
+                  </div>
+                  <div className="w-full bg-secondary rounded-full h-1.5 mt-2">
+                    <div
+                      className="bg-primary h-1.5 rounded-full transition-all"
+                      style={{ width: `${summary.totalTables > 0 ? (summary.occupiedTables / summary.totalTables) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Order Completion Rate */}
+                <div className="bg-card border border-border/50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Order Throughput</span>
+                    <Receipt className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <div className="text-2xl font-bold">
+                    {summary.pendingOrders + summary.preparingOrders + summary.completedOrders > 0
+                      ? Math.round(
+                          (summary.completedOrders /
+                            (summary.pendingOrders +
+                              summary.preparingOrders +
+                              summary.completedOrders)) *
+                            100
+                        )
+                      : 0}%
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {summary.completedOrders} completed today
+                  </p>
+                </div>
+
+                {/* Peak Hour */}
+                <div className="bg-card border border-border/50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Peak Activity</span>
+                    <Activity className="w-4 h-4 text-red-500" />
+                  </div>
+                  <div className="text-2xl font-bold">
+                    {(() => {
+                      let maxHour = "N/A";
+                      let maxVal = 0;
+                      for (let i = 0; i < 7; i++) {
+                        for (const hour of HOURS) {
+                          const count = heatmap[`${i}-${hour}`] ?? 0;
+                          if (count > maxVal) {
+                            maxVal = count;
+                            maxHour = hour;
+                          }
+                        }
+                      }
+                      return maxHour;
+                    })()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Most reservations
+                  </p>
+                </div>
+              </>
+            ) : null}
+          </div>
         </div>
 
+        {/* Main KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {isLoadingSummary ? (
             Array.from({ length: 4 }).map((_, i) => (

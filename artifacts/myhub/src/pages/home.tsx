@@ -64,21 +64,6 @@ export default function Home() {
                 Reserve a Table
               </Button>
             </Link>
-            {isLoggedIn ? (
-              <Link href="/my-reservations">
-                <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold">
-                  <UserCircle className="w-4 h-4 mr-2" />
-                  My Reservations
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="h-12 px-8 text-base font-semibold">
-                  <UserCircle className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
-              </Link>
-            )}
             <a href="#tables">
               <Button size="lg" variant="ghost" className="h-12 px-8 text-base font-semibold">
                 View Tables
@@ -128,12 +113,22 @@ export default function Home() {
               Click an <span className="text-emerald-600 font-medium">available</span> or <span className="text-amber-500 font-medium">reserved</span> table to get its QR code and order link.
             </p>
           </div>
-          <Link href="/reservation">
-            <Button variant="outline" className="shrink-0">
-              <CalendarCheck className="w-4 h-4 mr-2" />
-              Make a Reservation
-            </Button>
-          </Link>
+          <div className="flex flex-wrap gap-3 shrink-0">
+            <Link href="/reservation">
+              <Button variant="outline">
+                <CalendarCheck className="w-4 h-4 mr-2" />
+                Make a Reservation
+              </Button>
+            </Link>
+            {isLoggedIn && (
+              <Link href="/my-reservations">
+                <Button variant="outline">
+                  <UserCircle className="w-4 h-4 mr-2" />
+                  My Reservations
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">

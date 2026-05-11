@@ -1,7 +1,17 @@
 import { ReactNode, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { LayoutDashboard, UtensilsCrossed, Calendar, Receipt, Monitor, LogOut } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, Calendar, Receipt, LogOut } from "lucide-react";
+
+// Simple SVG Logo Component
+const MyHubLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="8" height="8" rx="1" />
+    <rect x="13" y="3" width="8" height="8" rx="1" />
+    <rect x="3" y="13" width="8" height="8" rx="1" />
+    <rect x="13" y="13" width="8" height="8" rx="1" />
+  </svg>
+);
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AdminLayoutProps {
@@ -49,7 +59,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Logo */}
         <div className="h-16 flex items-center justify-center md:justify-start md:px-6 border-b border-sidebar-border">
-          <Monitor className="w-6 h-6 text-sidebar-primary md:hidden" />
+          <MyHubLogo className="w-6 h-6 text-sidebar-primary md:hidden" />
           <span className="hidden md:block text-xl font-bold text-sidebar-primary tracking-tight">
             MyHUB<span className="text-sidebar-foreground">Admin</span>
           </span>

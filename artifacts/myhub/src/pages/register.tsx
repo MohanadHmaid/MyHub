@@ -15,7 +15,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { User, Mail, Lock, Phone, Monitor } from "lucide-react";
+import { User, Mail, Lock, Phone } from "lucide-react";
+
+// Simple SVG Logo Component
+const MyHubLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="8" height="8" rx="1" />
+    <rect x="13" y="3" width="8" height="8" rx="1" />
+    <rect x="3" y="13" width="8" height="8" rx="1" />
+    <rect x="13" y="13" width="8" height="8" rx="1" />
+  </svg>
+);
 import { useState } from "react";
 
 const registerSchema = z.object({
@@ -98,7 +108,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col items-center justify-center p-4">
       <Link href="/" className="flex items-center gap-2 mb-8 group">
         <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors">
-          <Monitor className="w-6 h-6 text-primary" />
+          <MyHubLogo className="w-6 h-6 text-primary" />
         </div>
         <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
       </Link>
