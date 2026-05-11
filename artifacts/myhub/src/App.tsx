@@ -19,6 +19,7 @@ import AdminTables from "@/pages/admin/tables";
 import AdminOrders from "@/pages/admin/orders";
 import AdminMenu from "@/pages/admin/menu";
 import AdminReservations from "@/pages/admin/reservations";
+import AdminPayTable from "@/pages/admin/pay-table";
 
 function Router() {
   return (
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/menu" component={AdminMenu} />
       <Route path="/admin/reservations" component={AdminReservations} />
+      <Route path="/admin/pay-table" component={AdminPayTable} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -51,7 +51,10 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterValues) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      // Check if a user with this email already exists by attempting sign-in
+      // Supabase does not expose a public "check email exists" API, so we attempt signUp
+      // and handle the "User already registered" error explicitly
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -59,13 +62,37 @@ export default function RegisterPage() {
             full_name: data.name,
             phone: data.phone,
           },
-          redirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) {
         console.error("Supabase signUp error:", error);
+        // Supabase returns this message when the email is already registered
+        if (
+          error.message.toLowerCase().includes("already registered") ||
+          error.message.toLowerCase().includes("already exists") ||
+          error.message.toLowerCase().includes("user already")
+        ) {
+          toast({
+            title: "Email already registered",
+            description: "This email is already associated with an account. Please sign in instead.",
+            variant: "destructive",
+          });
+          return;
+        }
         throw error;
+      }
+
+      // Supabase may return a user with identities = [] when email is already registered
+      // (when email confirmation is enabled and the email is taken)
+      if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+        toast({
+          title: "Email already registered",
+          description: "This email is already associated with an account. Please sign in instead.",
+          variant: "destructive",
+        });
+        return;
       }
 
       setIsEmailSent(true);

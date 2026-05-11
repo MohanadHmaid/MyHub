@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { LayoutDashboard, UtensilsCrossed, Calendar, Receipt, LogOut } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, Calendar, Receipt, LogOut, Monitor, CreditCard } from "lucide-react";
 
 // Simple SVG Logo Component
 const MyHubLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
@@ -51,6 +51,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { label: "Orders", href: "/admin/orders", icon: Receipt },
     { label: "Menu", href: "/admin/menu", icon: UtensilsCrossed },
     { label: "Reservations", href: "/admin/reservations", icon: Calendar },
+    { label: "Pay for Table", href: "/admin/pay-table", icon: CreditCard },
   ];
 
   return (
