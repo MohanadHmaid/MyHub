@@ -17,107 +17,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Lock, ShieldCheck, Monitor, Mail } from "lucide-react";
+import { User, Lock, Mail } from "lucide-react";
 
-const customerSchema = z.object({
-  email: z.string().email("Invalid email address"),
+// Simple SVG Logo Component
+const MyHubLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="8" height="8" rx="1" />
+    <rect x="13" y="3" width="8" height="8" rx="1" />
+    <rect x="3" y="13" width="8" height="8" rx="1" />
+    <rect x="13" y="13" width="8" height="8" rx="1" />
+  </svg>
+);
+
+const unifiedLoginSchema = z.object({
+  identifier: z.string().min(1, "Email or username is required"),
   password: z.string().min(1, "Password is required"),
 });
 
-const adminSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
-});
-
-function CustomerLoginForm() {
+function UnifiedLoginForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [loginType, setLoginType] = useState<"customer" | "admin">("customer");
   const queryClient = useQueryClient();
 
-  const form = useForm<z.infer<typeof customerSchema>>({
-    resolver: zodResolver(customerSchema),
-    defaultValues: { email: "", password: "" },
-  });
-
-  const onSubmit = async (data: z.infer<typeof customerSchema>) => {
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
-
-      if (error) throw error;
-
-      await queryClient.invalidateQueries();
-      toast({ title: "Welcome back!" });
-      setLocation("/");
-    } catch (error: any) {
-      toast({
-        title: "Login failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-        <FormField control={form.control} name="email" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="john@example.com" className="pl-9 h-11" {...field} />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <FormField control={form.control} name="password" render={({ field }) => (
-          <FormItem>
-            <div className="flex items-center justify-between">
-              <FormLabel>Password</FormLabel>
-              <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-            <FormControl>
-              <div className="relative">
-                <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input type="password" placeholder="••••••••" className="pl-9 h-11" {...field} />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign In"}
-        </Button>
-        <p className="text-center text-sm text-muted-foreground">
-          No account?{" "}
-          <Link href="/register" className="text-primary font-medium hover:underline">
-            Register here
-          </Link>
-        </p>
-      </form>
-    </Form>
-  );
-}
-
-function AdminLoginForm() {
-  const [, setLocation] = useLocation();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const form = useForm<z.infer<typeof adminSchema>>({
-    resolver: zodResolver(adminSchema),
-    defaultValues: { username: "", password: "" },
+  const form = useForm<z.infer<typeof unifiedLoginSchema>>({
+    resolver: zodResolver(unifiedLoginSchema),
+    defaultValues: { identifier: "", password: "" },
   });
 
   const loginMutation = useAdminLogin({
@@ -135,77 +61,172 @@ function AdminLoginForm() {
     },
   });
 
+  const onSubmit = async (data: z.infer<typeof unifiedLoginSchema>) => {
+    setIsLoading(true);
+    try {
+      if (loginType === "customer") {
+        // Customer login with email
+        const { error } = await supabase.auth.signInWithPassword({
+          email: data.identifier,
+          password: data.password,
+        });
+
+        if (error) throw error;
+
+        await queryClient.invalidateQueries();
+        toast({ title: "Welcome back!" });
+        setLocation("/");
+      } else {
+        // Admin login with username
+        loginMutation.mutate({
+          data: {
+            username: data.identifier,
+            password: data.password,
+          },
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit((d) => loginMutation.mutate({ data: d }))} className="space-y-5">
-        <FormField control={form.control} name="username" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Username</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="admin" className="pl-9 h-11" {...field} />
+    <>
+      {/* Login Type Toggle */}
+      <div className="flex gap-2 mb-6 bg-secondary/50 p-1 rounded-lg">
+        <button
+          type="button"
+          onClick={() => {
+            setLoginType("customer");
+            form.reset();
+          }}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+            loginType === "customer"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Mail className="w-4 h-4 inline mr-2" />
+          Customer
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setLoginType("admin");
+            form.reset();
+          }}
+          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+            loginType === "admin"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <User className="w-4 h-4 inline mr-2" />
+          Admin
+        </button>
+      </div>
+
+      {/* Form Header */}
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold">
+          {loginType === "customer" ? "Welcome back" : "Admin Access"}
+        </h1>
+        <p className="text-muted-foreground text-sm mt-1">
+          {loginType === "customer"
+            ? "Sign in to view your reservations"
+            : "MyHUB Management System"}
+        </p>
+      </div>
+
+      {/* Login Form */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FormField control={form.control} name="identifier" render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                {loginType === "customer" ? "Email" : "Username"}
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  {loginType === "customer" ? (
+                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  )}
+                  <Input
+                    placeholder={loginType === "customer" ? "john@example.com" : "admin"}
+                    className="pl-9 h-11"
+                    {...field}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+
+          <FormField control={form.control} name="password" render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center justify-between">
+                <FormLabel>Password</FormLabel>
+                {loginType === "customer" && (
+                  <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                )}
               </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <FormField control={form.control} name="password" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Password</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input type="password" placeholder="••••••••" className="pl-9 h-11" {...field} />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <Button type="submit" className="w-full h-11 font-semibold" disabled={loginMutation.isPending}>
-          {loginMutation.isPending ? "Authenticating..." : "Sign In as Admin"}
-        </Button>
-      </form>
-    </Form>
+              <FormControl>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input type="password" placeholder="••••••••" className="pl-9 h-11" {...field} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+
+          <Button
+            type="submit"
+            className="w-full h-11 font-semibold"
+            disabled={isLoading || loginMutation.isPending}
+          >
+            {isLoading || loginMutation.isPending
+              ? loginType === "customer"
+                ? "Signing in..."
+                : "Authenticating..."
+              : "Sign In"}
+          </Button>
+
+          {loginType === "customer" && (
+            <p className="text-center text-sm text-muted-foreground">
+              No account?{" "}
+              <Link href="/register" className="text-primary font-medium hover:underline">
+                Register here
+              </Link>
+            </p>
+          )}
+        </form>
+      </Form>
+    </>
   );
 }
 
 export default function LoginPage() {
-  const [tab, setTab] = useState<string>("customer");
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col items-center justify-center p-4">
       <Link href="/" className="flex items-center gap-2 mb-8">
         <div className="bg-primary/10 p-2 rounded-xl">
-          <Monitor className="w-6 h-6 text-primary" />
+          <MyHubLogo className="w-6 h-6 text-primary" />
         </div>
         <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
       </Link>
       <div className="w-full max-w-md bg-card border border-border/50 rounded-2xl shadow-xl p-8">
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="w-full mb-6">
-            <TabsTrigger value="customer" className="flex-1 gap-2">
-              <User className="w-4 h-4" /> Customer
-            </TabsTrigger>
-            <TabsTrigger value="admin" className="flex-1 gap-2">
-              <ShieldCheck className="w-4 h-4" /> Admin
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="customer">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold">Welcome back</h1>
-              <p className="text-muted-foreground text-sm mt-1">Sign in to view your reservations</p>
-            </div>
-            <CustomerLoginForm />
-          </TabsContent>
-          <TabsContent value="admin">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold">Admin Access</h1>
-              <p className="text-muted-foreground text-sm mt-1">MyHUB Management System</p>
-            </div>
-            <AdminLoginForm />
-          </TabsContent>
-        </Tabs>
+        <UnifiedLoginForm />
       </div>
     </div>
   );

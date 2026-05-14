@@ -126,6 +126,12 @@ export default function Reservation() {
     return reservationMap[key] ?? {};
   }, [reservationMap, selectedDate]);
 
+  // Get slot status: 'available' | 'full'
+  const getSlotStatus = (slot: string): "available" | "full" => {
+    const count = slotCounts[slot] ?? 0;
+    return count >= TOTAL_TABLES ? "full" : "available";
+  };
+
   const createReservation = useCreateReservation({
     mutation: {
       onSuccess: (data) => {
@@ -262,7 +268,7 @@ export default function Reservation() {
           </div>
         )}
 
-        {/* STEP 2 — Select Time Slot */}
+        {/* STEP 2 — Select Time Slot with Heatmap */}
         {step === 2 && (
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
@@ -280,14 +286,20 @@ export default function Reservation() {
                 const isPM = h >= 12;
                 const display = h > 12 ? `${h - 12}:00 PM` : h === 12 ? "12:00 PM" : `${h}:00 AM`;
                 const isSelected = selectedTime === slot;
+                const slotStatus = getSlotStatus(slot);
+                const isSlotFull = slotStatus === "full";
+                
                 return (
                   <button
                     key={slot}
-                    onClick={() => setSelectedTime(slot)}
+                    onClick={() => !isSlotFull && setSelectedTime(slot)}
+                    disabled={isSlotFull}
                     className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all ${
-                      isSelected
+                      isSlotFull
+                        ? "opacity-50 cursor-not-allowed bg-red-100 border-red-300 text-red-700"
+                        : isSelected
                         ? "bg-primary text-primary-foreground border-primary shadow-md"
-                        : "bg-card border-border hover:border-primary/50 hover:bg-primary/5 text-foreground"
+                        : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
                     }`}
                   >
                     {display}
@@ -306,7 +318,7 @@ export default function Reservation() {
           </div>
         )}
 
-        {/* STEP 3 — Select Table */}
+        {/* STEP 3 — Select Table with Dynamic Status */}
         {step === 3 && (
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
@@ -323,15 +335,20 @@ export default function Reservation() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {tables?.map((table) => {
-                  const isOccupied = table.status === "occupied";
+                  // Determine availability based on selected time
+                  const slotReservations = selectedTime ? (slotCounts[selectedTime] ?? 0) : 0;
+                  const isAvailableAtTime = slotReservations < TOTAL_TABLES;
+                  const isTableOccupied = table.status === "occupied";
+                  const isTableAvailable = isAvailableAtTime && !isTableOccupied;
                   const isSelected = selectedTableId === table.id;
+                  
                   return (
                     <button
                       key={table.id}
-                      disabled={isOccupied}
+                      disabled={!isTableAvailable}
                       onClick={() => setSelectedTableId(isSelected ? null : table.id)}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
-                        isOccupied
+                        !isTableAvailable
                           ? "opacity-50 cursor-not-allowed bg-destructive/5 border-destructive/20"
                           : isSelected
                           ? "bg-primary/10 border-primary shadow-sm"
@@ -340,12 +357,12 @@ export default function Reservation() {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-sm">{table.name}</span>
-                        <div className={`w-2.5 h-2.5 rounded-full ${isOccupied ? "bg-red-500" : "bg-emerald-500"}`} />
+                        <div className={`w-2.5 h-2.5 rounded-full ${isTableAvailable ? "bg-emerald-500" : "bg-red-500"}`} />
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Users className="w-3 h-3" /> Up to {table.capacity}
                       </div>
-                      {isOccupied && <span className="text-xs text-destructive font-medium mt-1 block">Occupied</span>}
+                      {!isTableAvailable && <span className="text-xs text-destructive font-medium mt-1 block">Unavailable</span>}
                       {isSelected && <span className="text-xs text-primary font-semibold mt-1 block">Selected ✓</span>}
                     </button>
                   );

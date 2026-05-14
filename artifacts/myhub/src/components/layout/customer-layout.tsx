@@ -1,6 +1,16 @@
 import { ReactNode } from "react";
 import { Link } from "wouter";
-import { Monitor, Facebook, Twitter, Instagram, Mail, Phone, MapPin, UserCircle, LogOut, CalendarCheck } from "lucide-react";
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, UserCircle, LogOut, CalendarCheck } from "lucide-react";
+
+// Simple SVG Logo Component
+const MyHubLogo = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="8" height="8" rx="1" />
+    <rect x="13" y="3" width="8" height="8" rx="1" />
+    <rect x="3" y="13" width="8" height="8" rx="1" />
+    <rect x="13" y="13" width="8" height="8" rx="1" />
+  </svg>
+);
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +35,7 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="bg-primary/10 p-1.5 rounded-lg">
-              <Monitor className="w-5 h-5 text-primary" />
+              <MyHubLogo className="w-5 h-5 text-primary" />
             </div>
             <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
           </Link>
@@ -79,7 +89,7 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-primary/20 p-1.5 rounded-lg">
-                  <Monitor className="w-5 h-5 text-primary" />
+                  <MyHubLogo className="w-5 h-5 text-primary" />
                 </div>
                 <span className="text-xl font-bold text-primary">MyHUB</span>
               </div>

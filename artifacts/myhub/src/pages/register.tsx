@@ -15,7 +15,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { User, Mail, Lock, Phone, Monitor } from "lucide-react";
+import { User, Mail, Lock, Phone } from "lucide-react";
+
+// Simple SVG Logo Component
+const MyHubLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="8" height="8" rx="1" />
+    <rect x="13" y="3" width="8" height="8" rx="1" />
+    <rect x="3" y="13" width="8" height="8" rx="1" />
+    <rect x="13" y="13" width="8" height="8" rx="1" />
+  </svg>
+);
 import { useState } from "react";
 
 const registerSchema = z.object({
@@ -41,7 +51,10 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterValues) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      // Check if a user with this email already exists by attempting sign-in
+      // Supabase does not expose a public "check email exists" API, so we attempt signUp
+      // and handle the "User already registered" error explicitly
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -49,13 +62,37 @@ export default function RegisterPage() {
             full_name: data.name,
             phone: data.phone,
           },
-          redirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) {
         console.error("Supabase signUp error:", error);
+        // Supabase returns this message when the email is already registered
+        if (
+          error.message.toLowerCase().includes("already registered") ||
+          error.message.toLowerCase().includes("already exists") ||
+          error.message.toLowerCase().includes("user already")
+        ) {
+          toast({
+            title: "Email already registered",
+            description: "This email is already associated with an account. Please sign in instead.",
+            variant: "destructive",
+          });
+          return;
+        }
         throw error;
+      }
+
+      // Supabase may return a user with identities = [] when email is already registered
+      // (when email confirmation is enabled and the email is taken)
+      if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+        toast({
+          title: "Email already registered",
+          description: "This email is already associated with an account. Please sign in instead.",
+          variant: "destructive",
+        });
+        return;
       }
 
       setIsEmailSent(true);
@@ -98,7 +135,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col items-center justify-center p-4">
       <Link href="/" className="flex items-center gap-2 mb-8 group">
         <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors">
-          <Monitor className="w-6 h-6 text-primary" />
+          <MyHubLogo className="w-6 h-6 text-primary" />
         </div>
         <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
       </Link>
