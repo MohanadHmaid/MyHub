@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { User, Lock, Mail, Monitor } from "lucide-react";
+import { Lock, User, Monitor } from "lucide-react";
 
 const unifiedLoginSchema = z.object({
   identifier: z.string().min(1, "Email or username is required"),
@@ -28,7 +28,6 @@ function UnifiedLoginForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [loginType, setLoginType] = useState<"customer" | "admin">("customer");
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof unifiedLoginSchema>>({
@@ -46,7 +45,11 @@ function UnifiedLoginForm() {
         }
       },
       onError: () => {
-        toast({ title: "Login failed", description: "Invalid credentials", variant: "destructive" });
+        toast({ 
+          title: "Login failed", 
+          description: "Invalid credentials. If you are a customer, please use your email.", 
+          variant: "destructive" 
+        });
       },
     },
   });
@@ -54,27 +57,32 @@ function UnifiedLoginForm() {
   const onSubmit = async (data: z.infer<typeof unifiedLoginSchema>) => {
     setIsLoading(true);
     try {
-      if (loginType === "customer") {
-        // Customer login with email
+      // Try customer login first if it looks like an email
+      if (data.identifier.includes("@")) {
         const { error } = await supabase.auth.signInWithPassword({
           email: data.identifier,
           password: data.password,
         });
 
-        if (error) throw error;
-
-        await queryClient.invalidateQueries();
-        toast({ title: "Welcome back!" });
-        setLocation("/");
-      } else {
-        // Admin login with username
-        loginMutation.mutate({
-          data: {
-            username: data.identifier,
-            password: data.password,
-          },
-        });
+        if (!error) {
+          await queryClient.invalidateQueries();
+          toast({ title: "Welcome back!" });
+          setLocation("/");
+          return;
+        }
+        
+        // If email login fails, don't immediately throw, try admin login just in case
+        // (though admins usually use usernames)
       }
+
+      // Try admin login
+      loginMutation.mutate({
+        data: {
+          username: data.identifier,
+          password: data.password,
+        },
+      });
+      
     } catch (error: any) {
       toast({
         title: "Login failed",
@@ -88,49 +96,11 @@ function UnifiedLoginForm() {
 
   return (
     <>
-      {/* Login Type Toggle */}
-      <div className="flex gap-2 mb-6 bg-secondary/50 p-1 rounded-lg">
-        <button
-          type="button"
-          onClick={() => {
-            setLoginType("customer");
-            form.reset();
-          }}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-            loginType === "customer"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Mail className="w-4 h-4 inline mr-2" />
-          Customer
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setLoginType("admin");
-            form.reset();
-          }}
-          className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-            loginType === "admin"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <User className="w-4 h-4 inline mr-2" />
-          Admin
-        </button>
-      </div>
-
       {/* Form Header */}
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold">
-          {loginType === "customer" ? "Welcome back" : "Admin Access"}
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          {loginType === "customer"
-            ? "Sign in to view your reservations"
-            : "MyHUB Management System"}
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold">Welcome to MyHUB</h1>
+        <p className="text-muted-foreground text-sm mt-2">
+          Sign in to access your account
         </p>
       </div>
 
@@ -139,18 +109,12 @@ function UnifiedLoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField control={form.control} name="identifier" render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                {loginType === "customer" ? "Email" : "Username"}
-              </FormLabel>
+              <FormLabel>Email or Username</FormLabel>
               <FormControl>
                 <div className="relative">
-                  {loginType === "customer" ? (
-                    <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  )}
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder={loginType === "customer" ? "john@example.com" : "admin"}
+                    placeholder="Enter your email or username"
                     className="pl-9 h-11"
                     {...field}
                   />
@@ -164,11 +128,9 @@ function UnifiedLoginForm() {
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel>Password</FormLabel>
-                {loginType === "customer" && (
-                  <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
-                    Forgot password?
-                  </Link>
-                )}
+                <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
+                  Forgot password?
+                </Link>
               </div>
               <FormControl>
                 <div className="relative">
@@ -185,21 +147,24 @@ function UnifiedLoginForm() {
             className="w-full h-11 font-semibold"
             disabled={isLoading || loginMutation.isPending}
           >
-            {isLoading || loginMutation.isPending
-              ? loginType === "customer"
-                ? "Signing in..."
-                : "Authenticating..."
-              : "Sign In"}
+            {isLoading || loginMutation.isPending ? "Signing in..." : "Sign In"}
           </Button>
 
-          {loginType === "customer" && (
-            <p className="text-center text-sm text-muted-foreground">
-              No account?{" "}
-              <Link href="/register" className="text-primary font-medium hover:underline">
-                Register here
-              </Link>
-            </p>
-          )}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">New here?</span>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground">
+            No account?{" "}
+            <Link href="/register" className="text-primary font-medium hover:underline">
+              Register here
+            </Link>
+          </p>
         </form>
       </Form>
     </>
