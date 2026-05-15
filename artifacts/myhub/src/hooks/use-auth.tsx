@@ -80,7 +80,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const isAdmin = !!adminSession?.authenticated;
-  const customer = customerSession?.authenticated ? (customerSession.customer as CustomerProfile ?? null) : null;
+  
+  // Try to get customer from session first, then fallback to user metadata
+  let customer: CustomerProfile | null = null;
+  if (customerSession?.authenticated && customerSession.customer) {
+    customer = customerSession.customer as CustomerProfile;
+  } else if (user) {
+    customer = {
+      id: 0, // Placeholder as we don't have the DB ID here
+      name: user.user_metadata?.full_name || user.user_metadata?.name || "Customer",
+      email: user.email || "",
+      phone: user.user_metadata?.phone || null,
+    };
+  }
+
   const isLoggedIn = !!user;
 
   return (
