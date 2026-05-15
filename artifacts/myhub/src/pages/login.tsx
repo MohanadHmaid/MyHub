@@ -17,17 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { User, Lock, Mail } from "lucide-react";
-
-// Simple SVG Logo Component
-const MyHubLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <rect x="3" y="3" width="8" height="8" rx="1" />
-    <rect x="13" y="3" width="8" height="8" rx="1" />
-    <rect x="3" y="13" width="8" height="8" rx="1" />
-    <rect x="13" y="13" width="8" height="8" rx="1" />
-  </svg>
-);
+import { User, Lock, Mail, Monitor } from "lucide-react";
 
 const unifiedLoginSchema = z.object({
   identifier: z.string().min(1, "Email or username is required"),
@@ -221,7 +211,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col items-center justify-center p-4">
       <Link href="/" className="flex items-center gap-2 mb-8">
         <div className="bg-primary/10 p-2 rounded-xl">
-          <MyHubLogo className="w-6 h-6 text-primary" />
+          <Monitor className="w-6 h-6 text-primary" />
         </div>
         <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
       </Link>
