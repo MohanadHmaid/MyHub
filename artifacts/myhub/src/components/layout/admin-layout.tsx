@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { LayoutDashboard, UtensilsCrossed, Calendar, Receipt, LogOut, Monitor, CreditCard } from "lucide-react";
 
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -47,7 +47,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <TooltipProvider>
+      <div className="flex h-screen bg-background overflow-hidden">
       <aside className="w-16 md:w-64 border-r border-sidebar-border bg-sidebar flex flex-col shrink-0 transition-all duration-200">
 
         {/* Logo */}
@@ -111,5 +112,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
       </main>
     </div>
+    </TooltipProvider>
   );
 }
