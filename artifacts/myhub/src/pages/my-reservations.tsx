@@ -5,7 +5,7 @@ import CustomerLayout from "@/components/layout/customer-layout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { CalendarCheck, Clock, Users, QrCode, LogOut, UserCircle } from "lucide-react";
+import { CalendarCheck, Clock, Users, QrCode, LogOut, UserCircle, PlusCircle } from "lucide-react";
 import { format } from "date-fns";
 
 const statusColors: Record<string, string> = {
@@ -81,18 +81,28 @@ export default function MyReservationsPage() {
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36 w-full rounded-2xl" />)}
           </div>
-        ) : reservations?.length === 0 ? (
-          <div className="py-20 text-center border border-dashed rounded-2xl space-y-4">
-            <CalendarCheck className="w-10 h-10 text-muted-foreground mx-auto" />
-            <p className="text-muted-foreground">No reservations yet.</p>
+        ) : !reservations || reservations.length === 0 ? (
+          <div className="py-24 px-6 text-center border-2 border-dashed border-border/60 rounded-3xl bg-secondary/5 flex flex-col items-center gap-6">
+            <div className="bg-primary/10 p-6 rounded-full">
+              <CalendarCheck className="w-12 h-12 text-primary/60" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold">No reservations found</h2>
+              <p className="text-muted-foreground max-w-xs mx-auto">
+                You haven't made any bookings yet. Ready to secure your spot at MyHUB?
+              </p>
+            </div>
             <Link href="/reservation">
-              <Button className="mt-2">Book a Table</Button>
+              <Button size="lg" className="gap-2 h-12 px-8 rounded-xl shadow-lg shadow-primary/20">
+                <PlusCircle className="w-5 h-5" />
+                Book Your First Table
+              </Button>
             </Link>
           </div>
         ) : (
           <div className="space-y-4">
             {reservations?.map((r) => (
-              <div key={r.id} className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm space-y-3">
+              <div key={r.id} className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm space-y-3 hover:border-primary/30 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-bold text-lg">{format(new Date(r.dateTime), "EEEE, MMM d, yyyy")}</p>
