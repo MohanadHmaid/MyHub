@@ -105,14 +105,46 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="flex flex-col space-y-8">
-        {/* Hero Section with Analysis Board */}
+        {/* Header Section */}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+          <p className="text-muted-foreground mt-1">Monitor your café's live status and daily performance.</p>
+        </div>
+
+        {/* Main KPI Cards - NOW AT THE TOP */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {isLoadingSummary ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-36 rounded-xl" />
+            ))
+          ) : (
+            statsCards.map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <Card key={i} className="border-border/50 shadow-sm hover:shadow-md transition-shadow">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+                    <div className={`${stat.bg} ${stat.color} p-2 rounded-lg`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
+                    <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </div>
+
+        {/* Analysis Board Section */}
         <div className="bg-gradient-to-br from-primary/5 via-background to-accent/5 border border-border/50 rounded-2xl p-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
-            <p className="text-muted-foreground mt-1">Monitor your café's live status and daily performance.</p>
+            <h2 className="text-xl font-bold tracking-tight">Performance Analysis</h2>
+            <p className="text-sm text-muted-foreground">Key efficiency metrics for today's operations.</p>
           </div>
 
-          {/* Quick Analysis Board */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {isLoadingSummary ? (
               <>
@@ -190,33 +222,6 @@ export default function AdminDashboard() {
               </>
             ) : null}
           </div>
-        </div>
-
-        {/* Main KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {isLoadingSummary ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-36 rounded-xl" />
-            ))
-          ) : (
-            statsCards.map((stat, i) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={i} className="border-border/50 shadow-sm">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
-                    <div className={`${stat.bg} ${stat.color} p-2 rounded-lg`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
-                    <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -323,6 +328,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+
         {/* Traffic Heatmap */}
         <Card className="border-border/50 shadow-sm mt-6">
           <CardHeader className="border-b border-border/50 pb-4">
@@ -332,38 +338,46 @@ export default function AdminDashboard() {
             </div>
             <CardDescription>Busiest hours by day of week (all-time). Green = quiet, yellow = moderate, red = peak.</CardDescription>
           </CardHeader>
-          <CardContent className="pt-4 overflow-x-auto">
-            <div className="min-w-[600px]">
-              {/* Header row: hours */}
-              <div className="flex gap-1 mb-1 pl-10">
-                {HOURS.map(h => (
-                  <div key={h} className="flex-1 text-center text-[10px] text-muted-foreground font-medium">{h.replace(":00","")}</div>
+          <CardContent className="pt-6">
+            <div className="overflow-x-auto">
+              <div className="min-w-[800px]">
+                <div className="grid grid-cols-[100px_repeat(13,1fr)] gap-2 mb-2">
+                  <div />
+                  {HOURS.map(h => (
+                    <div key={h} className="text-[10px] font-medium text-muted-foreground text-center">{h}</div>
+                  ))}
+                </div>
+                {DAYS.map((day, dayIdx) => (
+                  <div key={day} className="grid grid-cols-[100px_repeat(13,1fr)] gap-2 mb-2 items-center">
+                    <div className="text-xs font-semibold">{day}</div>
+                    {HOURS.map(hour => {
+                      const count = heatmap[`${dayIdx}-${hour}`] ?? 0;
+                      return (
+                        <div
+                          key={hour}
+                          className={`h-8 rounded-md flex items-center justify-center text-[10px] font-bold transition-all hover:scale-110 cursor-default ${heatColor(count)}`}
+                          title={`${day} at ${hour}: ${count} reservations`}
+                        >
+                          {count > 0 ? count : ""}
+                        </div>
+                      );
+                    })}
+                  </div>
                 ))}
               </div>
-              {/* Data rows: days */}
-              {DAYS.map((day, dayIdx) => (
-                <div key={day} className="flex gap-1 mb-1 items-center">
-                  <div className="w-9 text-xs text-muted-foreground font-medium shrink-0">{day}</div>
-                  {HOURS.map(hour => {
-                    const count = heatmap[`${dayIdx}-${hour}`] ?? 0;
-                    return (
-                      <div
-                        key={hour}
-                        className={`flex-1 h-8 rounded-md text-[10px] font-semibold flex items-center justify-center transition-colors ${heatColor(count)}`}
-                        title={`${day} ${hour}: ${count} reservation${count !== 1 ? "s" : ""}`}
-                      >
-                        {count > 0 ? count : ""}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-              {/* Legend */}
-              <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-secondary inline-block border" /> None</div>
-                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-emerald-200 inline-block" /> Low</div>
-                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-amber-300 inline-block" /> Moderate</div>
-                <div className="flex items-center gap-1.5"><span className="w-4 h-4 rounded bg-red-400 inline-block" /> Peak</div>
+            </div>
+            <div className="mt-6 flex items-center justify-end gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded bg-secondary" /> Quiet
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded bg-emerald-200" /> Low
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded bg-amber-300" /> Moderate
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded bg-red-400" /> Peak
               </div>
             </div>
           </CardContent>
