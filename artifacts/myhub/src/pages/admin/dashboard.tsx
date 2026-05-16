@@ -65,8 +65,16 @@ export default function AdminDashboard() {
       value: `$${summary.todayRevenue.toFixed(2)}`,
       description: "Total paid orders today",
       icon: DollarSign,
-      color: "text-primary",
-      bg: "bg-primary/10",
+      color: "text-emerald-600",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      title: "Unpaid Amount",
+      value: `$${summary.unpaidAmount.toFixed(2)}`,
+      description: "Total pending payments",
+      icon: DollarSign,
+      color: "text-red-600",
+      bg: "bg-red-500/10",
     },
     {
       title: "Active Orders",
@@ -87,7 +95,7 @@ export default function AdminDashboard() {
     {
       title: "Reservations",
       value: summary.pendingReservations,
-      description: "Pending confirmation today",
+      description: `${summary.confirmedReservations} confirmed today`,
       icon: Calendar,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
@@ -185,9 +193,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {isLoadingSummary ? (
-            Array.from({ length: 4 }).map((_, i) => (
+            Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-36 rounded-xl" />
             ))
           ) : (

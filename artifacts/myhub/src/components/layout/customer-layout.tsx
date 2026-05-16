@@ -30,10 +30,10 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
             <span className="text-2xl font-bold text-primary tracking-tight">MyHUB</span>
           </Link>
           {!minimal && (
-            <nav className="flex items-center gap-1">
-              <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Home</Link>
-              <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Reserve a Table</Link>
-              <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors">Contact</a>
+            <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[60vw] sm:max-w-none">
+              <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">Home</Link>
+              <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">Reserve a Table</Link>
+              <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">Contact</a>
               {isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -58,9 +58,10 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                 </DropdownMenu>
               ) : (
                 <Link href="/login">
-                  <Button size="sm" className="ml-2 h-9 gap-2">
+                  <Button size="sm" className="ml-2 h-9 gap-2 whitespace-nowrap">
                     <UserCircle className="w-4 h-4" />
-                    <span>Sign In</span>
+                    <span className="hidden xs:inline">Sign In</span>
+                    <span className="xs:hidden">Login</span>
                   </Button>
                 </Link>
               )}
