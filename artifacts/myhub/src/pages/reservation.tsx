@@ -136,10 +136,34 @@ export default function Reservation() {
   const isTimePast = (slot: string): boolean => {
     if (!selectedDate) return false;
     const now = new Date();
-    const [h, m] = slot.split(":").map(Number);
-    const slotTime = new Date(selectedDate);
-    slotTime.setHours(h, m, 0, 0);
-    return slotTime < now;
+    
+    // Get year, month, date of selectedDate in local timezone
+    const selYear = selectedDate.getFullYear();
+    const selMonth = selectedDate.getMonth();
+    const selDay = selectedDate.getDate();
+    
+    // Get year, month, date of now in local timezone
+    const nowYear = now.getFullYear();
+    const nowMonth = now.getMonth();
+    const nowDay = now.getDate();
+    
+    // If selected date is in the past (yesterday or older), it is past
+    if (selYear < nowYear) return true;
+    if (selYear > nowYear) return false;
+    if (selMonth < nowMonth) return true;
+    if (selMonth > nowMonth) return false;
+    if (selDay < nowDay) return true;
+    if (selDay > nowDay) return false;
+    
+    // If selectedDate is EXACTLY today, compare hours and minutes
+    const [slotHour, slotMinute] = slot.split(":").map(Number);
+    const nowHour = now.getHours();
+    const nowMinute = now.getMinutes();
+    
+    if (slotHour < nowHour) return true;
+    if (slotHour === nowHour && slotMinute <= nowMinute) return true;
+    
+    return false;
   };
 
   const createReservation = useCreateReservation({
