@@ -35,11 +35,12 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true);
-      // In production, you should ideally list your Vercel domains here
-      // For now, we allow all origins but explicitly for credentials
+      // Allow all origins for now (can be restricted later)
       callback(null, true);
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 );
 app.use(express.json());
@@ -52,17 +53,26 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Required for cross-origin cookies
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
+      domain: process.env.NODE_ENV === "production" ? undefined : undefined, // Let browser handle it
     },
   }),
 );
 
+// Add OPTIONS handler for preflight requests
+app.options('*', cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use("/api", router);
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  logger.error(err, "Unhandled error");
+  logger.error(err, "Unhandled error:", err);
   res.status(500).json({ error: err.message ?? "Internal server error" });
 };
 app.use(errorHandler);

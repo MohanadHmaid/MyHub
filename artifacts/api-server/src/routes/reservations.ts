@@ -38,8 +38,13 @@ function formatReservation(r: typeof reservationsTable.$inferSelect) {
 }
 
 router.get("/reservations", async (_req, res): Promise<void> => {
-  const reservations = await db.select().from(reservationsTable).orderBy(reservationsTable.dateTime);
-  res.json(GetReservationsResponse.parse(reservations.map(formatReservation)));
+  try {
+    const reservations = await db.select().from(reservationsTable).orderBy(reservationsTable.dateTime);
+    res.json(GetReservationsResponse.parse(reservations.map(formatReservation)));
+  } catch (error) {
+    console.error("Reservations fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch reservations" });
+  }
 });
 
 router.post("/reservations", async (req, res): Promise<void> => {
@@ -84,41 +89,51 @@ router.post("/reservations", async (req, res): Promise<void> => {
 });
 
 router.get("/reservations/:code", async (req, res): Promise<void> => {
-  const params = GetReservationByCodeParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
+  try {
+    const params = GetReservationByCodeParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    const [reservation] = await db.select().from(reservationsTable)
+      .where(eq(reservationsTable.code, params.data.code));
+    if (!reservation) {
+      res.status(404).json({ error: "Reservation not found" });
+      return;
+    }
+    res.json(GetReservationByCodeResponse.parse(formatReservation(reservation)));
+  } catch (error) {
+    console.error("Reservation by code fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch reservation" });
   }
-  const [reservation] = await db.select().from(reservationsTable)
-    .where(eq(reservationsTable.code, params.data.code));
-  if (!reservation) {
-    res.status(404).json({ error: "Reservation not found" });
-    return;
-  }
-  res.json(GetReservationByCodeResponse.parse(formatReservation(reservation)));
 });
 
 router.put("/reservations/:id/status", async (req, res): Promise<void> => {
-  const params = UpdateReservationStatusParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
+  try {
+    const params = UpdateReservationStatusParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    const parsed = UpdateReservationStatusBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+    const [reservation] = await db
+      .update(reservationsTable)
+      .set({ status: parsed.data.status })
+      .where(eq(reservationsTable.id, params.data.id))
+      .returning();
+    if (!reservation) {
+      res.status(404).json({ error: "Reservation not found" });
+      return;
+    }
+    res.json(UpdateReservationStatusResponse.parse(formatReservation(reservation)));
+  } catch (error) {
+    console.error("Reservation status update error:", error);
+    res.status(500).json({ error: "Failed to update reservation status" });
   }
-  const parsed = UpdateReservationStatusBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-  const [reservation] = await db
-    .update(reservationsTable)
-    .set({ status: parsed.data.status })
-    .where(eq(reservationsTable.id, params.data.id))
-    .returning();
-  if (!reservation) {
-    res.status(404).json({ error: "Reservation not found" });
-    return;
-  }
-  res.json(UpdateReservationStatusResponse.parse(formatReservation(reservation)));
 });
 
 export default router;
