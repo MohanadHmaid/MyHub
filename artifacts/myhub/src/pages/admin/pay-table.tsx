@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useGetTables, getGetTablesQueryKey, useUpdateTable } from "@workspace/api-client-react";
+import { useState, useEffect } from "react";
+import { useGetTables, getGetTablesQueryKey, useUpdateTable, useGetOrders } from "@workspace/api-client-react";
 import AdminLayout from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
-import { Monitor, Users, CreditCard, CheckCircle2, X } from "lucide-react";
+import { Monitor, Users, CreditCard, CheckCircle2, X, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,6 @@ type TableItem = {
   name: string;
   capacity: number;
   status: string;
-  bill?: number;
 };
 
 export default function AdminPayTable() {
@@ -40,9 +39,33 @@ export default function AdminPayTable() {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [phoneNumber] = useState("0595256882");
 
-  const { data: tables, isLoading } = useGetTables({
+  const { data: tables, isLoading: tablesLoading } = useGetTables({
     query: { queryKey: getGetTablesQueryKey(), refetchInterval: 10000 },
   });
+
+  // Fetch orders for the selected table to calculate the bill
+  const { data: tableOrders, isLoading: ordersLoading } = useGetOrders({
+    query: {
+      queryKey: ["orders", { tableId: selectedTable?.id }],
+      enabled: !!selectedTable,
+    },
+    params: {
+      query: { tableId: selectedTable?.id }
+    }
+  });
+
+  // Auto-populate amount when table orders are loaded
+  useEffect(() => {
+    if (selectedTable && tableOrders) {
+      const unpaidOrders = tableOrders.filter(o => o.paymentStatus === "unpaid");
+      const totalBill = unpaidOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+      if (totalBill > 0) {
+        setAmount(totalBill.toFixed(2));
+      } else {
+        setAmount("");
+      }
+    }
+  }, [selectedTable, tableOrders]);
 
   const updateTable = useUpdateTable({
     mutation: {
@@ -91,7 +114,7 @@ export default function AdminPayTable() {
           {/* Table Selection */}
           <div className="flex flex-col gap-4">
             <h2 className="text-lg font-semibold">Step 1 — Select a Table</h2>
-            {isLoading ? (
+            {tablesLoading ? (
               <div className="grid grid-cols-2 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <Skeleton key={i} className="h-28 rounded-xl" />
@@ -112,12 +135,7 @@ export default function AdminPayTable() {
                       onClick={() => {
                         setSelectedTable(table as TableItem);
                         setQrLink(null);
-                        // Auto-populate amount from table bill if available
-                        if (table.bill && table.bill > 0) {
-                          setAmount(table.bill.toString());
-                        } else {
-                          setAmount("");
-                        }
+                        setAmount("");
                       }}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
                         isSelected
@@ -159,6 +177,7 @@ export default function AdminPayTable() {
                 <CardTitle className="text-base flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-primary" />
                   {selectedTable ? selectedTable.name : "No table selected"}
+                  {ordersLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                 </CardTitle>
                 <CardDescription>Enter the amount to charge and generate the payment QR code.</CardDescription>
               </CardHeader>
@@ -176,7 +195,7 @@ export default function AdminPayTable() {
                       onChange={(e) => { setAmount(e.target.value); setQrLink(null); }}
                       className="h-11"
                     />
-                    <Button onClick={handleGenerateQR} className="shrink-0 h-11">
+                    <Button onClick={handleGenerateQR} className="shrink-0 h-11" disabled={ordersLoading}>
                       Generate QR
                     </Button>
                   </div>
