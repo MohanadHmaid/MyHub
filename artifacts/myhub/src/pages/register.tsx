@@ -32,18 +32,54 @@ export default function RegisterPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [emailCheckLoading, setEmailCheckLoading] = useState(false);
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: "", email: "", password: "", phone: "" },
   });
 
+  // Check if email already exists
+  const checkEmailExists = async (email: string) => {
+    try {
+      setEmailCheckLoading(true);
+      const response = await fetch("/api/auth/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        console.error("Email check failed");
+        return false;
+      }
+
+      const data = await response.json();
+      return data.exists;
+    } catch (error) {
+      console.error("Error checking email:", error);
+      return false;
+    } finally {
+      setEmailCheckLoading(false);
+    }
+  };
+
   const onSubmit = async (data: RegisterValues) => {
     setIsLoading(true);
     try {
-      // Check if a user with this email already exists by attempting sign-in
-      // Supabase does not expose a public "check email exists" API, so we attempt signUp
-      // and handle the "User already registered" error explicitly
+      // First, check if email already exists in our database
+      const emailExists = await checkEmailExists(data.email);
+      if (emailExists) {
+        toast({
+          title: "Email already registered",
+          description: "This email is already associated with an account. Please sign in instead.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Proceed with Supabase sign-up
       const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -93,7 +129,7 @@ export default function RegisterPage() {
     } catch (error: any) {
       toast({
         title: "Registration failed",
-        description: error.message,
+        description: error.message || "An error occurred during registration",
         variant: "destructive",
       });
     } finally {
@@ -186,8 +222,8 @@ export default function RegisterPage() {
                   <FormMessage />
                 </FormItem>
               )} />
-              <Button type="submit" className="w-full h-11 font-semibold mt-2" disabled={isLoading}>
-                {isLoading ? "Creating account..." : "Register"}
+              <Button type="submit" className="w-full h-11 font-semibold mt-2" disabled={isLoading || emailCheckLoading}>
+                {isLoading ? "Creating account..." : emailCheckLoading ? "Checking email..." : "Register"}
               </Button>
             </form>
           </Form>
