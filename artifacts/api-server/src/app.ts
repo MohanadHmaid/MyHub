@@ -61,14 +61,6 @@ app.use(
   }),
 );
 
-// Add OPTIONS handler for preflight requests
-app.options('*', cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-
 app.use("/api", router);
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
