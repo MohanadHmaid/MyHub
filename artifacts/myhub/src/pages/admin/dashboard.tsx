@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   const statsCards = summary ? [
     {
       title: "Today's Revenue",
-      value: `$${summary.todayRevenue.toFixed(2)}`,
+      value: `₪${summary.todayRevenue.toFixed(2)}`,
       description: "Total paid orders today",
       icon: DollarSign,
       color: "text-emerald-600",
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
     },
     {
       title: "Unpaid Amount",
-      value: `$${summary.unpaidAmount.toFixed(2)}`,
+      value: `₪${summary.unpaidAmount.toFixed(2)}`,
       description: "Total pending payments",
       icon: DollarSign,
       color: "text-red-600",

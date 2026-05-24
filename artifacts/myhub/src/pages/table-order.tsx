@@ -237,7 +237,7 @@ export default function TableOrder() {
                         <CardHeader className="p-4 pb-2">
                           <div className="flex justify-between items-start gap-4">
                             <CardTitle className="text-lg leading-tight">{product.name}</CardTitle>
-                            <span className="font-bold text-primary shrink-0">${product.price.toFixed(2)}</span>
+                            <span className="font-bold text-primary shrink-0">₪{product.price.toFixed(2)}</span>
                           </div>
                         </CardHeader>
                         <CardContent className="p-4 pt-0 flex-1">
@@ -287,7 +287,7 @@ export default function TableOrder() {
                         <div key={item.product.id} className="flex flex-col gap-2 p-3 bg-secondary/50 rounded-lg border border-border/50">
                           <div className="flex justify-between items-start gap-2">
                             <span className="font-medium text-sm leading-tight">{item.product.name}</span>
-                            <span className="font-bold text-sm">${(item.product.price * item.quantity).toFixed(2)}</span>
+                            <span className="font-bold text-sm">₪{(item.product.price * item.quantity).toFixed(2)}</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center bg-background border border-border rounded-md">
@@ -327,7 +327,7 @@ export default function TableOrder() {
               <CardFooter className="flex flex-col gap-4 p-4 border-t border-border/50 bg-secondary/20">
                 <div className="flex justify-between w-full items-center">
                   <span className="font-medium text-muted-foreground">Total</span>
-                  <span className="text-2xl font-bold text-primary">${cartTotal.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-primary">₪{cartTotal.toFixed(2)}</span>
                 </div>
                 <Button 
                   className="w-full h-12 text-lg font-semibold" 

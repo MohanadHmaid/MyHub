@@ -27,6 +27,7 @@ type TableItem = {
   name: string;
   capacity: number;
   status: string;
+  bill?: number;
 };
 
 export default function AdminPayTable() {
@@ -37,6 +38,7 @@ export default function AdminPayTable() {
   const [amount, setAmount] = useState("");
   const [qrLink, setQrLink] = useState<string | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [phoneNumber] = useState("0595256882");
 
   const { data: tables, isLoading } = useGetTables({
     query: { queryKey: getGetTablesQueryKey(), refetchInterval: 10000 },
@@ -63,8 +65,8 @@ export default function AdminPayTable() {
       toast({ title: "Invalid amount", description: "Please select a table and enter a valid amount.", variant: "destructive" });
       return;
     }
-    const amountCents = Math.round(Number(amount) * 100);
-    const link = `${PAYIBOURAQ_BASE_URL}${amountCents.toString().padStart(2, "0")}`;
+    // Format: *268*1*0595256882*[Price in placeholder]#
+    const link = `*268*1*${phoneNumber}*${amount}#`;
     setQrLink(link);
   };
 
@@ -110,7 +112,12 @@ export default function AdminPayTable() {
                       onClick={() => {
                         setSelectedTable(table as TableItem);
                         setQrLink(null);
-                        setAmount("");
+                        // Auto-populate amount from table bill if available
+                        if (table.bill && table.bill > 0) {
+                          setAmount(table.bill.toString());
+                        } else {
+                          setAmount("");
+                        }
                       }}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
                         isSelected
@@ -157,7 +164,7 @@ export default function AdminPayTable() {
               </CardHeader>
               <CardContent className="flex flex-col gap-5">
                 <div className="space-y-1.5">
-                  <Label htmlFor="amount">Amount (DZD)</Label>
+                  <Label htmlFor="amount">Amount (ILS)</Label>
                   <div className="flex gap-2">
                     <Input
                       id="amount"
@@ -181,7 +188,7 @@ export default function AdminPayTable() {
                       <QRCodeSVG value={qrLink} size={180} level="H" includeMargin={false} fgColor="#134e4a" />
                     </div>
                     <p className="text-xs text-muted-foreground text-center">
-                      Customer scans this code to pay <strong>{amount} DZD</strong> via iBouraq
+                      Customer scans this code to pay <strong>₪{amount}</strong> via iBouraq
                     </p>
                     <div className="w-full bg-secondary/60 rounded-xl border border-border px-3 py-2">
                       <span className="text-xs font-mono text-foreground break-all">{qrLink}</span>

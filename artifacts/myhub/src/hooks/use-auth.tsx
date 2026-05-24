@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutation: {
       onSuccess: () => {
         queryClient.clear();
-        setLocation("/login");
+        setLocation("/");
         toast({ title: "Logged out successfully" });
       },
     },
