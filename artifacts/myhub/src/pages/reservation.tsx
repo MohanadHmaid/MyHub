@@ -132,6 +132,16 @@ export default function Reservation() {
     return count >= TOTAL_TABLES ? "full" : "available";
   };
 
+  // Check if a time slot is in the past
+  const isTimePast = (slot: string): boolean => {
+    if (!selectedDate) return false;
+    const now = new Date();
+    const [h, m] = slot.split(":").map(Number);
+    const slotTime = new Date(selectedDate);
+    slotTime.setHours(h, m, 0, 0);
+    return slotTime < now;
+  };
+
   const createReservation = useCreateReservation({
     mutation: {
       onSuccess: (data) => {
@@ -288,19 +298,22 @@ export default function Reservation() {
                 const isSelected = selectedTime === slot;
                 const slotStatus = getSlotStatus(slot);
                 const isSlotFull = slotStatus === "full";
+                const isPast = isTimePast(slot);
+                const isDisabled = isSlotFull || isPast;
                 
                 return (
                   <button
                     key={slot}
-                    onClick={() => !isSlotFull && setSelectedTime(slot)}
-                    disabled={isSlotFull}
+                    onClick={() => !isDisabled && setSelectedTime(slot)}
+                    disabled={isDisabled}
                     className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all ${
-                      isSlotFull
+                      isDisabled
                         ? "opacity-50 cursor-not-allowed bg-red-100 border-red-300 text-red-700"
                         : isSelected
                         ? "bg-primary text-primary-foreground border-primary shadow-md"
                         : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
                     }`}
+                    title={isPast ? "Time has already passed" : isSlotFull ? "No tables available" : ""}
                   >
                     {display}
                   </button>
@@ -335,11 +348,11 @@ export default function Reservation() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {tables?.map((table) => {
-                  // Determine availability based on selected time
+                  // For future reservations, check if table is reserved at the selected time
                   const slotReservations = selectedTime ? (slotCounts[selectedTime] ?? 0) : 0;
                   const isAvailableAtTime = slotReservations < TOTAL_TABLES;
-                  const isTableOccupied = table.status === "occupied";
-                  const isTableAvailable = isAvailableAtTime && !isTableOccupied;
+                  // For reservations, we only care about future availability, not current live status
+                  const isTableAvailable = isAvailableAtTime;
                   const isSelected = selectedTableId === table.id;
                   
                   return (
@@ -349,7 +362,7 @@ export default function Reservation() {
                       onClick={() => setSelectedTableId(isSelected ? null : table.id)}
                       className={`p-4 rounded-xl border-2 text-left transition-all ${
                         !isTableAvailable
-                          ? "opacity-50 cursor-not-allowed bg-destructive/5 border-destructive/20"
+                          ? "opacity-50 cursor-not-allowed bg-amber-50 border-amber-200"
                           : isSelected
                           ? "bg-primary/10 border-primary shadow-sm"
                           : "bg-card border-border hover:border-primary/50"
@@ -357,12 +370,12 @@ export default function Reservation() {
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-sm">{table.name}</span>
-                        <div className={`w-2.5 h-2.5 rounded-full ${isTableAvailable ? "bg-emerald-500" : "bg-red-500"}`} />
+                        <div className={`w-2.5 h-2.5 rounded-full ${isTableAvailable ? "bg-emerald-500" : "bg-amber-500"}`} />
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Users className="w-3 h-3" /> Up to {table.capacity}
                       </div>
-                      {!isTableAvailable && <span className="text-xs text-destructive font-medium mt-1 block">Unavailable</span>}
+                      {!isTableAvailable && <span className="text-xs text-amber-600 font-medium mt-1 block">Reserved</span>}
                       {isSelected && <span className="text-xs text-primary font-semibold mt-1 block">Selected ✓</span>}
                     </button>
                   );
@@ -553,21 +566,16 @@ export default function Reservation() {
               </CardContent>
             </Card>
 
-            <div className="bg-secondary/50 rounded-xl p-4 border border-border text-sm text-muted-foreground text-center">
-              No payment required now. You'll settle the bill when you arrive.
-            </div>
-
             <div className="flex gap-3">
               <Button variant="outline" onClick={goBack} className="flex-1 h-11">
                 <ChevronLeft className="w-4 h-4 mr-1" /> Back
               </Button>
               <Button
-                className="flex-1 h-12 text-base font-semibold"
+                className="flex-1 h-11"
                 onClick={handleConfirm}
                 disabled={createReservation.isPending}
               >
                 {createReservation.isPending ? "Confirming..." : "Confirm Reservation"}
-                {!createReservation.isPending && <CheckCircle2 className="w-4 h-4 ml-2" />}
               </Button>
             </div>
           </div>

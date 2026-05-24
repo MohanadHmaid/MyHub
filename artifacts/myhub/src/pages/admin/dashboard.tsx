@@ -264,7 +264,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <span className="font-bold">${order.totalAmount.toFixed(2)}</span>
+                        <span className="font-bold">₪{order.totalAmount.toFixed(2)}</span>
                         <div className="flex gap-2">
                           <Badge variant="outline" className={
                             order.status === 'pending' ? 'border-amber-500/50 text-amber-500' :
