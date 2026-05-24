@@ -307,8 +307,10 @@ export default function Reservation() {
                     onClick={() => !isDisabled && setSelectedTime(slot)}
                     disabled={isDisabled}
                     className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all ${
-                      isDisabled
-                        ? "opacity-50 cursor-not-allowed bg-red-100 border-red-300 text-red-700"
+                      isPast
+                        ? "bg-secondary text-muted-foreground border-border opacity-40 cursor-not-allowed"
+                        : isSlotFull
+                        ? "bg-red-100 border-red-300 text-red-700 opacity-50 cursor-not-allowed"
                         : isSelected
                         ? "bg-primary text-primary-foreground border-primary shadow-md"
                         : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
