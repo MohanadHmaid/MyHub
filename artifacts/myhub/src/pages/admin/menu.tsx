@@ -25,7 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { UtensilsCrossed, Plus, Settings2, Trash2, Search } from "lucide-react";
+import { UtensilsCrossed, Plus, Settings2, Trash2, بحث } from "lucide-react";
 import { 
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger 
 } from "@/components/ui/alert-dialog";
@@ -33,8 +33,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  price: z.coerce.number().min(0.01, "Price must be > 0"),
-  category: z.string().min(1, "Category is required"),
+  price: z.coerce.number().min(0.01, "السعر must be > 0"),
+  category: z.string().min(1, "الفئة is required"),
   description: z.string().optional(),
   available: z.boolean().default(true),
 });
@@ -138,27 +138,27 @@ export default function AdminMenu() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
             <UtensilsCrossed className="w-8 h-8 text-primary" />
-            Menu Management
+            القائمة Management
           </h1>
-          <p className="text-muted-foreground mt-1">Add, edit, and organize café menu items.</p>
+          <p className="text-muted-foreground mt-1">إضافة, edit, and organize café menu items.</p>
         </div>
 
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
             <Button className="shrink-0 h-10">
-              <Plus className="w-4 h-4 mr-2" /> Add Item
+              <Plus className="w-4 h-4 mr-2" /> إضافة العنصر
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Add Menu Item</DialogTitle>
+              <DialogTitle>إضافة القائمة العنصر</DialogTitle>
               <DialogDescription>Create a new product for the menu.</DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
               <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                 <FormField control={addForm.control} name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Name</FormLabel>
+                    <FormLabel>العنصر Name</FormLabel>
                     <FormControl><Input placeholder="e.g. Iced Latte" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,14 +166,14 @@ export default function AdminMenu() {
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={addForm.control} name="price" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price ($)</FormLabel>
+                      <FormLabel>السعر ($)</FormLabel>
                       <FormControl><Input type="number" step="0.01" min="0" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
                   <FormField control={addForm.control} name="category" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel>الفئة</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
@@ -191,7 +191,7 @@ export default function AdminMenu() {
                 </div>
                 <FormField control={addForm.control} name="description" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormLabel>الوصف (Optional)</FormLabel>
                     <FormControl><Textarea className="resize-none" rows={3} placeholder="Brief description of the item..." {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -199,7 +199,7 @@ export default function AdminMenu() {
                 <FormField control={addForm.control} name="available" render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Available for order</FormLabel>
+                      <FormLabel className="text-base">متاحة for order</FormLabel>
                     </div>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -207,8 +207,8 @@ export default function AdminMenu() {
                   </FormItem>
                 )} />
                 <DialogFooter className="pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                  <Button type="submit" disabled={createProduct.isPending}>Save Item</Button>
+                  <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)}>إلغاء</Button>
+                  <Button type="submit" disabled={createProduct.isPending}>حفظ العنصر</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -216,17 +216,17 @@ export default function AdminMenu() {
         </Dialog>
       </div>
 
-      {/* Edit Dialog */}
+      {/* تعديل Dialog */}
       <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit Menu Item</DialogTitle>
+            <DialogTitle>تعديل القائمة العنصر</DialogTitle>
           </DialogHeader>
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
               <FormField control={editForm.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Item Name</FormLabel>
+                  <FormLabel>العنصر Name</FormLabel>
                   <FormControl><Input {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
@@ -234,14 +234,14 @@ export default function AdminMenu() {
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={editForm.control} name="price" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price ($)</FormLabel>
+                    <FormLabel>السعر ($)</FormLabel>
                     <FormControl><Input type="number" step="0.01" min="0" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <FormField control={editForm.control} name="category" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>الفئة</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
@@ -259,14 +259,14 @@ export default function AdminMenu() {
               </div>
               <FormField control={editForm.control} name="description" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>الوصف</FormLabel>
                   <FormControl><Textarea className="resize-none" rows={3} {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <DialogFooter className="pt-4">
-                <Button type="button" variant="outline" onClick={() => setEditingProduct(null)}>Cancel</Button>
-                <Button type="submit" disabled={updateProduct.isPending}>Update Item</Button>
+                <Button type="button" variant="outline" onClick={() => setEditingProduct(null)}>إلغاء</Button>
+                <Button type="submit" disabled={updateProduct.isPending}>Update العنصر</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -275,9 +275,9 @@ export default function AdminMenu() {
 
       <div className="flex flex-col lg:flex-row gap-4 mb-6">
         <div className="relative w-full lg:w-[300px] shrink-0">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <بحث className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search menu..." 
+            placeholder="بحث menu..." 
             className="pl-9 h-10 bg-card" 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -304,7 +304,7 @@ export default function AdminMenu() {
           Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-44 rounded-xl" />)
         ) : filteredProducts.length === 0 ? (
           <div className="col-span-full py-20 text-center text-muted-foreground border border-dashed rounded-xl bg-card/50">
-            No items found matching your criteria.
+            لا items found matching your criteria.
           </div>
         ) : (
           filteredProducts.map((product) => (
@@ -318,7 +318,7 @@ export default function AdminMenu() {
                 </div>
                 <Badge variant="outline" className="mb-3 capitalize text-xs">{product.category}</Badge>
                 <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
-                  {product.description || "No description provided."}
+                  {product.description || "لا description provided."}
                 </p>
               </CardContent>
               <CardFooter className="p-4 pt-0 gap-2 border-t border-border/50 bg-secondary/10 mt-auto flex flex-col sm:flex-row">
@@ -342,15 +342,15 @@ export default function AdminMenu() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete {product.name}?</AlertDialogTitle>
+                        <AlertDialogTitle>حذف {product.name}?</AlertDialogTitle>
                         <AlertDialogDescription>
                           This will permanently remove the item from the menu. It cannot be ordered anymore.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
                         <AlertDialogAction onClick={() => deleteProduct.mutate({ id: product.id })} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                          Delete
+                          حذف
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

@@ -31,7 +31,7 @@ function genId() {
 
 type ActionType = typeof actionTypes
 
-type Action =
+type الإجراء =
   | {
       type: ActionType["ADD_TOAST"]
       toast: ToasterToast
@@ -71,7 +71,7 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout)
 }
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: الإجراء): State => {
   switch (action.type) {
     case "ADD_TOAST":
       return {
@@ -130,7 +130,7 @@ const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
 
-function dispatch(action: Action) {
+function dispatch(action: الإجراء) {
   memoryState = reducer(memoryState, action)
   listeners.forEach((listener) => {
     listener(memoryState)

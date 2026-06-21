@@ -37,7 +37,7 @@ export default function TableOrder() {
     mutation: {
       onSuccess: () => {
         toast({
-          title: "Order placed successfully!",
+          title: "الطلب placed successfully!",
           description: "We are preparing your items.",
           duration: 5000,
         });
@@ -150,7 +150,7 @@ export default function TableOrder() {
           <div className="bg-destructive/10 text-destructive p-4 rounded-full mb-4">
             <CheckCircle2 className="w-12 h-12" />
           </div>
-          <h2 className="text-2xl font-bold mb-2">Table Not Found</h2>
+          <h2 className="text-2xl font-bold mb-2">Table غير موجود</h2>
           <p className="text-muted-foreground">The table you are trying to order from does not exist.</p>
         </div>
       </CustomerLayout>
@@ -167,7 +167,7 @@ export default function TableOrder() {
               <div className="bg-amber-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Lock className="w-10 h-10 text-amber-600" />
               </div>
-              <h1 className="text-2xl font-bold mb-2">{table.name} — Reserved</h1>
+              <h1 className="text-2xl font-bold mb-2">{table.name} — محجوزة</h1>
               <p className="text-muted-foreground text-sm mb-8">
                 This table is reserved. Enter the 8-character code from your reservation confirmation to check in.
               </p>
@@ -210,8 +210,8 @@ export default function TableOrder() {
     <CustomerLayout minimal>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Order for {table.name}</h1>
-          <Badge variant="outline" className="text-sm">{table.status === 'occupied' ? 'Occupied' : 'Available'}</Badge>
+          <h1 className="text-3xl font-bold tracking-tight">الطلب for {table.name}</h1>
+          <Badge variant="outline" className="text-sm">{table.status === 'occupied' ? 'مشغولة' : 'متاحة'}</Badge>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -249,7 +249,7 @@ export default function TableOrder() {
                             className="w-full"
                             variant="secondary"
                           >
-                            <Plus className="w-4 h-4 mr-2" /> Add to Order
+                            <Plus className="w-4 h-4 mr-2" /> إضافة to الطلب
                           </Button>
                         </CardFooter>
                       </Card>
@@ -257,7 +257,7 @@ export default function TableOrder() {
                   </div>
                   {products?.filter(p => p.category === category && p.available).length === 0 && (
                     <div className="py-12 text-center text-muted-foreground border border-dashed rounded-lg">
-                      No items available in this category.
+                      لا items available in this category.
                     </div>
                   )}
                 </TabsContent>
@@ -270,7 +270,7 @@ export default function TableOrder() {
               <CardHeader className="bg-primary/5 border-b border-border/50 py-4">
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5 text-primary" />
-                  Your Order
+                  Your الطلب
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -279,7 +279,7 @@ export default function TableOrder() {
                     <div className="h-full min-h-[300px] flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
                       <ShoppingCart className="w-12 h-12 mb-4 opacity-20" />
                       <p>Your cart is empty.</p>
-                      <p className="text-sm mt-1">Add some items from the menu.</p>
+                      <p className="text-sm mt-1">إضافة some items from the menu.</p>
                     </div>
                   ) : (
                     <div className="p-4 flex flex-col gap-4">
@@ -326,7 +326,7 @@ export default function TableOrder() {
               </CardContent>
               <CardFooter className="flex flex-col gap-4 p-4 border-t border-border/50 bg-secondary/20">
                 <div className="flex justify-between w-full items-center">
-                  <span className="font-medium text-muted-foreground">Total</span>
+                  <span className="font-medium text-muted-foreground">الإجمالي</span>
                   <span className="text-2xl font-bold text-primary">₪{cartTotal.toFixed(2)}</span>
                 </div>
                 <Button 
@@ -334,7 +334,7 @@ export default function TableOrder() {
                   disabled={cart.length === 0 || createOrder.isPending}
                   onClick={handleSubmitOrder}
                 >
-                  {createOrder.isPending ? "Sending Order..." : "Place Order"}
+                  {createOrder.isPending ? "Sending الطلب..." : "Place الطلب"}
                 </Button>
               </CardFooter>
             </Card>

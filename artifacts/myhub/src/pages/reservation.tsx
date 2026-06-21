@@ -22,10 +22,10 @@ const TIME_SLOTS = [
 ];
 
 const STEPS = [
-  { num: 1, label: "Date" },
-  { num: 2, label: "Time" },
+  { num: 1, label: "التاريخ" },
+  { num: 2, label: "الوقت" },
   { num: 3, label: "Table" },
-  { num: 4, label: "Your Info" },
+  { num: 4, label: "Your معلومة" },
   { num: 5, label: "Summary" },
 ];
 
@@ -63,7 +63,7 @@ export default function Reservation() {
   const { customer, isLoggedIn } = useAuth();
 
   const [step, setStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [selectedDate, setSelectedDate] = useState<التاريخ | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
   const [name, setName] = useState("");
@@ -92,7 +92,7 @@ export default function Reservation() {
     const map: Record<string, Record<string, number>> = {};
     for (const r of allReservations ?? []) {
       if (r.status === "cancelled") continue;
-      const dt = new Date(r.dateTime);
+      const dt = new التاريخ(r.dateTime);
       const day = format(dt, "yyyy-MM-dd");
       const slot = format(dt, "HH") + ":00";
       if (!map[day]) map[day] = {};
@@ -102,7 +102,7 @@ export default function Reservation() {
   }, [allReservations]);
 
   // Day status: 'free' | 'partial' | 'hasFullSlot'
-  const getDayStatus = (date: Date): "free" | "partial" | "hasFullSlot" => {
+  const getDayStatus = (date: التاريخ): "free" | "partial" | "hasFullSlot" => {
     const key = format(date, "yyyy-MM-dd");
     const slots = reservationMap[key];
     if (!slots) return "free";
@@ -112,7 +112,7 @@ export default function Reservation() {
   };
 
   // Is a day fully blocked (ALL slots have count >= TOTAL_TABLES)?
-  const isDayFullyBlocked = (date: Date): boolean => {
+  const isDayFullyBlocked = (date: التاريخ): boolean => {
     const key = format(date, "yyyy-MM-dd");
     const slots = reservationMap[key];
     if (!slots) return false;
@@ -135,7 +135,7 @@ export default function Reservation() {
   // Check if a time slot is in the past
   const isTimePast = (slot: string): boolean => {
     if (!selectedDate) return false;
-    const now = new Date();
+    const now = new التاريخ();
     
     // Get year, month, date of selectedDate in local timezone
     const selYear = selectedDate.getFullYear();
@@ -198,7 +198,7 @@ export default function Reservation() {
   const handleConfirm = () => {
     if (!selectedDate || !selectedTime) return;
     const [h, m] = selectedTime.split(":").map(Number);
-    const dt = new Date(selectedDate);
+    const dt = new التاريخ(selectedDate);
     dt.setHours(h, m, 0, 0);
 
     createReservation.mutate({
@@ -217,13 +217,13 @@ export default function Reservation() {
     <CustomerLayout>
       <div className={`container mx-auto px-4 py-12 transition-all ${step === 1 ? "max-w-5xl" : "max-w-2xl"}`}>
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">Reserve a Table</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2">احجز طاولة</h1>
           <p className="text-muted-foreground">Complete the steps below to secure your spot at MyHUB.</p>
         </div>
 
         <StepIndicator current={step} />
 
-        {/* STEP 1 — Select Date */}
+        {/* STEP 1 — Select التاريخ */}
         {step === 1 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-[480px] rounded-3xl border border-border shadow-md overflow-hidden bg-card">
             {/* Left panel — info */}
@@ -232,7 +232,7 @@ export default function Reservation() {
                 <div className="bg-primary/15 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                   <CalendarCheck className="w-8 h-8 text-primary" />
                 </div>
-                <h2 className="text-3xl font-extrabold tracking-tight mb-3">Choose a Date</h2>
+                <h2 className="text-3xl font-extrabold tracking-tight mb-3">Choose a التاريخ</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   Pick the day you'd like to visit MyHUB. Past dates are unavailable.
                 </p>
@@ -255,7 +255,7 @@ export default function Reservation() {
 
                 {selectedDate && (
                   <div className="mt-6 bg-primary/10 border border-primary/20 rounded-2xl p-4">
-                    <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Selected Date</p>
+                    <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Selected التاريخ</p>
                     <p className="text-xl font-bold text-foreground">{format(selectedDate, "MMMM d, yyyy")}</p>
                     <p className="text-sm text-muted-foreground mt-0.5">{format(selectedDate, "EEEE")}</p>
                   </div>
@@ -282,13 +282,13 @@ export default function Reservation() {
                     setSelectedDate(d);
                   }}
                   disabled={(date) =>
-                    isBefore(startOfDay(date), startOfDay(new Date())) ||
+                    isBefore(startOfDay(date), startOfDay(new التاريخ())) ||
                     isDayFullyBlocked(date)
                   }
                   modifiers={{
-                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "free",
-                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "partial",
-                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
+                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(new التاريخ())) && getDayStatus(date) === "free",
+                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(new التاريخ())) && getDayStatus(date) === "partial",
+                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(new التاريخ())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
                   }}
                   modifiersStyles={{
                     dayFree: { backgroundColor: "#dcfce7", color: "#166534", borderRadius: "8px", fontWeight: 600 },
@@ -302,12 +302,12 @@ export default function Reservation() {
           </div>
         )}
 
-        {/* STEP 2 — Select Time Slot with Heatmap */}
+        {/* STEP 2 — Select الوقت Slot with Heatmap */}
         {step === 2 && (
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
               <Clock className="w-5 h-5 text-primary" />
-              Pick a Time Slot
+              Pick a الوقت Slot
               {selectedDate && (
                 <span className="text-muted-foreground font-normal text-sm ml-1">
                   — {format(selectedDate, "EEE, MMM d")}
@@ -339,7 +339,7 @@ export default function Reservation() {
                         ? "bg-primary text-primary-foreground border-primary shadow-md"
                         : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
                     }`}
-                    title={isPast ? "Time has already passed" : isSlotFull ? "No tables available" : ""}
+                    title={isPast ? "الوقت has already passed" : isSlotFull ? "لا tables available" : ""}
                   >
                     {display}
                   </button>
@@ -348,7 +348,7 @@ export default function Reservation() {
             </div>
             <div className="flex gap-3 mt-2">
               <Button variant="outline" onClick={goBack} className="flex-1 h-11">
-                <ChevronLeft className="w-4 h-4 mr-1" /> Back
+                <ChevronLeft className="w-4 h-4 mr-1" /> رجوع
               </Button>
               <Button className="flex-1 h-11" disabled={!selectedTime} onClick={goNext}>
                 Continue <ChevronRight className="w-4 h-4 ml-1" />
@@ -357,7 +357,7 @@ export default function Reservation() {
           </div>
         )}
 
-        {/* STEP 3 — Select Table with Dynamic Status */}
+        {/* STEP 3 — Select Table with Dynamic الحالة */}
         {step === 3 && (
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
@@ -399,9 +399,9 @@ export default function Reservation() {
                         <div className={`w-2.5 h-2.5 rounded-full ${isTableAvailable ? "bg-emerald-500" : "bg-amber-500"}`} />
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Users className="w-3 h-3" /> Up to {table.capacity}
+                        <Users className="w-3 h-3" /> حتى {table.capacity}
                       </div>
-                      {!isTableAvailable && <span className="text-xs text-amber-600 font-medium mt-1 block">Reserved</span>}
+                      {!isTableAvailable && <span className="text-xs text-amber-600 font-medium mt-1 block">محجوزة</span>}
                       {isSelected && <span className="text-xs text-primary font-semibold mt-1 block">Selected ✓</span>}
                     </button>
                   );
@@ -410,7 +410,7 @@ export default function Reservation() {
             )}
             <div className="flex gap-3">
               <Button variant="outline" onClick={goBack} className="flex-1 h-11">
-                <ChevronLeft className="w-4 h-4 mr-1" /> Back
+                <ChevronLeft className="w-4 h-4 mr-1" /> رجوع
               </Button>
               <Button className="flex-1 h-11" onClick={goNext}>
                 {selectedTableId ? "Continue" : "Skip & Continue"} <ChevronRight className="w-4 h-4 ml-1" />
@@ -419,7 +419,7 @@ export default function Reservation() {
           </div>
         )}
 
-        {/* STEP 4 — Customer Info */}
+        {/* STEP 4 — العميل معلومة */}
         {step === 4 && (
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
@@ -431,7 +431,7 @@ export default function Reservation() {
               <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
                 <UserPlus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="font-semibold text-foreground">Save your reservation history</p>
+                  <p className="font-semibold text-foreground">حفظ your reservation history</p>
                   <p className="text-muted-foreground mt-0.5">
                     <Link href="/register" className="text-primary font-medium hover:underline">Create a free account</Link>{" "}
                     or{" "}
@@ -475,7 +475,7 @@ export default function Reservation() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="email">Email Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                <Label htmlFor="email">البريد الإلكتروني Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -509,7 +509,7 @@ export default function Reservation() {
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={goBack} className="flex-1 h-11">
-                <ChevronLeft className="w-4 h-4 mr-1" /> Back
+                <ChevronLeft className="w-4 h-4 mr-1" /> رجوع
               </Button>
               <Button
                 className="flex-1 h-11"
@@ -534,7 +534,7 @@ export default function Reservation() {
                 <div className="flex items-center justify-between py-3 border-b border-border">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CalendarCheck className="w-4 h-4 text-primary" />
-                    Date
+                    التاريخ
                   </div>
                   <span className="font-semibold text-sm">
                     {selectedDate ? format(selectedDate, "EEEE, MMMM d, yyyy") : "—"}
@@ -544,7 +544,7 @@ export default function Reservation() {
                 <div className="flex items-center justify-between py-3 border-b border-border">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="w-4 h-4 text-primary" />
-                    Time Slot
+                    الوقت Slot
                   </div>
                   <span className="font-semibold text-sm">
                     {selectedTime ? (() => {
@@ -594,14 +594,14 @@ export default function Reservation() {
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={goBack} className="flex-1 h-11">
-                <ChevronLeft className="w-4 h-4 mr-1" /> Back
+                <ChevronLeft className="w-4 h-4 mr-1" /> رجوع
               </Button>
               <Button
                 className="flex-1 h-11"
                 onClick={handleConfirm}
                 disabled={createReservation.isPending}
               >
-                {createReservation.isPending ? "Confirming..." : "Confirm Reservation"}
+                {createReservation.isPending ? "Confirming..." : "تأكيد Reservation"}
               </Button>
             </div>
           </div>

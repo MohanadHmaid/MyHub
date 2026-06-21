@@ -20,8 +20,8 @@ import { useState } from "react";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("بريد إلكتروني غير صحيح address"),
+  password: z.string().min(6, "كلمة المرور must be at least 6 characters"),
   phone: z.string().optional(),
 });
 
@@ -50,14 +50,14 @@ export default function RegisterPage() {
       });
 
       if (!response.ok) {
-        console.error("Email check failed");
+        console.error("البريد الإلكتروني check failed");
         return false;
       }
 
       const data = await response.json();
       return data.exists;
     } catch (error) {
-      console.error("Error checking email:", error);
+      console.error("خطأ checking email:", error);
       return false;
     } finally {
       setEmailCheckLoading(false);
@@ -71,7 +71,7 @@ export default function RegisterPage() {
       const emailExists = await checkEmailExists(data.email);
       if (emailExists) {
         toast({
-          title: "Email already registered",
+          title: "البريد الإلكتروني already registered",
           description: "This email is already associated with an account. Please sign in instead.",
           variant: "destructive",
         });
@@ -101,7 +101,7 @@ export default function RegisterPage() {
           error.message.toLowerCase().includes("user already")
         ) {
           toast({
-            title: "Email already registered",
+            title: "البريد الإلكتروني already registered",
             description: "This email is already associated with an account. Please sign in instead.",
             variant: "destructive",
           });
@@ -114,7 +114,7 @@ export default function RegisterPage() {
       // (when email confirmation is enabled and the email is taken)
       if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
         toast({
-          title: "Email already registered",
+          title: "البريد الإلكتروني already registered",
           description: "This email is already associated with an account. Please sign in instead.",
           variant: "destructive",
         });
@@ -123,8 +123,8 @@ export default function RegisterPage() {
 
       setIsEmailSent(true);
       toast({
-        title: "Registration successful",
-        description: "Please check your email for the verification link.",
+        title: "تم التسجيل بنجاح",
+        description: "يرجى التحقق من بريدك الإلكتروني for the verification link.",
       });
     } catch (error: any) {
       toast({
@@ -150,7 +150,7 @@ export default function RegisterPage() {
             Please click the link to verify your account.
           </CardDescription>
           <Button asChild className="mt-8 w-full">
-            <Link href="/login">Back to Login</Link>
+            <Link href="/login">رجوع to دخول</Link>
           </Button>
         </Card>
       </div>
@@ -188,7 +188,7 @@ export default function RegisterPage() {
               )} />
               <FormField control={form.control} name="email" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>البريد الإلكتروني</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -212,7 +212,7 @@ export default function RegisterPage() {
               )} />
               <FormField control={form.control} name="password" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>كلمة المرور</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -223,7 +223,7 @@ export default function RegisterPage() {
                 </FormItem>
               )} />
               <Button type="submit" className="w-full h-11 font-semibold mt-2" disabled={isLoading || emailCheckLoading}>
-                {isLoading ? "Creating account..." : emailCheckLoading ? "Checking email..." : "Register"}
+                {isLoading ? "Creating account..." : emailCheckLoading ? "Checking email..." : "تسجيل"}
               </Button>
             </form>
           </Form>

@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const customerLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast({ title: "Error signing out", description: error.message, variant: "destructive" });
+      toast({ title: "خطأ signing out", description: error.message, variant: "destructive" });
     } else {
       queryClient.clear();
       setLocation("/");
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } else if (user) {
     customer = {
       id: 0, // Placeholder as we don't have the DB ID here
-      name: user.user_metadata?.full_name || user.user_metadata?.name || "Customer",
+      name: user.user_metadata?.full_name || user.user_metadata?.name || "العميل",
       email: user.email || "",
       phone: user.user_metadata?.phone || null,
     };
@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new خطأ("useAuth must be used within an AuthProvider");
   }
   return context;
 }

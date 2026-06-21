@@ -29,7 +29,7 @@ import {
 
 const tableSchema = z.object({
   name: z.string().min(1, "Table name is required"),
-  capacity: z.coerce.number().min(1, "Capacity must be at least 1").max(20, "Capacity max 20"),
+  capacity: z.coerce.number().min(1, "السعة must be at least 1").max(20, "السعة max 20"),
 });
 
 export default function AdminTables() {
@@ -113,32 +113,32 @@ export default function AdminTables() {
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
             <Button className="shrink-0">
-              <Plus className="w-4 h-4 mr-2" /> Add Table
+              <Plus className="w-4 h-4 mr-2" /> إضافة Table
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Table</DialogTitle>
+              <DialogTitle>إضافة New Table</DialogTitle>
               <DialogDescription>Create a new table for customers to order from.</DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
               <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                 <FormField control={addForm.control} name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Table Name/Number</FormLabel>
+                    <FormLabel>اسم الطاولة/Number</FormLabel>
                     <FormControl><Input placeholder="e.g. Table 01, VIP Booth" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <FormField control={addForm.control} name="capacity" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Capacity</FormLabel>
+                    <FormLabel>السعة</FormLabel>
                     <FormControl><Input type="number" min={1} {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <DialogFooter className="pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+                  <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)}>إلغاء</Button>
                   <Button type="submit" disabled={createTable.isPending}>Create Table</Button>
                 </DialogFooter>
               </form>
@@ -150,28 +150,28 @@ export default function AdminTables() {
       <Dialog open={!!editingTable} onOpenChange={(open) => !open && setEditingTable(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Table</DialogTitle>
+            <DialogTitle>تعديل Table</DialogTitle>
             <DialogDescription>Update table details.</DialogDescription>
           </DialogHeader>
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
               <FormField control={editForm.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Table Name/Number</FormLabel>
+                  <FormLabel>اسم الطاولة/Number</FormLabel>
                   <FormControl><Input {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={editForm.control} name="capacity" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Capacity</FormLabel>
+                  <FormLabel>السعة</FormLabel>
                   <FormControl><Input type="number" min={1} {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <DialogFooter className="pt-4">
-                <Button type="button" variant="outline" onClick={() => setEditingTable(null)}>Cancel</Button>
-                <Button type="submit" disabled={updateTable.isPending}>Save Changes</Button>
+                <Button type="button" variant="outline" onClick={() => setEditingTable(null)}>إلغاء</Button>
+                <Button type="submit" disabled={updateTable.isPending}>حفظ Changes</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -183,7 +183,7 @@ export default function AdminTables() {
           Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)
         ) : tables?.length === 0 ? (
           <div className="col-span-full py-20 text-center text-muted-foreground border border-dashed rounded-xl">
-            No tables configured yet.
+            لا tables configured yet.
           </div>
         ) : (
           tables?.map((table) => (
@@ -197,7 +197,7 @@ export default function AdminTables() {
                   <div>
                     <CardTitle className="text-xl">{table.name}</CardTitle>
                     <div className="flex items-center text-sm text-muted-foreground mt-1">
-                      <Users className="w-3.5 h-3.5 mr-1" /> Capacity: {table.capacity}
+                      <Users className="w-3.5 h-3.5 mr-1" /> السعة: {table.capacity}
                     </div>
                   </div>
                   <Monitor className={`w-5 h-5 ${
@@ -209,7 +209,7 @@ export default function AdminTables() {
               </CardHeader>
               <CardContent className="py-4 flex-1 flex flex-col justify-center">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium">Status</span>
+                  <span className="text-sm font-medium">الحالة</span>
                   <Badge
                     variant="outline"
                     className={`cursor-pointer ${
@@ -219,12 +219,12 @@ export default function AdminTables() {
                     }`}
                     onClick={() => table.status !== 'reserved' && toggleStatus(table.id, table.status)}
                   >
-                    {table.status === 'available' ? 'Available' : table.status === 'reserved' ? 'Reserved' : 'Occupied'}
+                    {table.status === 'available' ? 'متاحة' : table.status === 'reserved' ? 'محجوزة' : 'مشغولة'}
                   </Badge>
                 </div>
                 <div className="flex justify-between gap-2 mt-auto">
                   <Button variant="secondary" size="sm" className="flex-1" onClick={() => startEdit(table)}>
-                    <Settings2 className="w-4 h-4 mr-2" /> Edit
+                    <Settings2 className="w-4 h-4 mr-2" /> تعديل
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -240,9 +240,9 @@ export default function AdminTables() {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
                         <AlertDialogAction onClick={() => deleteTable.mutate({ id: table.id })} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                          Delete
+                          حذف
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

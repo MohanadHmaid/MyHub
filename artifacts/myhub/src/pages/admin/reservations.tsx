@@ -36,16 +36,16 @@ export default function AdminReservations() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed': return <Badge variant="outline" className="border-green-500 text-green-500 bg-green-500/10">Confirmed</Badge>;
-      case 'cancelled': return <Badge variant="outline" className="border-destructive text-destructive bg-destructive/10">Cancelled</Badge>;
-      default: return <Badge variant="outline" className="border-amber-500 text-amber-500 bg-amber-500/10">Pending</Badge>;
+      case 'cancelled': return <Badge variant="outline" className="border-destructive text-destructive bg-destructive/10">ملغى</Badge>;
+      default: return <Badge variant="outline" className="border-amber-500 text-amber-500 bg-amber-500/10">قيد الانتظار</Badge>;
     }
   };
 
-  // Sort by datetime, pending first
+  // ترتيب by datetime, pending first
   const sortedReservations = reservations ? [...reservations].sort((a, b) => {
     if (a.status === 'pending' && b.status !== 'pending') return -1;
     if (a.status !== 'pending' && b.status === 'pending') return 1;
-    return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
+    return new التاريخ(a.dateTime).getTime() - new التاريخ(b.dateTime).getTime();
   }) : [];
 
   return (
@@ -53,7 +53,7 @@ export default function AdminReservations() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
           <Calendar className="w-8 h-8 text-primary" />
-          Reservations
+          الحجوزات
         </h1>
         <p className="text-muted-foreground mt-1">Manage table bookings and guest requests.</p>
       </div>
@@ -63,7 +63,7 @@ export default function AdminReservations() {
           Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)
         ) : sortedReservations.length === 0 ? (
           <div className="col-span-full py-20 text-center text-muted-foreground border border-dashed rounded-xl">
-            No reservations found.
+            لا reservations found.
           </div>
         ) : (
           sortedReservations.map((res) => (
@@ -84,11 +84,11 @@ export default function AdminReservations() {
               <CardContent className="py-4 space-y-3 flex-1">
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(new Date(res.dateTime), 'EEEE, MMMM d, yyyy')}</span>
+                  <span className="font-medium">{format(new التاريخ(res.dateTime), 'EEEE, MMMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium text-lg">{format(new Date(res.dateTime), 'h:mm a')}</span>
+                  <span className="font-medium text-lg">{format(new التاريخ(res.dateTime), 'h:mm a')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-3 text-primary" />
@@ -114,7 +114,7 @@ export default function AdminReservations() {
                     onClick={() => handleStatusChange(res.id, 'confirmed')}
                     disabled={updateStatus.isPending}
                   >
-                    <Check className="w-4 h-4 mr-2" /> Confirm
+                    <Check className="w-4 h-4 mr-2" /> تأكيد
                   </Button>
                 </CardFooter>
               )}

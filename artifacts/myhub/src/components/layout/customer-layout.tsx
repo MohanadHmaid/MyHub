@@ -35,9 +35,9 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
             <>
               {/* Desktop Navigation */}
               <nav className="hidden md:flex items-center gap-1">
-                <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">Home</Link>
-                <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">Reserve a Table</Link>
-                <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">Contact</a>
+                <Link href="/" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">الرئيسية</Link>
+                <Link href="/reservation" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">احجز طاولة</Link>
+                <a href="#contact" className="text-sm font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors whitespace-nowrap">اتصل بنا</a>
                 {isLoggedIn ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -64,8 +64,8 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                   <Link href="/login">
                     <Button size="sm" className="ml-2 h-9 gap-2 whitespace-nowrap">
                       <UserCircle className="w-4 h-4" />
-                      <span className="hidden xs:inline">Sign In</span>
-                      <span className="xs:hidden">Login</span>
+                      <span className="hidden xs:inline">دخول</span>
+                      <span className="xs:hidden">دخول</span>
                     </Button>
                   </Link>
                 )}
@@ -100,8 +100,8 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                   <Link href="/login">
                     <Button size="sm" className="h-9 gap-2">
                       <UserCircle className="w-4 h-4" />
-                      <span className="hidden xs:inline">Sign In</span>
-                      <span className="xs:hidden">Login</span>
+                      <span className="hidden xs:inline">دخول</span>
+                      <span className="xs:hidden">دخول</span>
                     </Button>
                   </Link>
                 )}
@@ -113,11 +113,11 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                       <Menu className="w-5 h-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="w-64">
+                  <SheetContent side="left" className="w-64">
                     <nav className="flex flex-col gap-4 mt-8">
-                      <Link href="/" className="text-base font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-                      <Link href="/reservation" className="text-base font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Reserve a Table</Link>
-                      <a href="#contact" className="text-base font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+                      <Link href="/" className="text-base font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>الرئيسية</Link>
+                      <Link href="/reservation" className="text-base font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>احجز طاولة</Link>
+                      <a href="#contact" className="text-base font-medium px-3 py-2 rounded-md hover:bg-secondary hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>اتصل بنا</a>
                     </nav>
                   </SheetContent>
                 </Sheet>
@@ -142,30 +142,30 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                 <span className="text-xl font-bold text-primary">MyHUB</span>
               </div>
               <p className="text-background/60 text-sm leading-relaxed">
-                Your neighbourhood internet café. Fast connections, comfortable seating, great drinks. Book online and skip the wait.
+                مقهى الإنترنت المحلية. اتصالات سريعة، مقاعد مريحة، مشروبات رائعة. احجز عبر الإنترنت وتجاوز الانتظار.
               </p>
             </div>
 
             <div id="contact">
-              <h3 className="font-semibold text-background mb-4 uppercase tracking-wider text-xs">Contact</h3>
+              <h3 className="font-semibold text-background mb-4 uppercase tracking-wider text-xs">اتصل بنا</h3>
               <ul className="space-y-3 text-sm text-background/70">
                 <li className="flex items-center gap-2.5">
                   <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  <span>123 Cyber Street, Tech District</span>
+                  <span>شارع السايبر 123، منطقة التكنولوجيا</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Phone className="w-4 h-4 text-primary shrink-0" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+966 55 123-4567</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Mail className="w-4 h-4 text-primary shrink-0" />
-                  <span>hello@myhub.café</span>
+                  <span>hello@myhub.cafe</span>
                 </li>
               </ul>
             </div>
 
             <div id="about">
-              <h3 className="font-semibold text-background mb-4 uppercase tracking-wider text-xs">Follow Us</h3>
+              <h3 className="font-semibold text-background mb-4 uppercase tracking-wider text-xs">تابعنا</h3>
               <div className="flex gap-3">
                 <a href="#" aria-label="Facebook" className="bg-background/10 hover:bg-primary/20 p-2.5 rounded-lg transition-colors">
                   <Facebook className="w-4 h-4" />
@@ -178,12 +178,12 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                 </a>
               </div>
               <p className="text-background/50 text-xs mt-6">
-                Open daily · 9:00 AM – 10:00 PM
+                مفتوح يومياً · 9:00 صباحاً – 10:00 مساءً
               </p>
             </div>
           </div>
           <div className="border-t border-background/10 mt-10 pt-6 text-center text-background/40 text-xs">
-            © {new Date().getFullYear()} MyHUB Internet Café. All rights reserved.
+© {new Date().getFullYear()} MyHUB مقهى الإنترنت. جميع الحقوق محفوظة.
           </div>
         </div>
       </footer>

@@ -49,7 +49,7 @@ export default function ReservationSuccess() {
           </div>
           
           <CardContent className="pt-10 pb-8 px-8">
-            <p className="text-sm font-medium text-muted-foreground mb-4 uppercase tracking-widest">Your Reservation Code</p>
+            <p className="text-sm font-medium text-muted-foreground mb-4 uppercase tracking-widest">Your رمز الحجز</p>
             <div className="flex items-center justify-center gap-3 bg-secondary/50 py-6 px-4 rounded-xl border border-border group relative mb-8">
               <span className="text-5xl font-mono font-bold tracking-widest text-primary">{code}</span>
               <Button 
@@ -72,11 +72,11 @@ export default function ReservationSuccess() {
               <div className="text-left space-y-3 bg-secondary/20 p-4 rounded-lg border border-border/50">
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(new Date(reservation.dateTime), 'EEEE, MMMM d, yyyy')}</span>
+                  <span className="font-medium">{format(new التاريخ(reservation.dateTime), 'EEEE, MMMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(new Date(reservation.dateTime), 'h:mm a')}</span>
+                  <span className="font-medium">{format(new التاريخ(reservation.dateTime), 'h:mm a')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-3 text-primary" />
@@ -88,7 +88,7 @@ export default function ReservationSuccess() {
           
           <CardFooter className="bg-secondary/20 p-6 flex flex-col gap-3 border-t border-border/50">
             <Button className="w-full h-12" onClick={() => setLocation("/")}>
-              Return to Home <ArrowRight className="w-4 h-4 ml-2" />
+              Return to الرئيسية <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </CardFooter>
         </Card>

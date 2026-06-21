@@ -45,7 +45,7 @@ export default function AdminOrders() {
   const updateStatus = useUpdateOrderStatus({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Order status updated" });
+        toast({ title: "الطلب status updated" });
         queryClient.invalidateQueries({ queryKey: getGetOrdersQueryKey() });
       }
     }
@@ -74,7 +74,7 @@ export default function AdminOrders() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
             <Receipt className="w-8 h-8 text-primary" />
-            Order Management
+            الطلب Management
           </h1>
           <p className="text-muted-foreground mt-1">Track and update kitchen orders in real-time.</p>
         </div>
@@ -82,7 +82,7 @@ export default function AdminOrders() {
         <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full md:w-auto">
           <TabsList className="grid w-full grid-cols-4 bg-secondary">
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending" className="data-[state=active]:text-amber-500">Pending</TabsTrigger>
+            <TabsTrigger value="pending" className="data-[state=active]:text-amber-500">قيد الانتظار</TabsTrigger>
             <TabsTrigger value="preparing" className="data-[state=active]:text-blue-500">Preparing</TabsTrigger>
             <TabsTrigger value="completed" className="data-[state=active]:text-green-500">Done</TabsTrigger>
           </TabsList>
@@ -94,7 +94,7 @@ export default function AdminOrders() {
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36 w-full rounded-xl" />)
         ) : orders?.length === 0 ? (
-          <div className="py-16 text-center text-muted-foreground border border-dashed rounded-xl">No orders found.</div>
+          <div className="py-16 text-center text-muted-foreground border border-dashed rounded-xl">لا orders found.</div>
         ) : (
           orders?.map((order) => (
             <div key={order.id} className="rounded-xl border border-border/50 bg-card p-4 space-y-3 shadow-sm">
@@ -142,14 +142,14 @@ export default function AdminOrders() {
         <Table>
           <TableHeader className="bg-secondary/50">
             <TableRow>
-              <TableHead className="w-[100px]">Order ID</TableHead>
+              <TableHead className="w-[100px]">الطلب ID</TableHead>
               <TableHead>Table</TableHead>
-              <TableHead className="w-[300px]">Items</TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="w-[300px]">العناصر</TableHead>
+              <TableHead>الوقت</TableHead>
+              <TableHead>الإجمالي</TableHead>
+              <TableHead>الحالة</TableHead>
               <TableHead>Payment</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -169,7 +169,7 @@ export default function AdminOrders() {
             ) : orders?.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
-                  No orders found for this filter.
+                  لا orders found for this filter.
                 </TableCell>
               </TableRow>
             ) : (
@@ -190,7 +190,7 @@ export default function AdminOrders() {
                   <TableCell className="text-muted-foreground text-sm">
                     <div className="flex items-center">
                       <Clock className="w-3.5 h-3.5 mr-1" />
-                      {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new التاريخ(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </TableCell>
                   <TableCell className="font-bold text-base">${order.totalAmount.toFixed(2)}</TableCell>
@@ -202,21 +202,21 @@ export default function AdminOrders() {
                           order.status === 'preparing' ? 'border-blue-500/50 text-blue-500 bg-blue-500/5' :
                           'border-green-500/50 text-green-500 bg-green-500/5'
                         }`}>
-                          {order.status === 'pending' ? 'Pending' : order.status === 'preparing' ? 'Preparing' : 'Completed'}
+                          {order.status === 'pending' ? 'قيد الانتظار' : order.status === 'preparing' ? 'Preparing' : 'مكتمل'}
                           <ChevronDown className="w-3 h-3 ml-1" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Update Status</DropdownMenuLabel>
+                        <DropdownMenuLabel>Update الحالة</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'pending')} disabled={order.status === 'pending'}>
-                          Pending
+                          قيد الانتظار
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'preparing')} disabled={order.status === 'preparing'}>
                           Preparing
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'completed')} disabled={order.status === 'completed'}>
-                          Completed
+                          مكتمل
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -230,7 +230,7 @@ export default function AdminOrders() {
                       }`}
                       onClick={() => handlePaymentChange(order.id, order.paymentStatus === 'paid' ? 'unpaid' : 'paid')}
                     >
-                      {order.paymentStatus === 'paid' ? 'Paid' : 'Unpaid'}
+                      {order.paymentStatus === 'paid' ? 'مدفوع' : 'غير مدفوع'}
                     </Button>
                   </TableCell>
                   <TableCell className="text-right">

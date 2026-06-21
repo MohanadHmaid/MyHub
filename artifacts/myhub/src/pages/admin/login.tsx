@@ -12,8 +12,8 @@ import { Lock, User } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, "اسم المستخدم is required"),
+  password: z.string().min(1, "كلمة المرور is required"),
 });
 
 export default function AdminLogin() {
@@ -34,11 +34,11 @@ export default function AdminLogin() {
       onSuccess: (data) => {
         if (data.success) {
           queryClient.invalidateQueries(); // Clear cache to refetch auth state
-          toast({ title: "Login successful" });
+          toast({ title: "دخول successful" });
           setLocation("/admin/dashboard");
         } else {
           toast({
-            title: "Login failed",
+            title: "دخول failed",
             description: "Invalid credentials",
             variant: "destructive",
           });
@@ -46,7 +46,7 @@ export default function AdminLogin() {
       },
       onError: () => {
         toast({
-          title: "Login failed",
+          title: "دخول failed",
           description: "Invalid credentials",
           variant: "destructive",
         });
@@ -65,9 +65,9 @@ export default function AdminLogin() {
           <div className="mx-auto w-16 h-16 bg-primary/10 flex items-center justify-center rounded-2xl mb-6">
             <Lock className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-3xl font-bold tracking-tight">Admin Access</CardTitle>
+          <CardTitle className="text-3xl font-bold tracking-tight">المسؤول Access</CardTitle>
           <CardDescription className="text-base mt-2">
-            MyHUB Internet Café Management System
+            MyHUB نظام إدارة مقهى الإنترنت System
           </CardDescription>
         </CardHeader>
         <CardContent className="pb-10 px-8">
@@ -78,7 +78,7 @@ export default function AdminLogin() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="admin-username">Username</FormLabel>
+                    <FormLabel htmlFor="admin-username">اسم المستخدم</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -100,7 +100,7 @@ export default function AdminLogin() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="admin-password">Password</FormLabel>
+                    <FormLabel htmlFor="admin-password">كلمة المرور</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -123,7 +123,7 @@ export default function AdminLogin() {
                 className="w-full h-12 text-lg font-medium mt-4"
                 disabled={loginMutation.isPending}
               >
-                {loginMutation.isPending ? "Authenticating..." : "Sign In"}
+                {loginMutation.isPending ? "Authenticating..." : "دخول"}
               </Button>
             </form>
           </Form>

@@ -20,8 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Lock, User, Monitor } from "lucide-react";
 
 const unifiedLoginSchema = z.object({
-  identifier: z.string().min(1, "Email or username is required"),
-  password: z.string().min(1, "Password is required"),
+  identifier: z.string().min(1, "البريد الإلكتروني or username is required"),
+  password: z.string().min(1, "كلمة المرور is required"),
 });
 
 function UnifiedLoginForm() {
@@ -40,14 +40,14 @@ function UnifiedLoginForm() {
       onSuccess: async (data) => {
         if (data.success) {
           await queryClient.invalidateQueries({ queryKey: ["/api/admin/me"] });
-          toast({ title: "Admin access granted" });
+          toast({ title: "المسؤول access granted" });
           setLocation("/admin/dashboard");
         }
       },
       onError: () => {
         toast({ 
-          title: "Login failed", 
-          description: "Password or username is incorrect.", 
+          title: "دخول failed", 
+          description: "كلمة المرور or username is incorrect.", 
           variant: "destructive" 
         });
       },
@@ -85,7 +85,7 @@ function UnifiedLoginForm() {
       
     } catch (error: any) {
       toast({
-        title: "Login failed",
+        title: "دخول failed",
         description: error.message,
         variant: "destructive",
       });
@@ -104,12 +104,12 @@ function UnifiedLoginForm() {
         </p>
       </div>
 
-      {/* Login Form */}
+      {/* دخول Form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField control={form.control} name="identifier" render={({ field }) => (
             <FormItem>
-              <FormLabel>Email or Username</FormLabel>
+              <FormLabel>البريد الإلكتروني or اسم المستخدم</FormLabel>
               <FormControl>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -127,7 +127,7 @@ function UnifiedLoginForm() {
           <FormField control={form.control} name="password" render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel>Password</FormLabel>
+                <FormLabel>كلمة المرور</FormLabel>
                 <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
                   Forgot password?
                 </Link>
@@ -147,7 +147,7 @@ function UnifiedLoginForm() {
             className="w-full h-11 font-semibold"
             disabled={isLoading || loginMutation.isPending}
           >
-            {isLoading || loginMutation.isPending ? "Signing in..." : "Sign In"}
+            {isLoading || loginMutation.isPending ? "Signing in..." : "دخول"}
           </Button>
 
           <div className="relative my-6">
@@ -160,9 +160,9 @@ function UnifiedLoginForm() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground">
-            No account?{" "}
+            لا account?{" "}
             <Link href="/register" className="text-primary font-medium hover:underline">
-              Register here
+              تسجيل here
             </Link>
           </p>
         </form>

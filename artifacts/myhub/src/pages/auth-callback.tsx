@@ -24,7 +24,7 @@ export default function AuthCallbackPage() {
           });
           setLocation("/login");
         } else {
-          toast({ title: "Email verified successfully!" });
+          toast({ title: "البريد الإلكتروني verified successfully!" });
           setLocation(next);
         }
       } else {

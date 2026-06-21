@@ -30,7 +30,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }, [isAdmin, isAdminLoading, setLocation]);
 
   if (isAdminLoading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center">جاري التحميل...</div>;
   }
 
   if (!isAdmin) {
@@ -38,11 +38,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const navItems = [
-    { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    { label: "Tables", href: "/admin/tables", icon: Monitor },
-    { label: "Orders", href: "/admin/orders", icon: Receipt },
-    { label: "Menu", href: "/admin/menu", icon: UtensilsCrossed },
-    { label: "Reservations", href: "/admin/reservations", icon: Calendar },
+    { label: "لوحة التحكم", href: "/admin/dashboard", icon: LayoutDashboard },
+    { label: "الطاولات", href: "/admin/tables", icon: Monitor },
+    { label: "الطلبات", href: "/admin/orders", icon: Receipt },
+    { label: "القائمة", href: "/admin/menu", icon: UtensilsCrossed },
+    { label: "الحجوزات", href: "/admin/reservations", icon: Calendar },
     { label: "Pay for Table", href: "/admin/pay-table", icon: CreditCard },
   ];
 
@@ -55,7 +55,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="h-16 flex items-center justify-center md:justify-start md:px-6 border-b border-sidebar-border">
           <Monitor className="w-6 h-6 text-sidebar-primary md:hidden" />
           <span className="hidden md:block text-xl font-bold text-sidebar-primary tracking-tight">
-            MyHUB<span className="text-sidebar-foreground">Admin</span>
+            MyHUB<span className="text-sidebar-foreground">المسؤول</span>
           </span>
         </div>
 
@@ -87,7 +87,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           })}
         </nav>
 
-        {/* Logout */}
+        {/* تسجيل الخروج */}
         <div className="p-2 md:p-4 border-t border-sidebar-border flex justify-center md:justify-start">
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
@@ -96,11 +96,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 className="flex items-center justify-center md:justify-start gap-3 w-12 h-12 md:w-full md:h-auto md:px-3 md:py-2.5 rounded-xl text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
               >
                 <LogOut className="w-6 h-6 shrink-0" />
-                <span className="hidden md:block">Logout</span>
+                <span className="hidden md:block">تسجيل الخروج</span>
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="md:hidden">
-              Logout
+              تسجيل الخروج
             </TooltipContent>
           </Tooltip>
         </div>

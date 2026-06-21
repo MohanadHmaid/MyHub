@@ -42,10 +42,10 @@ export default function AdminDashboard() {
     const occupiedTables = tables.filter(t => t.status === "occupied").length;
     const availableTables = tables.filter(t => t.status === "available").length;
 
-    const today = new Date();
+    const today = new التاريخ();
     today.setHours(0, 0, 0, 0);
 
-    const todayOrders = recentOrders.filter(o => new Date(o.createdAt) >= today);
+    const todayOrders = recentOrders.filter(o => new التاريخ(o.createdAt) >= today);
     const todayRevenue = todayOrders
       .filter(o => o.paymentStatus === "paid")
       .reduce((sum, o) => sum + o.totalAmount, 0);
@@ -56,8 +56,8 @@ export default function AdminDashboard() {
 
     const pendingReservations = reservations.filter(r => r.status === "pending").length;
     const confirmedToday = reservations.filter(r => {
-      const d = new Date(r.dateTime);
-      return d >= today && d < new Date(today.getTime() + 24 * 60 * 60 * 1000) && r.status === "confirmed";
+      const d = new التاريخ(r.dateTime);
+      return d >= today && d < new التاريخ(today.getTime() + 24 * 60 * 60 * 1000) && r.status === "confirmed";
     }).length;
 
     return {
@@ -95,21 +95,21 @@ export default function AdminDashboard() {
     {
       title: "Today's Revenue",
       value: `₪${summary.todayRevenue.toFixed(2)}`,
-      description: "Paid orders today",
+      description: "مدفوع orders today",
       icon: TrendingUp,
       color: "text-emerald-600",
       bg: "bg-emerald-500/10",
     },
     {
-      title: "Unpaid Amount",
+      title: "غير مدفوع المبلغ",
       value: `₪${summary.unpaidAmount.toFixed(2)}`,
-      description: "Total pending payments",
+      description: "الإجمالي pending payments",
       icon: Receipt,
       color: "text-red-600",
       bg: "bg-red-500/10",
     },
     {
-      title: "Table Status",
+      title: "Table الحالة",
       value: `${summary.occupiedTables} / ${summary.totalTables}`,
       description: `${summary.availableTables} available now`,
       icon: Monitor,
@@ -117,9 +117,9 @@ export default function AdminDashboard() {
       bg: "bg-blue-500/10",
     },
     {
-      title: "Pending Bookings",
+      title: "قيد الانتظار Bookings",
       value: summary.pendingReservations,
-      description: "Reservations to review",
+      description: "الحجوزات to review",
       icon: Calendar,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+            <h1 className="text-3xl font-bold tracking-tight">لوحة التحكم Overview</h1>
             <p className="text-muted-foreground mt-1">Live status and performance metrics for MyHUB.</p>
           </div>
           <div className="flex items-center gap-2">
@@ -181,11 +181,11 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Orders Table */}
+          {/* Recent الطلبات Table */}
           <Card className="lg:col-span-2 border-border/50 shadow-sm flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-4 mb-4">
               <div>
-                <CardTitle>Recent Orders</CardTitle>
+                <CardTitle>Recent الطلبات</CardTitle>
                 <CardDescription>Latest activity across all tables</CardDescription>
               </div>
               <Button variant="ghost" size="sm" asChild className="text-primary hover:text-primary hover:bg-primary/5">
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
               ) : recentOrders?.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-10">
                   <Receipt className="w-10 h-10 mb-4 opacity-20" />
-                  <p>No orders found for today.</p>
+                  <p>لا orders found for today.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
                           <div className="font-semibold text-sm">{order.tableName}</div>
                           <div className="text-[10px] text-muted-foreground flex items-center mt-0.5">
                             <Clock className="w-3 h-3 mr-1" />
-                            {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {new التاريخ(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             <span className="mx-2">•</span>
                             {order.items.length} items
                           </div>

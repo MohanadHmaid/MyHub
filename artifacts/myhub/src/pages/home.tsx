@@ -38,7 +38,7 @@ export default function Home() {
 
   const copyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
-    toast({ title: "Copied!", description: "Table URL copied to clipboard." });
+    toast({ title: "تم النسخ!", description: "تم نسخ رابط الطاولة إلى الحافظة." });
   };
 
   return (
@@ -48,25 +48,25 @@ export default function Home() {
         <div className="container mx-auto px-4 py-24 flex flex-col items-center text-center gap-6">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full border border-primary/20">
             <Wifi className="w-3.5 h-3.5" />
-            High-speed internet · Comfortable seating · Great drinks
+إنترنت عالي السرعة · مقاعد مريحة · مشروبات رائعة
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-foreground max-w-2xl leading-tight">
-            Your Ultimate<br />
-            <span className="text-primary">Internet Café</span> Experience
+            تجربتك النهاية في<br />
+            <span className="text-primary">مقهى الإنترنت</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-            Book your table instantly, order via QR, and enjoy a seamless café experience. No waiting, no hassle — just fast Wi-Fi and great vibes.
+احجز طاولتك على الفور، اطلب عبر رمز QR، واستمتع بتجربة مقهى سلسة. بدون انتظار، بدون متاعب — فقط Wi-Fi سريع وأجواء رائعة.
           </p>
           <div className="flex flex-wrap gap-3 justify-center mt-2">
             <Link href="/reservation">
               <Button size="lg" className="h-12 px-8 text-base font-semibold shadow-md">
-                <CalendarCheck className="w-4 h-4 mr-2" />
-                Reserve a Table
+                <CalendarCheck className="w-4 h-4 ml-2" />
+                احجز طاولة
               </Button>
             </Link>
             <a href="#tables">
               <Button size="lg" variant="ghost" className="h-12 px-8 text-base font-semibold">
-                View Tables
+                عرض الطاولات
               </Button>
             </a>
           </div>
@@ -79,18 +79,18 @@ export default function Home() {
           {[
             {
               icon: <CalendarCheck className="w-6 h-6 text-primary" />,
-              title: "Instant Booking",
-              desc: "Reserve your table online in seconds. Pick your date, time, and party size.",
+              title: "الحجز الفوري",
+              desc: "احجز طاولتك عبر الإنترنت في ثوانٍ. اختر التاريخ والوقت وحجم المجموعة.",
             },
             {
               icon: <QrCode className="w-6 h-6 text-primary" />,
-              title: "QR Code Ordering",
-              desc: "Scan the QR code at your table to browse the menu and order without leaving your seat.",
+              title: "الطلب عبر رمز QR",
+              desc: "امسح رمز QR على طاولتك لتصفح القائمة والطلب دون مغادرة مقعدك.",
             },
             {
               icon: <Clock className="w-6 h-6 text-primary" />,
-              title: "Open Daily",
-              desc: "We're open every day from 9 AM to 10 PM. Walk in or book ahead for guaranteed seating.",
+              title: "مفتوح يومياً",
+              desc: "نحن مفتوحون كل يوم من الساعة 9 صباحاً إلى 10 مساءً. تفضل بالدخول أو احجز مسبقاً لضمان مقعد.",
             },
           ].map((f) => (
             <div key={f.title} className="flex flex-col gap-3 p-6 rounded-2xl border border-border bg-card hover:shadow-md transition-shadow">
@@ -108,23 +108,23 @@ export default function Home() {
       <section id="tables" className="container mx-auto px-4 pb-20">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight mb-1">Live Table Status</h2>
+            <h2 className="text-3xl font-bold tracking-tight mb-1">حالة الطاولات المباشرة</h2>
             <p className="text-muted-foreground">
-              Click an <span className="text-emerald-600 font-medium">available</span> or <span className="text-amber-500 font-medium">reserved</span> table to get its QR code and order link.
+              انقر على طاولة <span className="text-emerald-600 font-medium">متاحة</span> أو <span className="text-amber-500 font-medium">محجوزة</span> للحصول على رمز QR الخاص بها ورابط الطلب.
             </p>
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
             <Link href="/reservation">
               <Button variant="outline">
-                <CalendarCheck className="w-4 h-4 mr-2" />
-                Make a Reservation
+                <CalendarCheck className="w-4 h-4 ml-2" />
+                إجراء حجز
               </Button>
             </Link>
             {isLoggedIn && (
               <Link href="/my-reservations">
                 <Button variant="outline">
-                  <UserCircle className="w-4 h-4 mr-2" />
-                  My Reservations
+                  <UserCircle className="w-4 h-4 ml-2" />
+                  حجوزاتي
                 </Button>
               </Link>
             )}
@@ -138,7 +138,7 @@ export default function Home() {
             ))
           ) : tables?.length === 0 ? (
             <div className="col-span-full py-20 text-center">
-              <p className="text-muted-foreground">No tables available at the moment.</p>
+              <p className="text-muted-foreground">لا توجد طاولات متاحة في الوقت الحالي.</p>
             </div>
           ) : (
             tables?.map((table) => {
@@ -169,12 +169,12 @@ export default function Home() {
                     <CardContent>
                       <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1 mb-4">
                         <Monitor className={`w-4 h-4 ${isAvailable ? "text-primary" : isReserved ? "text-amber-500" : "text-muted-foreground"}`} />
-                        <span>PC Terminal</span>
+                        <span>محطة الكمبيوتر</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-muted-foreground text-xs">
-                          <Users className="w-3.5 h-3.5 mr-1" />
-                          <span>Up to {table.capacity}</span>
+                          <Users className="w-3.5 h-3.5 ml-1" />
+                          <span>حتى {table.capacity}</span>
                         </div>
                         <Badge
                           className={
@@ -186,7 +186,7 @@ export default function Home() {
                           }
                           variant="outline"
                         >
-                          {isAvailable ? "Available" : isReserved ? "Reserved" : "Occupied"}
+                          {isAvailable ? "متاحة" : isReserved ? "محجوزة" : "مشغولة"}
                         </Badge>
                       </div>
                     </CardContent>
@@ -203,7 +203,7 @@ export default function Home() {
         <DialogContent className="max-w-sm text-center">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
-              {qrTable?.name} — {qrTable?.status === "reserved" ? "Reserved Table" : "QR Code"}
+              {qrTable?.name} — {qrTable?.status === "reserved" ? "طاولة محجوزة" : "رمز QR"}
             </DialogTitle>
           </DialogHeader>
 
@@ -215,7 +215,7 @@ export default function Home() {
                 {isReserved && (
                   <div className="w-full bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 text-left flex items-start gap-2">
                     <span className="mt-0.5">🔐</span>
-                    <span>This table is <strong>reserved</strong>. Scan the QR code and enter your reservation code to unlock it.</span>
+                    <span>هذه الطاولة <strong>محجوزة</strong>. امسح رمز QR وأدخل رمز الحجز الخاص بك لفتحها.</span>
                   </div>
                 )}
                 <div className="bg-white p-4 rounded-2xl border border-border shadow-sm">
@@ -229,7 +229,7 @@ export default function Home() {
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  {isReserved ? "Scan to go to this table's check-in page" : "Scan to open the order page for this table"}
+                  {isReserved ? "امسح للذهاب إلى صفحة تسجيل الدخول لهذه الطاولة" : "امسح لفتح صفحة الطلب لهذه الطاولة"}
                 </p>
 
                 <div className="w-full bg-secondary/60 rounded-xl border border-border px-4 py-3 flex items-center gap-2">
@@ -250,8 +250,8 @@ export default function Home() {
                   className="w-full"
                 >
                   <Button className="w-full h-11" variant="default">
-                    Open Table Page
-                    <ExternalLink className="w-4 h-4 ml-2" />
+                    فتح صفحة الطاولة
+                    <ExternalLink className="w-4 h-4 mr-2" />
                   </Button>
                 </a>
               </div>

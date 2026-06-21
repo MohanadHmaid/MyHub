@@ -51,7 +51,7 @@ const itemVariants = cva(
   }
 )
 
-function Item({
+function العنصر({
   className,
   variant = "default",
   size = "default",
@@ -180,7 +180,7 @@ function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 export {
-  Item,
+  العنصر,
   ItemMedia,
   ItemContent,
   ItemActions,

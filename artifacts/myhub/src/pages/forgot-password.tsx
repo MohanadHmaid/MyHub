@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Mail, Monitor, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("بريد إلكتروني غير صحيح address"),
 });
 
 export default function ForgotPasswordPage() {
@@ -44,11 +44,11 @@ export default function ForgotPasswordPage() {
       setIsSubmitted(true);
       toast({
         title: "Reset link sent",
-        description: "Please check your email for the password reset link.",
+        description: "يرجى التحقق من بريدك الإلكتروني for the password reset link.",
       });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "خطأ",
         description: error.message,
         variant: "destructive",
       });
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
 
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
+          <CardTitle className="text-2xl font-bold">Reset كلمة المرور</CardTitle>
           <CardDescription>
             {isSubmitted 
               ? "Check your email for the reset link" 
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
                 We've sent a password reset link to <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
               </p>
               <Button asChild className="w-full">
-                <Link href="/login">Back to Login</Link>
+                <Link href="/login">رجوع to دخول</Link>
               </Button>
             </div>
           ) : (
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="email" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel>البريد الإلكتروني Address</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -104,11 +104,11 @@ export default function ForgotPasswordPage() {
                   </FormItem>
                 )} />
                 <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
-                  {isLoading ? "Sending link..." : "Send Reset Link"}
+                  {isLoading ? "Sending link..." : "إرسال رابط إعادة التعيين"}
                 </Button>
                 <Button asChild variant="ghost" className="w-full gap-2">
                   <Link href="/login">
-                    <ArrowLeft className="w-4 h-4" /> Back to Login
+                    <ArrowLeft className="w-4 h-4" /> رجوع to دخول
                   </Link>
                 </Button>
               </form>

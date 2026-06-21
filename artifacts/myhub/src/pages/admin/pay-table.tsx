@@ -88,7 +88,7 @@ export default function AdminPayTable() {
       toast({ title: "Invalid amount", description: "Please select a table and enter a valid amount.", variant: "destructive" });
       return;
     }
-    // Format: *268*1*0595256882*[Price in placeholder]#
+    // Format: *268*1*0595256882*[السعر in placeholder]#
     const link = `*268*1*${phoneNumber}*${amount}#`;
     setQrLink(link);
   };
@@ -123,7 +123,7 @@ export default function AdminPayTable() {
             ) : occupiedTables.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 border border-dashed rounded-xl text-muted-foreground gap-2">
                 <Monitor className="w-8 h-8 opacity-30" />
-                <p className="text-sm">No occupied or reserved tables right now.</p>
+                <p className="text-sm">لا occupied or reserved tables right now.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4">
@@ -150,7 +150,7 @@ export default function AdminPayTable() {
                         }`} />
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-                        <Users className="w-3 h-3" /> Up to {table.capacity}
+                        <Users className="w-3 h-3" /> حتى {table.capacity}
                       </div>
                       <Badge
                         variant="outline"
@@ -160,7 +160,7 @@ export default function AdminPayTable() {
                             : "bg-amber-50 text-amber-700 border-amber-300 text-xs"
                         }
                       >
-                        {table.status === "occupied" ? "Occupied" : "Reserved"}
+                        {table.status === "occupied" ? "مشغولة" : "محجوزة"}
                       </Badge>
                     </button>
                   );
@@ -169,21 +169,21 @@ export default function AdminPayTable() {
             )}
           </div>
 
-          {/* Amount + QR Generation */}
+          {/* المبلغ + QR Generation */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Step 2 — Set Amount & Generate QR</h2>
+            <h2 className="text-lg font-semibold">Step 2 — Set المبلغ & Generate QR</h2>
             <Card className={`transition-all ${!selectedTable ? "opacity-50 pointer-events-none" : ""}`}>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-primary" />
-                  {selectedTable ? selectedTable.name : "No table selected"}
+                  {selectedTable ? selectedTable.name : "لا table selected"}
                   {ordersLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                 </CardTitle>
                 <CardDescription>Enter the amount to charge and generate the payment QR code.</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-5">
                 <div className="space-y-1.5">
-                  <Label htmlFor="amount">Amount (ILS)</Label>
+                  <Label htmlFor="amount">المبلغ (ILS)</Label>
                   <div className="flex gap-2">
                     <Input
                       id="amount"
@@ -207,7 +207,7 @@ export default function AdminPayTable() {
                       <QRCodeSVG value={qrLink} size={180} level="H" includeMargin={false} fgColor="#134e4a" />
                     </div>
                     <p className="text-xs text-muted-foreground text-center">
-                      Customer scans this code to pay <strong>₪{amount}</strong> via iBouraq
+                      العميل scans this code to pay <strong>₪{amount}</strong> via iBouraq
                     </p>
                     <div className="w-full bg-secondary/60 rounded-xl border border-border px-3 py-2">
                       <span className="text-xs font-mono text-foreground break-all">{qrLink}</span>
@@ -229,11 +229,11 @@ export default function AdminPayTable() {
         </div>
       </div>
 
-      {/* Confirm Dialog */}
+      {/* تأكيد Dialog */}
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Payment Approval</DialogTitle>
+            <DialogTitle>تأكيد Payment Approval</DialogTitle>
             <DialogDescription>
               This will mark the payment as approved and set <strong>{selectedTable?.name}</strong> back to{" "}
               <strong>available</strong>. Make sure the customer has completed the payment before proceeding.
@@ -241,7 +241,7 @@ export default function AdminPayTable() {
           </DialogHeader>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
-              <X className="w-4 h-4 mr-2" /> Cancel
+              <X className="w-4 h-4 mr-2" /> إلغاء
             </Button>
             <Button
               className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
@@ -249,7 +249,7 @@ export default function AdminPayTable() {
               disabled={updateTable.isPending}
             >
               <CheckCircle2 className="w-4 h-4" />
-              {updateTable.isPending ? "Clearing..." : "Confirm & Clear Table"}
+              {updateTable.isPending ? "Clearing..." : "تأكيد & Clear Table"}
             </Button>
           </DialogFooter>
         </DialogContent>

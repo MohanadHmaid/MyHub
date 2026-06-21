@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils"
 
 function MenubarMenu({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.Menu>) {
-  return <MenubarPrimitive.Menu {...props} />
+}: React.ComponentProps<typeof MenubarPrimitive.القائمة>) {
+  return <MenubarPrimitive.القائمة {...props} />
 }
 
 function MenubarGroup({
@@ -126,12 +126,12 @@ const MenubarContent = React.forwardRef<
 MenubarContent.displayName = MenubarPrimitive.Content.displayName
 
 const MenubarItem = React.forwardRef<
-  React.ElementRef<typeof MenubarPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> & {
+  React.ElementRef<typeof MenubarPrimitive.العنصر>,
+  React.ComponentPropsWithoutRef<typeof MenubarPrimitive.العنصر> & {
     inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
-  <MenubarPrimitive.Item
+  <MenubarPrimitive.العنصر
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -141,7 +141,7 @@ const MenubarItem = React.forwardRef<
     {...props}
   />
 ))
-MenubarItem.displayName = MenubarPrimitive.Item.displayName
+MenubarItem.displayName = MenubarPrimitive.العنصر.displayName
 
 const MenubarCheckboxItem = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.CheckboxItem>,

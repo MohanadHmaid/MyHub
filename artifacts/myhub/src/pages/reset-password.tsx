@@ -19,8 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Lock, Monitor, CheckCircle2 } from "lucide-react";
 
 const resetPasswordSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, "كلمة المرور must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "كلمة المرور must be at least 6 characters"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -47,12 +47,12 @@ export default function ResetPasswordPage() {
 
       setIsSuccess(true);
       toast({
-        title: "Password updated",
+        title: "كلمة المرور updated",
         description: "Your password has been reset successfully.",
       });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "خطأ",
         description: error.message,
         variant: "destructive",
       });
@@ -72,7 +72,7 @@ export default function ResetPasswordPage() {
 
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">New Password</CardTitle>
+          <CardTitle className="text-2xl font-bold">New كلمة المرور</CardTitle>
           <CardDescription>
             {isSuccess 
               ? "Your password has been updated" 
@@ -89,7 +89,7 @@ export default function ResetPasswordPage() {
                 You can now sign in with your new password.
               </p>
               <Button asChild className="w-full">
-                <Link href="/login">Go to Login</Link>
+                <Link href="/login">Go to دخول</Link>
               </Button>
             </div>
           ) : (
@@ -97,7 +97,7 @@ export default function ResetPasswordPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="password" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>New كلمة المرور</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -109,7 +109,7 @@ export default function ResetPasswordPage() {
                 )} />
                 <FormField control={form.control} name="confirmPassword" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormLabel>تأكيد New كلمة المرور</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
                   </FormItem>
                 )} />
                 <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
-                  {isLoading ? "Updating password..." : "Update Password"}
+                  {isLoading ? "Updating password..." : "Update كلمة المرور"}
                 </Button>
               </form>
             </Form>
