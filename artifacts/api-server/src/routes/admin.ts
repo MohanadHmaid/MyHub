@@ -65,20 +65,4 @@ router.post("/admin/logout", async (req, res): Promise<void> => {
   }
 });
 
-router.get("/admin/me", async (req: Request, res): Promise<void> => {
-  try {
-    if (!req.session.adminId) {
-      res.status(401).json(GetAdminMeResponse.parse({ authenticated: false }));
-      return;
-    }
-    res.json(GetAdminMeResponse.parse({
-      authenticated: true,
-      admin: { id: req.session.adminId, username: req.session.adminUsername ?? "" },
-    }));
-  } catch (error) {
-    console.error("Admin me error:", error);
-    res.status(500).json({ error: "Failed to fetch admin info" });
-  }
-});
-
 export default router;

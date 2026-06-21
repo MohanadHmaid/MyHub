@@ -47,7 +47,7 @@ function UnifiedLoginForm() {
       onError: () => {
         toast({ 
           title: "Login failed", 
-          description: "Invalid credentials. If you are a customer, please use your email.", 
+          description: "Password or username is incorrect.", 
           variant: "destructive" 
         });
       },

@@ -429,64 +429,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Reservation"
 
-  /admin/login:
-    post:
-      operationId: adminLogin
-      tags: [admin]
-      summary: Admin login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AdminLoginBody"
-      responses:
-        "200":
-          description: Login result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AdminLoginResponse"
-
-  /admin/logout:
-    post:
-      operationId: adminLogout
-      tags: [admin]
-      summary: Admin logout
-      responses:
-        "200":
-          description: Logged out
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResponse"
-
-  /admin/me:
-    get:
-      operationId: getAdminMe
-      tags: [admin]
-      summary: Get current admin session
-      responses:
-        "200":
-          description: Current session
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AdminSession"
-
-  /dashboard/summary:
-    get:
-      operationId: getDashboardSummary
-      tags: [dashboard]
-      summary: Get dashboard overview stats
-      responses:
-        "200":
-          description: Dashboard summary
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DashboardSummary"
-
   /dashboard/recent-orders:
     get:
       operationId: getRecentOrders
@@ -542,7 +484,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/CustomerAuthResponse"
         "401":
-          description: Invalid credentials
+          description: Invalid username or password
 
   /auth/logout:
     post:

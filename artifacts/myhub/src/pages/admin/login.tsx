@@ -78,11 +78,16 @@ export default function AdminLogin() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel htmlFor="admin-username">Username</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="admin" className="pl-9 h-11" {...field} />
+                        <Input 
+                          id="admin-username"
+                          placeholder="admin" 
+                          className="pl-9 h-11" 
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -95,11 +100,17 @@ export default function AdminLogin() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel htmlFor="admin-password">Password</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input type="password" placeholder="••••••••" className="pl-9 h-11" {...field} />
+                        <Input 
+                          id="admin-password"
+                          type="password" 
+                          placeholder="••••••••" 
+                          className="pl-9 h-11" 
+                          {...field} 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
