@@ -13,7 +13,7 @@ A full-stack web-based internet café management system named **MyHUB**. Support
 - **Frontend**: React + Vite (artifact: `myhub`)
 - **API framework**: Express 5 (artifact: `api-server`)
 - **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
+- **Validation**: Zod (`zod`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 - **Auth**: Session-based (express-session + SHA-256 hashed passwords)

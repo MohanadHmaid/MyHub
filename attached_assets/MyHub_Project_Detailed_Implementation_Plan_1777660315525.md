@@ -430,7 +430,7 @@ This section outlines the migration to a unified user model and the implementati
     // After:
     import { pgTable, serial, text, timestamp, boolean } from "drizzle-orm/pg-core";
     import { createInsertSchema } from "drizzle-zod";
-    import { z } from "zod/v4";
+    import { z } from "zod";
 
     export const usersTable = pgTable("users", {
       id: serial("id").primaryKey(),
