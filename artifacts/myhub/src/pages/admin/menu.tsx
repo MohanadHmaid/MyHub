@@ -25,7 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { UtensilsCrossed, Plus, Settings2, Trash2, بحث } from "lucide-react";
+import { UtensilsCrossed, Plus, Settings2, Trash2, Search } from "lucide-react";
 import { 
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger 
 } from "@/components/ui/alert-dialog";
