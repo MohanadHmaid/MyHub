@@ -115,16 +115,16 @@ const SheetTitle = React.forwardRef<
 SheetTitle.displayName = SheetPrimitive.Title.displayName
 
 const SheetDescription = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.الوصف>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.الوصف>
+  React.ElementRef<typeof SheetPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <SheetPrimitive.الوصف
+  <SheetPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
-SheetDescription.displayName = SheetPrimitive.الوصف.displayName
+SheetDescription.displayName = SheetPrimitive.Description.displayName
 
 export {
   Sheet,
