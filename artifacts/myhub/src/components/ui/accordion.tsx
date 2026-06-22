@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils"
 const Accordion = AccordionPrimitive.Root
 
 const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPritive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPritive.Item>
+  React.ElementRef<typeof AccordionPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <AccordionPritive.Item
+  <AccordionPrimitive.Item
     ref={ref}
     className={cn("border-b", className)}
     {...props}

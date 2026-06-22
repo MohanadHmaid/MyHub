@@ -126,12 +126,12 @@ const MenubarContent = React.forwardRef<
 MenubarContent.displayName = MenubarPrimitive.Content.displayName
 
 const MenubarItem = React.forwardRef<
-  React.ElementRef<typeof MenubarPritive.Item>,
-  React.ComponentPropsWithoutRef<typeof MenubarPritive.Item> & {
+  React.ElementRef<typeof MenubarPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> & {
     inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
-  <MenubarPritive.Item
+  <MenubarPrimitive.Item
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -141,7 +141,7 @@ const MenubarItem = React.forwardRef<
     {...props}
   />
 ))
-MenubarItem.displayName = MenubarPritive.Item.displayName
+MenubarItem.displayName = MenubarPrimitive.Item.displayName
 
 const MenubarCheckboxItem = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.CheckboxItem>,
