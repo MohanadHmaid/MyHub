@@ -70,12 +70,21 @@ const ContextMenuContent = React.forwardRef<
 ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName
 
 const ContextMenuItem = React.forwardRef<
+<<<<<<< HEAD
   React.ElementRef<typeof ContextMenuPritive.Item>,
   React.ComponentPropsWithoutRef<typeof ContextMenuPritive.Item> & {
     inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
   <ContextMenuPritive.Item
+=======
+  React.ElementRef<typeof ContextMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
+    inset?: boolean
+  }
+>(({ className, inset, ...props }, ref) => (
+  <ContextMenuPrimitive.Item
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -85,7 +94,11 @@ const ContextMenuItem = React.forwardRef<
     {...props}
   />
 ))
+<<<<<<< HEAD
 ContextMenuItem.displayName = ContextMenuPritive.Item.displayName
+=======
+ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
 
 const ContextMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,

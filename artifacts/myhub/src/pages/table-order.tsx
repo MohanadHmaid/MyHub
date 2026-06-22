@@ -60,7 +60,7 @@ export default function TableOrder() {
         setIsVerified(true);
         setVerifyError("");
         queryClient.invalidateQueries({ queryKey: getGetTableQueryKey(tableId) });
-        toast({ title: "Reservation verified!", description: "Welcome to MyHUB. Your table is ready." });
+        toast({ title: "Reservation verified!", description: "مرحباً بكم في MyHUB. Your table is ready." });
       },
       onError: (err: any) => {
         const msg = err?.response?.data?.error || err?.message || "Invalid reservation code.";

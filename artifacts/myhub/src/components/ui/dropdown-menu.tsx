@@ -76,12 +76,21 @@ const DropdownMenuContent = React.forwardRef<
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const DropdownMenuItem = React.forwardRef<
+<<<<<<< HEAD
   React.ElementRef<typeof DropdownMenuPritive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPritive.Item> & {
     inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPritive.Item
+=======
+  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+    inset?: boolean
+  }
+>(({ className, inset, ...props }, ref) => (
+  <DropdownMenuPrimitive.Item
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
@@ -91,7 +100,11 @@ const DropdownMenuItem = React.forwardRef<
     {...props}
   />
 ))
+<<<<<<< HEAD
 DropdownMenuItem.displayName = DropdownMenuPritive.Item.displayName
+=======
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
 
 const DropdownMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,

@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
   username: z.string().min(1, "اسم المستخدم is required"),
-  password: z.string().min(1, "كلمة المرور is required"),
+  password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
 
 export default function AdminLogin() {

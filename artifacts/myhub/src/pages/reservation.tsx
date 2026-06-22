@@ -188,7 +188,7 @@ export default function Reservation() {
 
   const validateStep4 = () => {
     const e: Record<string, string> = {};
-    if (name.trim().length < 2) e.name = "Name must be at least 2 characters";
+    if (name.trim().length < 2) e.name = "يجب أن يكون الاسم حرفين على الأقل";
     if (phone.trim().length < 10) e.phone = "Please enter a valid phone number";
     if (partySize < 1 || partySize > 20) e.partySize = "Party size must be between 1 and 20";
     setErrors(e);

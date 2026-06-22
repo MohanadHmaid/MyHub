@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils"
 
 function MenubarMenu({
   ...props
-}: React.ComponentProps<typeof MenubarPrimitive.القائمة>) {
-  return <MenubarPrimitive.القائمة {...props} />
+}: React.ComponentProps<typeof MenubarPrimitive.List>) {
+  return <MenubarPrimitive.List {...props} />
 }
 
 function MenubarGroup({
@@ -126,12 +126,21 @@ const MenubarContent = React.forwardRef<
 MenubarContent.displayName = MenubarPrimitive.Content.displayName
 
 const MenubarItem = React.forwardRef<
+<<<<<<< HEAD
   React.ElementRef<typeof MenubarPritive.Item>,
   React.ComponentPropsWithoutRef<typeof MenubarPritive.Item> & {
     inset?: boolean
   }
 >(({ className, inset, ...props }, ref) => (
   <MenubarPritive.Item
+=======
+  React.ElementRef<typeof MenubarPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> & {
+    inset?: boolean
+  }
+>(({ className, inset, ...props }, ref) => (
+  <MenubarPrimitive.Item
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -141,7 +150,11 @@ const MenubarItem = React.forwardRef<
     {...props}
   />
 ))
+<<<<<<< HEAD
 MenubarItem.displayName = MenubarPritive.Item.displayName
+=======
+MenubarItem.displayName = MenubarPrimitive.Item.displayName
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
 
 const MenubarCheckboxItem = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.CheckboxItem>,

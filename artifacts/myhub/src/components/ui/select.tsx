@@ -112,10 +112,17 @@ const SelectLabel = React.forwardRef<
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
 const SelectItem = React.forwardRef<
+<<<<<<< HEAD
   React.ElementRef<typeof SelectPritive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPritive.Item>
 >(({ className, children, ...props }, ref) => (
   <SelectPritive.Item
+=======
+  React.ElementRef<typeof SelectPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Item
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
     ref={ref}
     className={cn(
       "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -129,9 +136,15 @@ const SelectItem = React.forwardRef<
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+<<<<<<< HEAD
   </SelectPritive.Item>
 ))
 SelectItem.displayName = SelectPritive.Item.displayName
+=======
+  </SelectPrimitive.Item>
+))
+SelectItem.displayName = SelectPrimitive.Item.displayName
+>>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
 
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
