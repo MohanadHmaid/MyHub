@@ -84,35 +84,35 @@ const AlertDialogTitle = React.forwardRef<
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
 const AlertDialogDescription = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.الوصف>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.الوصف>
+  React.ElementRef<typeof AlertDialogPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.الوصف
+  <AlertDialogPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
 AlertDialogDescription.displayName =
-  AlertDialogPrimitive.الوصف.displayName
+  AlertDialogPrimitive.Description.displayName
 
 const AlertDialogAction = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.الإجراء>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.الإجراء>
+  React.ElementRef<typeof AlertDialogPrimitive.Action>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.الإجراء
+  <AlertDialogPrimitive.Action
     ref={ref}
     className={cn(buttonVariants(), className)}
     {...props}
   />
 ))
-AlertDialogAction.displayName = AlertDialogPrimitive.الإجراء.displayName
+AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
 const AlertDialogCancel = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.إلغاء>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.إلغاء>
+  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.إلغاء
+  <AlertDialogPrimitive.Cancel
     ref={ref}
     className={cn(
       buttonVariants({ variant: "outline" }),
@@ -122,7 +122,7 @@ const AlertDialogCancel = React.forwardRef<
     {...props}
   />
 ))
-AlertDialogCancel.displayName = AlertDialogPrimitive.إلغاء.displayName
+AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
 export {
   AlertDialog,

@@ -18,7 +18,7 @@ const DrawerTrigger = DrawerPrimitive.Trigger
 
 const DrawerPortal = DrawerPrimitive.Portal
 
-const DrawerClose = DrawerPrimitive.إغلاق
+const DrawerClose = DrawerPrimitive.Close
 
 const DrawerOverlay = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Overlay>,
@@ -91,16 +91,16 @@ const DrawerTitle = React.forwardRef<
 DrawerTitle.displayName = DrawerPrimitive.Title.displayName
 
 const DrawerDescription = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.الوصف>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.الوصف>
+  React.ElementRef<typeof DrawerPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <DrawerPrimitive.الوصف
+  <DrawerPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
-DrawerDescription.displayName = DrawerPrimitive.الوصف.displayName
+DrawerDescription.displayName = DrawerPrimitive.Description.displayName
 
 export {
   Drawer,

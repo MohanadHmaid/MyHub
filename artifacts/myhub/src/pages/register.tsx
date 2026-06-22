@@ -19,9 +19,9 @@ import { User, Mail, Lock, Phone, Monitor } from "lucide-react";
 import { useState } from "react";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("بريد إلكتروني غير صحيح address"),
-  password: z.string().min(6, "كلمة المرور must be at least 6 characters"),
+  name: z.string().min(2, "يجب أن يكون الاسم حرفين على الأقل"),
+  email: z.string().email("بريد إلكتروني غير صحيح"),
+  password: z.string().min(6, "يجب أن تكون كلمة المرور 6 أحرف على الأقل"),
   phone: z.string().optional(),
 });
 
@@ -50,14 +50,14 @@ export default function RegisterPage() {
       });
 
       if (!response.ok) {
-        console.error("البريد الإلكتروني check failed");
+        console.error("فشل التحقق من البريد الإلكتروني");
         return false;
       }
 
       const data = await response.json();
       return data.exists;
     } catch (error) {
-      console.error("خطأ checking email:", error);
+      console.error("خطأ أثناء التحقق من البريد الإلكتروني:", error);
       return false;
     } finally {
       setEmailCheckLoading(false);
@@ -71,8 +71,8 @@ export default function RegisterPage() {
       const emailExists = await checkEmailExists(data.email);
       if (emailExists) {
         toast({
-          title: "البريد الإلكتروني already registered",
-          description: "This email is already associated with an account. Please sign in instead.",
+          title: "البريد الإلكتروني مسجل بالفعل",
+          description: "هذا البريد الإلكتروني مرتبط بحساب بالفعل. يرجى تسجيل الدخول بدلاً من ذلك.",
           variant: "destructive",
         });
         setIsLoading(false);
@@ -101,8 +101,8 @@ export default function RegisterPage() {
           error.message.toLowerCase().includes("user already")
         ) {
           toast({
-            title: "البريد الإلكتروني already registered",
-            description: "This email is already associated with an account. Please sign in instead.",
+            title: "البريد الإلكتروني مسجل بالفعل",
+            description: "هذا البريد الإلكتروني مرتبط بحساب بالفعل. يرجى تسجيل الدخول بدلاً من ذلك.",
             variant: "destructive",
           });
           return;
@@ -114,8 +114,8 @@ export default function RegisterPage() {
       // (when email confirmation is enabled and the email is taken)
       if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
         toast({
-          title: "البريد الإلكتروني already registered",
-          description: "This email is already associated with an account. Please sign in instead.",
+          title: "البريد الإلكتروني مسجل بالفعل",
+          description: "هذا البريد الإلكتروني مرتبط بحساب بالفعل. يرجى تسجيل الدخول بدلاً من ذلك.",
           variant: "destructive",
         });
         return;
@@ -124,7 +124,7 @@ export default function RegisterPage() {
       setIsEmailSent(true);
       toast({
         title: "تم التسجيل بنجاح",
-        description: "يرجى التحقق من بريدك الإلكتروني for the verification link.",
+        description: "يرجى التحقق من بريدك الإلكتروني للحصول على رابط التحقق.",
       });
     } catch (error: any) {
       toast({
@@ -144,13 +144,13 @@ export default function RegisterPage() {
           <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
             <Mail className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold mb-2">Check your email</CardTitle>
+          <CardTitle className="text-2xl font-bold mb-2">تحقق من بريدك الإلكتروني</CardTitle>
           <CardDescription className="text-base">
             We've sent a verification link to <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
             Please click the link to verify your account.
           </CardDescription>
           <Button asChild className="mt-8 w-full">
-            <Link href="/login">رجوع to دخول</Link>
+            <Link href="/login">العودة لتسجيل الدخول</Link>
           </Button>
         </Card>
       </div>
@@ -168,15 +168,15 @@ export default function RegisterPage() {
 
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>Enter your details to register for MyHUB</CardDescription>
+          <CardTitle className="text-2xl font-bold">إنشاء حساب</CardTitle>
+          <CardDescription>أدخل بياناتك للتسجيل في MyHUB</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField control={form.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>الاسم الكامل</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -200,7 +200,7 @@ export default function RegisterPage() {
               )} />
               <FormField control={form.control} name="phone" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone (Optional)</FormLabel>
+                  <FormLabel>الهاتف (اختياري)</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -223,7 +223,7 @@ export default function RegisterPage() {
                 </FormItem>
               )} />
               <Button type="submit" className="w-full h-11 font-semibold mt-2" disabled={isLoading || emailCheckLoading}>
-                {isLoading ? "Creating account..." : emailCheckLoading ? "Checking email..." : "تسجيل"}
+                {isLoading ? "جاري إنشاء الحساب..." : emailCheckLoading ? "Checking email..." : "تسجيل"}
               </Button>
             </form>
           </Form>

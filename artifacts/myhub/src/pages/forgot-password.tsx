@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Mail, Monitor, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("بريد إلكتروني غير صحيح address"),
+  email: z.string().email("بريد إلكتروني غير صحيح"),
 });
 
 export default function ForgotPasswordPage() {
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
                 We've sent a password reset link to <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
               </p>
               <Button asChild className="w-full">
-                <Link href="/login">رجوع to دخول</Link>
+                <Link href="/login">العودة لتسجيل الدخول</Link>
               </Button>
             </div>
           ) : (
@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
                 </Button>
                 <Button asChild variant="ghost" className="w-full gap-2">
                   <Link href="/login">
-                    <ArrowLeft className="w-4 h-4" /> رجوع to دخول
+                    <ArrowLeft className="w-4 h-4" /> العودة لتسجيل الدخول
                   </Link>
                 </Button>
               </form>

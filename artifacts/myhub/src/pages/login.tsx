@@ -20,8 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Lock, User, Monitor } from "lucide-react";
 
 const unifiedLoginSchema = z.object({
-  identifier: z.string().min(1, "البريد الإلكتروني or username is required"),
-  password: z.string().min(1, "كلمة المرور is required"),
+  identifier: z.string().min(1, "البريد الإلكتروني أو اسم المستخدم مطلوب"),
+  password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
 
 function UnifiedLoginForm() {
@@ -66,7 +66,7 @@ function UnifiedLoginForm() {
 
         if (!error) {
           await queryClient.invalidateQueries();
-          toast({ title: "Welcome back!" });
+          toast({ title: "مرحباً بعودتك!" });
           setLocation("/");
           return;
         }
@@ -98,9 +98,9 @@ function UnifiedLoginForm() {
     <>
       {/* Form Header */}
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold">Welcome to MyHUB</h1>
+        <h1 className="text-2xl font-bold">مرحباً بكم في MyHUB</h1>
         <p className="text-muted-foreground text-sm mt-2">
-          Sign in to access your account
+          سجل الدخول للوصول إلى حسابك
         </p>
       </div>
 
@@ -114,7 +114,7 @@ function UnifiedLoginForm() {
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Enter your email or username"
+                    placeholder="أدخل بريدك الإلكتروني أو اسم المستخدم"
                     className="pl-9 h-11"
                     {...field}
                   />
@@ -129,7 +129,7 @@ function UnifiedLoginForm() {
               <div className="flex items-center justify-between">
                 <FormLabel>كلمة المرور</FormLabel>
                 <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
-                  Forgot password?
+                  هل نسيت كلمة المرور؟
                 </Link>
               </div>
               <FormControl>
@@ -147,7 +147,7 @@ function UnifiedLoginForm() {
             className="w-full h-11 font-semibold"
             disabled={isLoading || loginMutation.isPending}
           >
-            {isLoading || loginMutation.isPending ? "Signing in..." : "دخول"}
+            {isLoading || loginMutation.isPending ? "جاري تسجيل الدخول..." : "دخول"}
           </Button>
 
           <div className="relative my-6">
@@ -155,14 +155,14 @@ function UnifiedLoginForm() {
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">New here?</span>
+              <span className="bg-card px-2 text-muted-foreground">جديد هنا؟</span>
             </div>
           </div>
 
           <p className="text-center text-sm text-muted-foreground">
-            لا account?{" "}
+            ليس لديك حساب؟{" "}
             <Link href="/register" className="text-primary font-medium hover:underline">
-              تسجيل here
+              سجل هنا
             </Link>
           </p>
         </form>
