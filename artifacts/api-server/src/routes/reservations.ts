@@ -23,10 +23,10 @@ function generateCode(): string {
 }
 
 function formatReservation(r: typeof reservationsTable.$inferSelect) {
-  const parseDate = (val: any): string => {
-    if (!val) return new Date().toISOString();
+  const parseDate = (val: any): Date => { 
+    if (!val) return new Date();
     const d = new Date(val);
-    return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+    return isNaN(d.getTime()) ? new Date()
   };
 
   const allowedStatuses = ["pending", "confirmed", "cancelled"];
