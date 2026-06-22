@@ -26,7 +26,7 @@ function formatReservation(r: typeof reservationsTable.$inferSelect) {
   const parseDate = (val: any): Date => { 
     if (!val) return new Date();
     const d = new Date(val);
-    return isNaN(d.getTime()) ? new Date()
+    return isNaN(d.getTime()) ? new Date(): d;
   };
 
   const allowedStatuses = ["pending", "confirmed", "cancelled"];
