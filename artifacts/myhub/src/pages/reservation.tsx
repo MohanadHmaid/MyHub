@@ -92,7 +92,7 @@ export default function Reservation() {
     const map: Record<string, Record<string, number>> = {};
     for (const r of allReservations ?? []) {
       if (r.status === "cancelled") continue;
-      const dt = new التاريخ(r.dateTime);
+      const dt = Date(r.dateTime);
       const day = format(dt, "yyyy-MM-dd");
       const slot = format(dt, "HH") + ":00";
       if (!map[day]) map[day] = {};
@@ -135,7 +135,7 @@ export default function Reservation() {
   // Check if a time slot is in the past
   const isTimePast = (slot: string): boolean => {
     if (!selectedDate) return false;
-    const now = new التاريخ();
+    const now = Date();
     
     // Get year, month, date of selectedDate in local timezone
     const selYear = selectedDate.getFullYear();
@@ -198,7 +198,7 @@ export default function Reservation() {
   const handleConfirm = () => {
     if (!selectedDate || !selectedTime) return;
     const [h, m] = selectedTime.split(":").map(Number);
-    const dt = new التاريخ(selectedDate);
+    const dt = Date(selectedDate);
     dt.setHours(h, m, 0, 0);
 
     createReservation.mutate({
@@ -282,13 +282,13 @@ export default function Reservation() {
                     setSelectedDate(d);
                   }}
                   disabled={(date) =>
-                    isBefore(startOfDay(date), startOfDay(new التاريخ())) ||
+                    isBefore(startOfDay(date), startOfDay(Date())) ||
                     isDayFullyBlocked(date)
                   }
                   modifiers={{
-                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(new التاريخ())) && getDayStatus(date) === "free",
-                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(new التاريخ())) && getDayStatus(date) === "partial",
-                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(new التاريخ())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
+                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(Date())) && getDayStatus(date) === "free",
+                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(Date())) && getDayStatus(date) === "partial",
+                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(Date())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
                   }}
                   modifiersStyles={{
                     dayFree: { backgroundColor: "#dcfce7", color: "#166534", borderRadius: "8px", fontWeight: 600 },

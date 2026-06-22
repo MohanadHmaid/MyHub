@@ -105,9 +105,9 @@ export default function MyReservationsPage() {
               <div key={r.id} className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm space-y-3 hover:border-primary/30 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-bold text-lg">{format(new التاريخ(r.dateTime), "EEEE, MMM d, yyyy")}</p>
+                    <p className="font-bold text-lg">{format(Date(r.dateTime), "EEEE, MMM d, yyyy")}</p>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{format(new التاريخ(r.dateTime), "h:mm a")}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{format(Date(r.dateTime), "h:mm a")}</span>
                       <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{r.partySize} {r.partySize === 1 ? "person" : "people"}</span>
                     </div>
                   </div>

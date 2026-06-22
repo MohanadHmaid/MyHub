@@ -72,11 +72,11 @@ export default function ReservationSuccess() {
               <div className="text-left space-y-3 bg-secondary/20 p-4 rounded-lg border border-border/50">
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(new التاريخ(reservation.dateTime), 'EEEE, MMMM d, yyyy')}</span>
+                  <span className="font-medium">{format(Date(reservation.dateTime), 'EEEE, MMMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(new التاريخ(reservation.dateTime), 'h:mm a')}</span>
+                  <span className="font-medium">{format(Date(reservation.dateTime), 'h:mm a')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-3 text-primary" />

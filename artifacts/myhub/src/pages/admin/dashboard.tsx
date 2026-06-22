@@ -42,10 +42,10 @@ export default function AdminDashboard() {
     const occupiedTables = tables.filter(t => t.status === "occupied").length;
     const availableTables = tables.filter(t => t.status === "available").length;
 
-    const today = new التاريخ();
+    const today = Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayOrders = recentOrders.filter(o => new التاريخ(o.createdAt) >= today);
+    const todayOrders = recentOrders.filter(o => Date(o.createdAt) >= today);
     const todayRevenue = todayOrders
       .filter(o => o.paymentStatus === "paid")
       .reduce((sum, o) => sum + o.totalAmount, 0);
@@ -56,8 +56,8 @@ export default function AdminDashboard() {
 
     const pendingReservations = reservations.filter(r => r.status === "pending").length;
     const confirmedToday = reservations.filter(r => {
-      const d = new التاريخ(r.dateTime);
-      return d >= today && d < new التاريخ(today.getTime() + 24 * 60 * 60 * 1000) && r.status === "confirmed";
+      const d = Date(r.dateTime);
+      return d >= today && d < Date(today.getTime() + 24 * 60 * 60 * 1000) && r.status === "confirmed";
     }).length;
 
     return {
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
                           <div className="font-semibold text-sm">{order.tableName}</div>
                           <div className="text-[10px] text-muted-foreground flex items-center mt-0.5">
                             <Clock className="w-3 h-3 mr-1" />
-                            {new التاريخ(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             <span className="mx-2">•</span>
                             {order.items.length} items
                           </div>

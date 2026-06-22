@@ -190,7 +190,7 @@ export default function AdminOrders() {
                   <TableCell className="text-muted-foreground text-sm">
                     <div className="flex items-center">
                       <Clock className="w-3.5 h-3.5 mr-1" />
-                      {new التاريخ(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </TableCell>
                   <TableCell className="font-bold text-base">${order.totalAmount.toFixed(2)}</TableCell>
