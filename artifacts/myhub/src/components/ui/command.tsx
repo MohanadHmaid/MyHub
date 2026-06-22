@@ -109,17 +109,10 @@ const CommandSeparator = React.forwardRef<
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
 const CommandItem = React.forwardRef<
-<<<<<<< HEAD
   React.ElementRef<typeof CommandPritive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPritive.Item>
 >(({ className, ...props }, ref) => (
   <CommandPritive.Item
-=======
-  React.ElementRef<typeof CommandPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Item
->>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
     ref={ref}
     className={cn(
       "relative flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -129,11 +122,7 @@ const CommandItem = React.forwardRef<
   />
 ))
 
-<<<<<<< HEAD
 CommandItem.displayName = CommandPritive.Item.displayName
-=======
-CommandItem.displayName = CommandPrimitive.Item.displayName
->>>>>>> 77cfbcae63ce667f37dda7a09a8db3815f4aef37
 
 const CommandShortcut = ({
   className,
