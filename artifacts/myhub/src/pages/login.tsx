@@ -109,7 +109,7 @@ function UnifiedLoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField control={form.control} name="identifier" render={({ field }) => (
             <FormItem>
-              <FormLabel>البريد الإلكتروني أو اسم المستخدم</FormLabel>
+              <FormLabel htmlFor="identifier">البريد الإلكتروني أو اسم المستخدم</FormLabel>
               <FormControl>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -129,7 +129,7 @@ function UnifiedLoginForm() {
           <FormField control={form.control} name="password" render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel>كلمة المرور</FormLabel>
+                <FormLabel htmlFor="password">كلمة المرور</FormLabel>
                 <Link href="/forgot-password" title="Reset password" className="text-xs text-primary hover:underline">
                   هل نسيت كلمة المرور؟
                 </Link>

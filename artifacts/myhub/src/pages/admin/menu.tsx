@@ -158,16 +158,16 @@ export default function AdminMenu() {
               <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                 <FormField control={addForm.control} name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>اسم العنصر</FormLabel>
-                    <FormControl><Input placeholder="e.g. Iced Latte" {...field} /></FormControl>
+                    <FormLabel htmlFor="add-name">اسم العنصر</FormLabel>
+                    <FormControl><Input id="add-name" placeholder="e.g. Iced Latte" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={addForm.control} name="price" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>السعر ($)</FormLabel>
-                      <FormControl><Input type="number" step="0.01" min="0" {...field} /></FormControl>
+                      <FormLabel htmlFor="add-price">السعر ($)</FormLabel>
+                      <FormControl><Input id="add-price" type="number" step="0.01" min="0" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
@@ -191,8 +191,8 @@ export default function AdminMenu() {
                 </div>
                 <FormField control={addForm.control} name="description" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>الوصف (اختياري)</FormLabel>
-                    <FormControl><Textarea className="resize-none" rows={3} placeholder="وصف موجز للعنصر..." {...field} /></FormControl>
+                    <FormLabel htmlFor="add-desc">الوصف (اختياري)</FormLabel>
+                    <FormControl><Textarea id="add-desc" className="resize-none" rows={3} placeholder="وصف موجز للعنصر..." {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
@@ -226,16 +226,16 @@ export default function AdminMenu() {
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
               <FormField control={editForm.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>العنصر Name</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormLabel htmlFor="edit-name">العنصر Name</FormLabel>
+                  <FormControl><Input id="edit-name" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={editForm.control} name="price" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>السعر ($)</FormLabel>
-                    <FormControl><Input type="number" step="0.01" min="0" {...field} /></FormControl>
+                    <FormLabel htmlFor="edit-price">السعر ($)</FormLabel>
+                    <FormControl><Input id="edit-price" type="number" step="0.01" min="0" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
@@ -259,8 +259,8 @@ export default function AdminMenu() {
               </div>
               <FormField control={editForm.control} name="description" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>الوصف</FormLabel>
-                  <FormControl><Textarea className="resize-none" rows={3} {...field} /></FormControl>
+                  <FormLabel htmlFor="edit-desc">الوصف</FormLabel>
+                  <FormControl><Textarea id="edit-desc" className="resize-none" rows={3} {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />

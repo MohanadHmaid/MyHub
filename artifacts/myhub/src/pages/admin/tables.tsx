@@ -125,15 +125,15 @@ export default function AdminTables() {
               <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                 <FormField control={addForm.control} name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>اسم الطاولة/Number</FormLabel>
-                    <FormControl><Input placeholder="e.g. Table 01, VIP Booth" {...field} /></FormControl>
+                    <FormLabel htmlFor="add-name">اسم الطاولة/Number</FormLabel>
+                    <FormControl><Input id="add-name" placeholder="e.g. Table 01, VIP Booth" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <FormField control={addForm.control} name="capacity" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>السعة</FormLabel>
-                    <FormControl><Input type="number" min={1} {...field} /></FormControl>
+                    <FormLabel htmlFor="add-capacity">السعة</FormLabel>
+                    <FormControl><Input id="add-capacity" type="number" min={1} {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
@@ -157,15 +157,15 @@ export default function AdminTables() {
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
               <FormField control={editForm.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>اسم الطاولة/Number</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormLabel htmlFor="edit-name">اسم الطاولة/Number</FormLabel>
+                  <FormControl><Input id="edit-name" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={editForm.control} name="capacity" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>السعة</FormLabel>
-                  <FormControl><Input type="number" min={1} {...field} /></FormControl>
+                  <FormLabel htmlFor="edit-capacity">السعة</FormLabel>
+                  <FormControl><Input id="edit-capacity" type="number" min={1} {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
