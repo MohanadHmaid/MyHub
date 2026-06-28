@@ -114,8 +114,10 @@ function UnifiedLoginForm() {
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
+                    id="identifier"
                     placeholder="أدخل بريدك الإلكتروني أو اسم المستخدم"
                     className="pl-9 h-11"
+                    autoComplete="username"
                     {...field}
                   />
                 </div>
@@ -135,7 +137,7 @@ function UnifiedLoginForm() {
               <FormControl>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input type="password" placeholder="••••••••" className="pl-9 h-11" {...field} />
+                  <Input id="password" type="password" placeholder="••••••••" className="pl-9 h-11" autoComplete="current-password" {...field} />
                 </div>
               </FormControl>
               <FormMessage />

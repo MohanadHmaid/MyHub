@@ -451,6 +451,7 @@ export default function Reservation() {
                     id="name"
                     placeholder="John Doe"
                     className="pl-9"
+                    autoComplete="name"
                     value={name}
                     onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
                   />
@@ -467,6 +468,7 @@ export default function Reservation() {
                     type="tel"
                     placeholder="+1 (555) 123-4567"
                     className="pl-9"
+                    autoComplete="tel"
                     value={phone}
                     onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: "" })); }}
                   />
@@ -483,6 +485,7 @@ export default function Reservation() {
                     type="email"
                     placeholder="you@example.com"
                     className="pl-9"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
