@@ -169,7 +169,7 @@ export default function Reservation() {
   const createReservation = useCreateReservation({
     mutation: {
       onSuccess: (data) => {
-        setLocation(`/success?code=${data.code}`);
+        setLocation(`/reservation-success?code=${data.code}`);
       },
       onError: (error: any) => {
         toast({

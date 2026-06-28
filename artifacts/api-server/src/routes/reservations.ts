@@ -67,20 +67,27 @@ router.post("/reservations", async (req, res): Promise<void> => {
   const { tableId, ...reservationData } = parsed.data;
 
   try {
-    await db.transaction(async (tx) => {
-      let finalCustomerId = reservationData.customerId ?? null;
-      if (finalCustomerId === 0) {
-        finalCustomerId = null;
-      }
+    // Resolve customerId BEFORE the transaction so a failed customers-table
+    // query doesn't abort the PostgreSQL transaction and block the insert.
+    let finalCustomerId = reservationData.customerId ?? null;
+    if (finalCustomerId === 0) {
+      finalCustomerId = null;
+    }
 
-      if (!finalCustomerId && reservationData.email) {
-        const [foundCustomer] = await tx.select().from(customersTable)
+    if (!finalCustomerId && reservationData.email) {
+      try {
+        const [foundCustomer] = await db.select().from(customersTable)
           .where(eq(customersTable.email, reservationData.email));
         if (foundCustomer) {
           finalCustomerId = foundCustomer.id;
         }
+      } catch (lookupErr) {
+        // customers table may not exist in production — proceed without linking
+        console.error("Customer lookup failed (proceeding without customerId):", lookupErr);
       }
+    }
 
+    await db.transaction(async (tx) => {
       const [reservation] = await tx.insert(reservationsTable).values({
         name: reservationData.name,
         phone: reservationData.phone,

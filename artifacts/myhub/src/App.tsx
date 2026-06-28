@@ -31,7 +31,7 @@ function Router() {
       <Route path="/reset-password" component={ResetPasswordPage} />
       <Route path="/auth/callback" component={AuthCallbackPage} />
       <Route path="/reservation" component={ReservationPage} />
-      <Route path="/reservation-success/:id" component={ReservationSuccessPage} />
+      <Route path="/reservation-success" component={ReservationSuccessPage} />
       <Route path="/my-reservations" component={MyReservationsPage} />
       <Route path="/table/:id" component={TableOrderPage} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
