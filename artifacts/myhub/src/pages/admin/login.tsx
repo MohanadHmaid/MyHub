@@ -86,6 +86,7 @@ export default function AdminLogin() {
                           id="admin-username"
                           placeholder="admin" 
                           className="pl-9 h-11" 
+                          autoComplete="username"
                           {...field} 
                         />
                       </div>
@@ -109,6 +110,7 @@ export default function AdminLogin() {
                           type="password" 
                           placeholder="••••••••" 
                           className="pl-9 h-11" 
+                          autoComplete="current-password"
                           {...field} 
                         />
                       </div>

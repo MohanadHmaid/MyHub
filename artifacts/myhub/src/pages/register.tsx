@@ -180,7 +180,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="John Doe" className="pl-9 h-11" {...field} />
+                      <Input id="name" placeholder="John Doe" className="pl-9 h-11" autoComplete="name" {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -192,7 +192,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="john@example.com" className="pl-9 h-11" {...field} />
+                      <Input id="email" type="email" placeholder="john@example.com" className="pl-9 h-11" autoComplete="email" {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -204,7 +204,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <div className="relative">
                       <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="+1 (555) 000-0000" className="pl-9 h-11" {...field} />
+                      <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" className="pl-9 h-11" autoComplete="tel" {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -216,7 +216,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input type="password" placeholder="••••••••" className="pl-9 h-11" {...field} />
+                      <Input id="password" type="password" placeholder="••••••••" className="pl-9 h-11" autoComplete="new-password" {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
