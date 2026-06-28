@@ -18,7 +18,7 @@ import {
 
 const TIME_SLOTS = [
   "09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
-  "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00",
+  "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
 ];
 
 const STEPS = [
@@ -35,13 +35,12 @@ function StepIndicator({ current }: { current: number }) {
       {STEPS.map((s, i) => (
         <div key={s.num} className="flex items-center">
           <div className="flex flex-col items-center gap-1">
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
-              current === s.num
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${current === s.num
                 ? "bg-primary text-primary-foreground border-primary"
                 : current > s.num
-                ? "bg-primary/20 text-primary border-primary/40"
-                : "bg-secondary text-muted-foreground border-border"
-            }`}>
+                  ? "bg-primary/20 text-primary border-primary/40"
+                  : "bg-secondary text-muted-foreground border-border"
+              }`}>
               {current > s.num ? <CheckCircle2 className="w-4 h-4" /> : s.num}
             </div>
             <span className={`text-xs font-medium hidden sm:block ${current === s.num ? "text-primary" : "text-muted-foreground"}`}>
@@ -136,17 +135,17 @@ export default function Reservation() {
   const isTimePast = (slot: string): boolean => {
     if (!selectedDate) return false;
     const now = new Date();
-    
+
     // Get year, month, date of selectedDate in local timezone
     const selYear = selectedDate.getFullYear();
     const selMonth = selectedDate.getMonth();
     const selDay = selectedDate.getDate();
-    
+
     // Get year, month, date of now in local timezone
     const nowYear = now.getFullYear();
     const nowMonth = now.getMonth();
     const nowDay = now.getDate();
-    
+
     // If selected date is in the past (yesterday or older), it is past
     if (selYear < nowYear) return true;
     if (selYear > nowYear) return false;
@@ -154,15 +153,15 @@ export default function Reservation() {
     if (selMonth > nowMonth) return false;
     if (selDay < nowDay) return true;
     if (selDay > nowDay) return false;
-    
+
     // If selectedDate is EXACTLY today, compare hours and minutes
     const [slotHour, slotMinute] = slot.split(":").map(Number);
     const nowHour = now.getHours();
     const nowMinute = now.getMinutes();
-    
+
     if (slotHour < nowHour) return true;
     if (slotHour === nowHour && slotMinute <= nowMinute) return true;
-    
+
     return false;
   };
 
@@ -324,21 +323,20 @@ export default function Reservation() {
                 const isSlotFull = slotStatus === "full";
                 const isPast = isTimePast(slot);
                 const isDisabled = isSlotFull || isPast;
-                
+
                 return (
                   <button
                     key={slot}
                     onClick={() => !isDisabled && setSelectedTime(slot)}
                     disabled={isDisabled}
-                    className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all ${
-                      isPast
+                    className={`py-3 px-2 rounded-xl border-2 text-sm font-medium transition-all ${isPast
                         ? "bg-secondary text-muted-foreground border-border opacity-40 cursor-not-allowed"
                         : isSlotFull
-                        ? "bg-red-100 border-red-300 text-red-700 opacity-50 cursor-not-allowed"
-                        : isSelected
-                        ? "bg-primary text-primary-foreground border-primary shadow-md"
-                        : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
-                    }`}
+                          ? "bg-red-100 border-red-300 text-red-700 opacity-50 cursor-not-allowed"
+                          : isSelected
+                            ? "bg-primary text-primary-foreground border-primary shadow-md"
+                            : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
+                      }`}
                     title={isPast ? "هذا الوقت قد مضى بالفعل" : isSlotFull ? "لا توجد طاولات متاحة" : ""}
                   >
                     {display}
@@ -380,19 +378,18 @@ export default function Reservation() {
                   // For reservations, we only care about future availability, not current live status
                   const isTableAvailable = isAvailableAtTime;
                   const isSelected = selectedTableId === table.id;
-                  
+
                   return (
                     <button
                       key={table.id}
                       disabled={!isTableAvailable}
                       onClick={() => setSelectedTableId(isSelected ? null : table.id)}
-                      className={`p-4 rounded-xl border-2 text-left transition-all ${
-                        !isTableAvailable
+                      className={`p-4 rounded-xl border-2 text-left transition-all ${!isTableAvailable
                           ? "opacity-50 cursor-not-allowed bg-amber-50 border-amber-200"
                           : isSelected
-                          ? "bg-primary/10 border-primary shadow-sm"
-                          : "bg-card border-border hover:border-primary/50"
-                      }`}
+                            ? "bg-primary/10 border-primary shadow-sm"
+                            : "bg-card border-border hover:border-primary/50"
+                        }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-sm">{table.name}</span>
