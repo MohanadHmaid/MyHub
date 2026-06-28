@@ -108,5 +108,5 @@ router.get("/dashboard/traffic-heatmap", async (req, res): Promise<void> => {
     res.status(500).json({ error: "Failed to fetch traffic heatmap" });
   }
 });
-
+  
 export default router;

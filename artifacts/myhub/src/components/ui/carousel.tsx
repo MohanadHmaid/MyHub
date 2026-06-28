@@ -34,7 +34,7 @@ function useCarousel() {
   const context = React.useContext(CarouselContext)
 
   if (!context) {
-    throw new خطأ("useCarousel must be used within a <Carousel />")
+    throw new Error("useCarousel must be used within a <Carousel />")
   }
 
   return context
