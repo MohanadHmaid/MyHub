@@ -63,7 +63,7 @@ export default function Reservation() {
   const { customer, isLoggedIn } = useAuth();
 
   const [step, setStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState<التاريخ | undefined>();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
   const [name, setName] = useState("");
@@ -92,7 +92,7 @@ export default function Reservation() {
     const map: Record<string, Record<string, number>> = {};
     for (const r of allReservations ?? []) {
       if (r.status === "cancelled") continue;
-      const dt = Date(r.dateTime);
+      const dt = new Date(r.dateTime);
       const day = format(dt, "yyyy-MM-dd");
       const slot = format(dt, "HH") + ":00";
       if (!map[day]) map[day] = {};
@@ -102,7 +102,7 @@ export default function Reservation() {
   }, [allReservations]);
 
   // Day status: 'free' | 'partial' | 'hasFullSlot'
-  const getDayStatus = (date: التاريخ): "free" | "partial" | "hasFullSlot" => {
+  const getDayStatus = (date: Date): "free" | "partial" | "hasFullSlot" => {
     const key = format(date, "yyyy-MM-dd");
     const slots = reservationMap[key];
     if (!slots) return "free";
@@ -112,7 +112,7 @@ export default function Reservation() {
   };
 
   // Is a day fully blocked (ALL slots have count >= TOTAL_TABLES)?
-  const isDayFullyBlocked = (date: التاريخ): boolean => {
+  const isDayFullyBlocked = (date: Date): boolean => {
     const key = format(date, "yyyy-MM-dd");
     const slots = reservationMap[key];
     if (!slots) return false;
@@ -135,7 +135,7 @@ export default function Reservation() {
   // Check if a time slot is in the past
   const isTimePast = (slot: string): boolean => {
     if (!selectedDate) return false;
-    const now = Date();
+    const now = new Date();
     
     // Get year, month, date of selectedDate in local timezone
     const selYear = selectedDate.getFullYear();
@@ -198,7 +198,7 @@ export default function Reservation() {
   const handleConfirm = () => {
     if (!selectedDate || !selectedTime) return;
     const [h, m] = selectedTime.split(":").map(Number);
-    const dt = Date(selectedDate);
+    const dt = new Date(selectedDate);
     dt.setHours(h, m, 0, 0);
 
     createReservation.mutate({
@@ -282,13 +282,13 @@ export default function Reservation() {
                     setSelectedDate(d);
                   }}
                   disabled={(date) =>
-                    isBefore(startOfDay(date), startOfDay(Date())) ||
+                    isBefore(startOfDay(date), startOfDay(new Date())) ||
                     isDayFullyBlocked(date)
                   }
                   modifiers={{
-                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(Date())) && getDayStatus(date) === "free",
-                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(Date())) && getDayStatus(date) === "partial",
-                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(Date())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
+                    dayFree: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "free",
+                    dayPartial: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "partial",
+                    dayFull: (date) => !isBefore(startOfDay(date), startOfDay(new Date())) && getDayStatus(date) === "hasFullSlot" && !isDayFullyBlocked(date),
                   }}
                   modifiersStyles={{
                     dayFree: { backgroundColor: "#dcfce7", color: "#166534", borderRadius: "8px", fontWeight: 600 },
