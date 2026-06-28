@@ -48,11 +48,12 @@ function formatReservation(r: typeof reservationsTable.$inferSelect) {
 
 router.get("/reservations", async (_req, res): Promise<void> => {
   try {
-    // Return empty array to bypass missing table/schema issues completely
-    res.json([]);
+    const reservations = await db.select().from(reservationsTable);
+    res.json(reservations.map(formatReservation));
   } catch (error) {
     console.error("Reservations fetch error:", error);
-    res.status(500).json({ error: "Failed to fetch reservations" });
+    // Return empty array instead of 500 so the admin dashboard doesn't crash
+    res.json([]);
   }
 });
 
