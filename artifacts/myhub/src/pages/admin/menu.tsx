@@ -275,7 +275,7 @@ export default function AdminMenu() {
 
       <div className="flex flex-col lg:flex-row gap-4 mb-6">
         <div className="relative w-full lg:w-[300px] shrink-0">
-          <بحث className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="بحث menu..." 
             className="pl-9 h-10 bg-card" 

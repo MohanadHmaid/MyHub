@@ -45,7 +45,7 @@ export default function AdminReservations() {
   const sortedReservations = reservations ? [...reservations].sort((a, b) => {
     if (a.status === 'pending' && b.status !== 'pending') return -1;
     if (a.status !== 'pending' && b.status === 'pending') return 1;
-    return Date(a.dateTime).getTime() - Date(b.dateTime).getTime();
+    return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
   }) : [];
 
   return (
@@ -84,11 +84,11 @@ export default function AdminReservations() {
               <CardContent className="py-4 space-y-3 flex-1">
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(Date(res.dateTime), 'EEEE, MMMM d, yyyy')}</span>
+                  <span className="font-medium">{format(new Date(res.dateTime), 'EEEE, MMMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium text-lg">{format(Date(res.dateTime), 'h:mm a')}</span>
+                  <span className="font-medium text-lg">{format(new Date(res.dateTime), 'h:mm a')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-3 text-primary" />
