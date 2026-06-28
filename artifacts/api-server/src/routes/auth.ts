@@ -132,8 +132,29 @@ router.get("/auth/my-reservations", async (req: Request, res): Promise<void> => 
         };
       }));
     } catch (dbError) {
-      // Database unavailable — return empty array instead of 500
-      console.error("Auth my-reservations DB error (returning empty):", dbError);
+      // Database unavailable or customers table missing — fallback to email lookup
+      console.error("Auth my-reservations DB error (falling back to email lookup):", dbError);
+      
+      if (supabaseUser.email) {
+        try {
+          const reservations = await db.select().from(reservationsTable)
+            .where(eq(reservationsTable.email, supabaseUser.email));
+            
+          res.json(reservations.map(r => {
+            const dt = new Date(r.dateTime);
+            const ca = new Date(r.createdAt);
+            return {
+              ...r,
+              dateTime: isNaN(dt.getTime()) ? new Date().toISOString() : dt.toISOString(),
+              createdAt: isNaN(ca.getTime()) ? new Date().toISOString() : ca.toISOString(),
+            };
+          }));
+          return;
+        } catch (fallbackError) {
+          console.error("Fallback reservations lookup also failed:", fallbackError);
+        }
+      }
+      
       res.json([]);
     }
   } catch (error) {
