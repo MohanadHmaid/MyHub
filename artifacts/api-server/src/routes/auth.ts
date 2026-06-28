@@ -99,11 +99,15 @@ router.get("/auth/my-reservations", async (req: Request, res): Promise<void> => 
         if (supabaseUser.email) {
           const reservations = await db.select().from(reservationsTable)
             .where(eq(reservationsTable.email, supabaseUser.email));
-          res.json(reservations.map(r => ({
-            ...r,
-            dateTime: r.dateTime.toISOString(),
-            createdAt: r.createdAt.toISOString(),
-          })));
+          res.json(reservations.map(r => {
+            const dt = new Date(r.dateTime);
+            const ca = new Date(r.createdAt);
+            return {
+              ...r,
+              dateTime: isNaN(dt.getTime()) ? new Date().toISOString() : dt.toISOString(),
+              createdAt: isNaN(ca.getTime()) ? new Date().toISOString() : ca.toISOString(),
+            };
+          }));
           return;
         }
         res.json([]);
@@ -118,11 +122,15 @@ router.get("/auth/my-reservations", async (req: Request, res): Promise<void> => 
           )
         );
 
-      res.json(reservations.map(r => ({
-        ...r,
-        dateTime: r.dateTime.toISOString(),
-        createdAt: r.createdAt.toISOString(),
-      })));
+      res.json(reservations.map(r => {
+        const dt = new Date(r.dateTime);
+        const ca = new Date(r.createdAt);
+        return {
+          ...r,
+          dateTime: isNaN(dt.getTime()) ? new Date().toISOString() : dt.toISOString(),
+          createdAt: isNaN(ca.getTime()) ? new Date().toISOString() : ca.toISOString(),
+        };
+      }));
     } catch (dbError) {
       // Database unavailable — return empty array instead of 500
       console.error("Auth my-reservations DB error (returning empty):", dbError);
