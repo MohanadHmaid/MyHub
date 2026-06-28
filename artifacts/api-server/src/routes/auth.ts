@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request } from "express";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { db, customersTable, reservationsTable } from "@workspace/db";
 import {
   GetCustomerMeResponse,
@@ -84,7 +84,12 @@ router.get("/auth/my-reservations", async (req: Request, res): Promise<void> => 
     }
 
     const reservations = await db.select().from(reservationsTable)
-      .where(eq(reservationsTable.customerId, customer.id));
+      .where(
+        or(
+          eq(reservationsTable.customerId, customer.id),
+          eq(reservationsTable.email, customer.email)
+        )
+      );
 
     res.json(reservations.map(r => ({
       ...r,

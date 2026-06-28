@@ -95,7 +95,7 @@ export default function MyReservationsPage() {
             <Link href="/reservation">
               <Button size="lg" className="gap-2 h-12 px-8 rounded-xl shadow-lg shadow-primary/20">
                 <PlusCircle className="w-5 h-5" />
-                Book Your First Table
+                احجز اول حجز لك
               </Button>
             </Link>
           </div>

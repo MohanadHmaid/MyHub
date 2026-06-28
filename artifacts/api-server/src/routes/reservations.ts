@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
-import { db, reservationsTable, tablesTable } from "@workspace/db";
+import { db, reservationsTable, tablesTable, customersTable } from "@workspace/db";
 import {
   GetReservationsResponse,
   CreateReservationBody,
@@ -68,11 +68,24 @@ router.post("/reservations", async (req, res): Promise<void> => {
 
   try {
     await db.transaction(async (tx) => {
+      let finalCustomerId = reservationData.customerId ?? null;
+      if (finalCustomerId === 0) {
+        finalCustomerId = null;
+      }
+
+      if (!finalCustomerId && reservationData.email) {
+        const [foundCustomer] = await tx.select().from(customersTable)
+          .where(eq(customersTable.email, reservationData.email));
+        if (foundCustomer) {
+          finalCustomerId = foundCustomer.id;
+        }
+      }
+
       const [reservation] = await tx.insert(reservationsTable).values({
         name: reservationData.name,
         phone: reservationData.phone,
         email: reservationData.email ?? null,
-        customerId: reservationData.customerId ?? null,
+        customerId: finalCustomerId,
         dateTime: new Date(reservationData.dateTime),
         code,
         status: "pending",
