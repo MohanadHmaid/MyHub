@@ -93,11 +93,11 @@ export default function ForgotPasswordPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="email" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>البريد الإلكتروني</FormLabel>
+                    <FormLabel htmlFor="email">البريد الإلكتروني</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="john@example.com" className="pl-9 h-11" {...field} />
+                        <Input id="email" placeholder="john@example.com" className="pl-9 h-11" {...field} />
                       </div>
                     </FormControl>
                     <FormMessage />

@@ -103,7 +103,7 @@ export default function AdminOrders() {
                   <span className="font-bold text-base">{order.tableName}</span>
                   <span className="text-muted-foreground text-xs ml-2">#{order.id}</span>
                 </div>
-                <span className="font-bold text-lg">${order.totalAmount.toFixed(2)}</span>
+                <span className="font-bold text-lg">₪{order.totalAmount.toFixed(2)}</span>
               </div>
               <div className="text-sm text-muted-foreground space-y-0.5">
                 {order.items.map(item => (

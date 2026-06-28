@@ -166,7 +166,7 @@ export default function AdminMenu() {
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={addForm.control} name="price" render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="add-price">السعر ($)</FormLabel>
+                      <FormLabel htmlFor="add-price">السعر (₪)</FormLabel>
                       <FormControl><Input id="add-price" type="number" step="0.01" min="0" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
@@ -234,7 +234,7 @@ export default function AdminMenu() {
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={editForm.control} name="price" render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="edit-price">السعر ($)</FormLabel>
+                    <FormLabel htmlFor="edit-price">السعر (₪)</FormLabel>
                     <FormControl><Input id="edit-price" type="number" step="0.01" min="0" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -313,7 +313,7 @@ export default function AdminMenu() {
                 <div className="flex justify-between items-start mb-2 gap-2">
                   <h3 className="font-bold text-lg leading-tight line-clamp-2">{product.name}</h3>
                   <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-sm shrink-0">
-                    ${product.price.toFixed(2)}
+                    ₪{product.price.toFixed(2)}
                   </span>
                 </div>
                 <Badge variant="outline" className="mb-3 capitalize text-xs">{product.category}</Badge>
