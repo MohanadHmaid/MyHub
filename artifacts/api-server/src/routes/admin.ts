@@ -65,4 +65,20 @@ router.post("/admin/logout", async (req, res): Promise<void> => {
   }
 });
 
+router.get("/admin/me", async (req, res): Promise<void> => {
+  try {
+    if (req.session.adminId && req.session.adminUsername) {
+      res.json(GetAdminMeResponse.parse({
+        authenticated: true,
+        admin: { id: req.session.adminId, username: req.session.adminUsername },
+      }));
+    } else {
+      res.json(GetAdminMeResponse.parse({ authenticated: false }));
+    }
+  } catch (error) {
+    console.error("Admin me error:", error);
+    res.json({ authenticated: false });
+  }
+});
+
 export default router;
