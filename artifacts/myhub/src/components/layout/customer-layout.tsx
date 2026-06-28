@@ -142,7 +142,7 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                 <span className="text-xl font-bold text-primary">MyHUB</span>
               </div>
               <p className="text-background/60 text-sm leading-relaxed">
-                مقهى الإنترنت المحلية. اتصالات سريعة، مقاعد مريحة، مشروبات رائعة. احجز عبر الإنترنت وتجاوز الانتظار.
+                افضل كافي متوفر. اتصالات سريعة، مقاعد مريحة، كهرباء متوفرة. احجز عبر الإنترنت وتجاوز الانتظار.
               </p>
             </div>
 
@@ -151,7 +151,7 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
               <ul className="space-y-3 text-sm text-background/70">
                 <li className="flex items-center gap-2.5">
                   <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  <span>شارع السايبر 123، منطقة التكنولوجيا</span>
+                  <span>شارع النص 123، خانيونس</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Phone className="w-4 h-4 text-primary shrink-0" />
@@ -178,12 +178,12 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                 </a>
               </div>
               <p className="text-background/50 text-xs mt-6">
-                مفتوح يومياً · 9:00 صباحاً – 10:00 مساءً
+                مفتوح يومياً · 9:00 صباحاً – 08:00 مساءً
               </p>
             </div>
           </div>
           <div className="border-t border-background/10 mt-10 pt-6 text-center text-background/40 text-xs">
-© {new Date().getFullYear()} MyHUB مقهى الإنترنت. جميع الحقوق محفوظة.
+© {new Date().getFullYear()} MyHUB جميع الحقوق محفوظة
           </div>
         </div>
       </footer>

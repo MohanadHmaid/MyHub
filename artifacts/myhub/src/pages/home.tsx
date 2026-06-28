@@ -48,11 +48,11 @@ export default function Home() {
         <div className="container mx-auto px-4 py-24 flex flex-col items-center text-center gap-6">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full border border-primary/20">
             <Wifi className="w-3.5 h-3.5" />
-إنترنت عالي السرعة · مقاعد مريحة · مشروبات رائعة
+إنترنت سريع · مقاعد مريحة · كهرباء متوفرة
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-foreground max-w-2xl leading-tight">
-            تجربتك النهاية في<br />
-            <span className="text-primary">مقهى الإنترنت</span>
+            افضل تجربة ممكنة<br />
+            <span className="text-primary">مع MyHub</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
 احجز طاولتك على الفور، اطلب عبر رمز QR، واستمتع بتجربة مقهى سلسة. بدون انتظار، بدون متاعب — فقط Wi-Fi سريع وأجواء رائعة.
@@ -90,7 +90,7 @@ export default function Home() {
             {
               icon: <Clock className="w-6 h-6 text-primary" />,
               title: "مفتوح يومياً",
-              desc: "نحن مفتوحون كل يوم من الساعة 9 صباحاً إلى 10 مساءً. تفضل بالدخول أو احجز مسبقاً لضمان مقعد.",
+              desc: "نحن مفتوحون كل يوم من الساعة 9 صباحاً إلى 8 مساءً. تفضل بالدخول أو احجز مسبقاً لضمان مقعد.",
             },
           ].map((f) => (
             <div key={f.title} className="flex flex-col gap-3 p-6 rounded-2xl border border-border bg-card hover:shadow-md transition-shadow">
@@ -169,7 +169,7 @@ export default function Home() {
                     <CardContent>
                       <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1 mb-4">
                         <Monitor className={`w-4 h-4 ${isAvailable ? "text-primary" : isReserved ? "text-amber-500" : "text-muted-foreground"}`} />
-                        <span>محطة الكمبيوتر</span>
+                        <span>مناسبة للابتوب</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-muted-foreground text-xs">
