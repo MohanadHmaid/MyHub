@@ -43,8 +43,8 @@ export default function ForgotPasswordPage() {
 
       setIsSubmitted(true);
       toast({
-        title: "Reset link sent",
-        description: "يرجى التحقق من بريدك الإلكتروني for the password reset link.",
+        title: "تم إرسال رابط إعادة التعيين",
+        description: "يرجى التحقق من بريدك الإلكتروني للحصول على رابط إعادة تعيين كلمة المرور.",
       });
     } catch (error: any) {
       toast({
@@ -68,11 +68,11 @@ export default function ForgotPasswordPage() {
 
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Reset كلمة المرور</CardTitle>
+          <CardTitle className="text-2xl font-bold">إعادة تعيين كلمة المرور</CardTitle>
           <CardDescription>
             {isSubmitted 
-              ? "Check your email for the reset link" 
-              : "Enter your email to receive a password reset link"}
+              ? "يرجى التحقق من بريدك الإلكتروني للحصول على رابط إعادة التعيين" 
+              : "أدخل بريدك الإلكتروني لتلقي رابط إعادة تعيين كلمة المرور"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                 <CheckCircle2 className="w-8 h-8 text-emerald-600" />
               </div>
               <p className="text-muted-foreground">
-                We've sent a password reset link to <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
+                لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
               </p>
               <Button asChild className="w-full">
                 <Link href="/login">العودة لتسجيل الدخول</Link>
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="email" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>البريد الإلكتروني Address</FormLabel>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
                   </FormItem>
                 )} />
                 <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
-                  {isLoading ? "Sending link..." : "إرسال رابط إعادة التعيين"}
+                  {isLoading ? "جاري إرسال الرابط..." : "إرسال رابط إعادة التعيين"}
                 </Button>
                 <Button asChild variant="ghost" className="w-full gap-2">
                   <Link href="/login">

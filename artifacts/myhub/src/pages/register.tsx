@@ -128,8 +128,8 @@ export default function RegisterPage() {
       });
     } catch (error: any) {
       toast({
-        title: "Registration failed",
-        description: error.message || "An error occurred during registration",
+        title: "فشل التسجيل",
+        description: error.message || "حدث خطأ أثناء التسجيل",
         variant: "destructive",
       });
     } finally {
@@ -146,8 +146,8 @@ export default function RegisterPage() {
           </div>
           <CardTitle className="text-2xl font-bold mb-2">تحقق من بريدك الإلكتروني</CardTitle>
           <CardDescription className="text-base">
-            We've sent a verification link to <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
-            Please click the link to verify your account.
+            لقد أرسلنا رابط تحقق إلى <span className="font-semibold text-foreground">{form.getValues("email")}</span>.
+            يرجى النقر على الرابط لتفعيل حسابك.
           </CardDescription>
           <Button asChild className="mt-8 w-full">
             <Link href="/login">العودة لتسجيل الدخول</Link>
@@ -223,14 +223,14 @@ export default function RegisterPage() {
                 </FormItem>
               )} />
               <Button type="submit" className="w-full h-11 font-semibold mt-2" disabled={isLoading || emailCheckLoading}>
-                {isLoading ? "جاري إنشاء الحساب..." : emailCheckLoading ? "Checking email..." : "تسجيل"}
+                {isLoading ? "جاري إنشاء الحساب..." : emailCheckLoading ? "جاري التحقق من البريد..." : "تسجيل الحساب"}
               </Button>
             </form>
           </Form>
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            لديك حساب بالفعل؟{" "}
             <Link href="/login" className="text-primary font-medium hover:underline">
-              Sign in
+              تسجيل الدخول
             </Link>
           </div>
         </CardContent>

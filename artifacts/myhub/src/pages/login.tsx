@@ -40,14 +40,14 @@ function UnifiedLoginForm() {
       onSuccess: async (data) => {
         if (data.success) {
           await queryClient.invalidateQueries({ queryKey: ["/api/admin/me"] });
-          toast({ title: "المسؤول access granted" });
+          toast({ title: "تم تسجيل دخول المسؤول" });
           setLocation("/admin/dashboard");
         }
       },
       onError: () => {
         toast({ 
-          title: "دخول failed", 
-          description: "كلمة المرور or username is incorrect.", 
+          title: "فشل تسجيل الدخول", 
+          description: "اسم المستخدم أو كلمة المرور غير صحيحة.", 
           variant: "destructive" 
         });
       },
@@ -85,7 +85,7 @@ function UnifiedLoginForm() {
       
     } catch (error: any) {
       toast({
-        title: "دخول failed",
+        title: "فشل تسجيل الدخول",
         description: error.message,
         variant: "destructive",
       });
@@ -109,7 +109,7 @@ function UnifiedLoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField control={form.control} name="identifier" render={({ field }) => (
             <FormItem>
-              <FormLabel>البريد الإلكتروني or اسم المستخدم</FormLabel>
+              <FormLabel>البريد الإلكتروني أو اسم المستخدم</FormLabel>
               <FormControl>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -147,7 +147,7 @@ function UnifiedLoginForm() {
             className="w-full h-11 font-semibold"
             disabled={isLoading || loginMutation.isPending}
           >
-            {isLoading || loginMutation.isPending ? "جاري تسجيل الدخول..." : "دخول"}
+            {isLoading || loginMutation.isPending ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
           </Button>
 
           <div className="relative my-6">

@@ -33,8 +33,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  price: z.coerce.number().min(0.01, "السعر must be > 0"),
-  category: z.string().min(1, "الفئة is required"),
+  price: z.coerce.number().min(0.01, "السعر يجب أن يكون أكبر من 0"),
+  category: z.string().min(1, "الفئة مطلوبة"),
   description: z.string().optional(),
   available: z.boolean().default(true),
 });
@@ -138,27 +138,27 @@ export default function AdminMenu() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
             <UtensilsCrossed className="w-8 h-8 text-primary" />
-            القائمة Management
+            إدارة القائمة
           </h1>
-          <p className="text-muted-foreground mt-1">إضافة, edit, and organize café menu items.</p>
+          <p className="text-muted-foreground mt-1">إضافة وتعديل وتنظيم عناصر قائمة المقهى.</p>
         </div>
 
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
             <Button className="shrink-0 h-10">
-              <Plus className="w-4 h-4 mr-2" /> إضافة العنصر
+              <Plus className="w-4 h-4 mr-2" /> إضافة عنصر
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>إضافة القائمة العنصر</DialogTitle>
-              <DialogDescription>Create a new product for the menu.</DialogDescription>
+              <DialogTitle>إضافة عنصر جديد</DialogTitle>
+              <DialogDescription>أنشئ منتجًا جديدًا للقائمة.</DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
               <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                 <FormField control={addForm.control} name="name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>العنصر Name</FormLabel>
+                    <FormLabel>اسم العنصر</FormLabel>
                     <FormControl><Input placeholder="e.g. Iced Latte" {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -191,15 +191,15 @@ export default function AdminMenu() {
                 </div>
                 <FormField control={addForm.control} name="description" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>الوصف (Optional)</FormLabel>
-                    <FormControl><Textarea className="resize-none" rows={3} placeholder="Brief description of the item..." {...field} /></FormControl>
+                    <FormLabel>الوصف (اختياري)</FormLabel>
+                    <FormControl><Textarea className="resize-none" rows={3} placeholder="وصف موجز للعنصر..." {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <FormField control={addForm.control} name="available" render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">متاحة for order</FormLabel>
+                      <FormLabel className="text-base">متاح للطلب</FormLabel>
                     </div>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -220,7 +220,7 @@ export default function AdminMenu() {
       <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>تعديل القائمة العنصر</DialogTitle>
+            <DialogTitle>تعديل العنصر</DialogTitle>
           </DialogHeader>
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
@@ -266,7 +266,7 @@ export default function AdminMenu() {
               )} />
               <DialogFooter className="pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditingProduct(null)}>إلغاء</Button>
-                <Button type="submit" disabled={updateProduct.isPending}>Update العنصر</Button>
+                <Button type="submit" disabled={updateProduct.isPending}>تحديث العنصر</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -277,7 +277,7 @@ export default function AdminMenu() {
         <div className="relative w-full lg:w-[300px] shrink-0">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="بحث menu..." 
+            placeholder="بحث في القائمة..." 
             className="pl-9 h-10 bg-card" 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -304,7 +304,7 @@ export default function AdminMenu() {
           Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-44 rounded-xl" />)
         ) : filteredProducts.length === 0 ? (
           <div className="col-span-full py-20 text-center text-muted-foreground border border-dashed rounded-xl bg-card/50">
-            لا items found matching your criteria.
+            لا توجد عناصر مطابقة لمعاييرك.
           </div>
         ) : (
           filteredProducts.map((product) => (
@@ -318,7 +318,7 @@ export default function AdminMenu() {
                 </div>
                 <Badge variant="outline" className="mb-3 capitalize text-xs">{product.category}</Badge>
                 <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
-                  {product.description || "لا description provided."}
+                  {product.description || "لا يوجد وصف."}
                 </p>
               </CardContent>
               <CardFooter className="p-4 pt-0 gap-2 border-t border-border/50 bg-secondary/10 mt-auto flex flex-col sm:flex-row">

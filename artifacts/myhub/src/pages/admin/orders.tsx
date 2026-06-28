@@ -74,17 +74,17 @@ export default function AdminOrders() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
             <Receipt className="w-8 h-8 text-primary" />
-            الطلب Management
+            إدارة الطلبات
           </h1>
-          <p className="text-muted-foreground mt-1">Track and update kitchen orders in real-time.</p>
+          <p className="text-muted-foreground mt-1">تتبع وتحديث طلبات المطبخ في الوقت الفعلي.</p>
         </div>
 
         <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full md:w-auto">
           <TabsList className="grid w-full grid-cols-4 bg-secondary">
-            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="all">الكل</TabsTrigger>
             <TabsTrigger value="pending" className="data-[state=active]:text-amber-500">قيد الانتظار</TabsTrigger>
-            <TabsTrigger value="preparing" className="data-[state=active]:text-blue-500">Preparing</TabsTrigger>
-            <TabsTrigger value="completed" className="data-[state=active]:text-green-500">Done</TabsTrigger>
+            <TabsTrigger value="preparing" className="data-[state=active]:text-blue-500">قيد التحضير</TabsTrigger>
+            <TabsTrigger value="completed" className="data-[state=active]:text-green-500">مكتمل</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -94,7 +94,7 @@ export default function AdminOrders() {
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36 w-full rounded-xl" />)
         ) : orders?.length === 0 ? (
-          <div className="py-16 text-center text-muted-foreground border border-dashed rounded-xl">لا orders found.</div>
+          <div className="py-16 text-center text-muted-foreground border border-dashed rounded-xl">لا توجد طلبات.</div>
         ) : (
           orders?.map((order) => (
             <div key={order.id} className="rounded-xl border border-border/50 bg-card p-4 space-y-3 shadow-sm">
@@ -128,7 +128,7 @@ export default function AdminOrders() {
                 </div>
                 {order.status !== 'completed' && (
                   <Button size="sm" className="h-8 text-xs" onClick={() => handleStatusChange(order.id, order.status === 'pending' ? 'preparing' : 'completed')}>
-                    {order.status === 'pending' ? 'Start' : 'Finish'} <CheckCircle2 className="w-3.5 h-3.5 ml-1" />
+                    {order.status === 'pending' ? 'بدء' : 'إنهاء'} <CheckCircle2 className="w-3.5 h-3.5 ml-1" />
                   </Button>
                 )}
               </div>
@@ -142,13 +142,13 @@ export default function AdminOrders() {
         <Table>
           <TableHeader className="bg-secondary/50">
             <TableRow>
-              <TableHead className="w-[100px]">الطلب ID</TableHead>
-              <TableHead>Table</TableHead>
+              <TableHead className="w-[100px]">رقم الطلب</TableHead>
+              <TableHead>الطاولة</TableHead>
               <TableHead className="w-[300px]">العناصر</TableHead>
               <TableHead>الوقت</TableHead>
               <TableHead>الإجمالي</TableHead>
               <TableHead>الحالة</TableHead>
-              <TableHead>Payment</TableHead>
+              <TableHead>الدفع</TableHead>
               <TableHead className="text-right">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
@@ -169,7 +169,7 @@ export default function AdminOrders() {
             ) : orders?.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
-                  لا orders found for this filter.
+                  لا توجد طلبات لهذا الفلتر.
                 </TableCell>
               </TableRow>
             ) : (
@@ -193,7 +193,7 @@ export default function AdminOrders() {
                       {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </TableCell>
-                  <TableCell className="font-bold text-base">${order.totalAmount.toFixed(2)}</TableCell>
+                  <TableCell className="font-bold text-base">₪{order.totalAmount.toFixed(2)}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -202,18 +202,18 @@ export default function AdminOrders() {
                           order.status === 'preparing' ? 'border-blue-500/50 text-blue-500 bg-blue-500/5' :
                           'border-green-500/50 text-green-500 bg-green-500/5'
                         }`}>
-                          {order.status === 'pending' ? 'قيد الانتظار' : order.status === 'preparing' ? 'Preparing' : 'مكتمل'}
+                          {order.status === 'pending' ? 'قيد الانتظار' : order.status === 'preparing' ? 'قيد التحضير' : 'مكتمل'}
                           <ChevronDown className="w-3 h-3 ml-1" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Update الحالة</DropdownMenuLabel>
+                        <DropdownMenuLabel>تحديث الحالة</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'pending')} disabled={order.status === 'pending'}>
                           قيد الانتظار
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'preparing')} disabled={order.status === 'preparing'}>
-                          Preparing
+                          قيد التحضير
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'completed')} disabled={order.status === 'completed'}>
                           مكتمل
@@ -241,7 +241,7 @@ export default function AdminOrders() {
                         onClick={() => handleStatusChange(order.id, order.status === 'pending' ? 'preparing' : 'completed')}
                         className="bg-primary text-primary-foreground hover:bg-primary/90"
                       >
-                        {order.status === 'pending' ? 'Start' : 'Finish'} <CheckCircle2 className="w-4 h-4 ml-1.5" />
+                        {order.status === 'pending' ? 'بدء' : 'إنهاء'} <CheckCircle2 className="w-4 h-4 ml-1.5" />
                       </Button>
                     )}
                   </TableCell>

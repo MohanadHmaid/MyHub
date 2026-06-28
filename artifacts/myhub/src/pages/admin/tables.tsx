@@ -28,8 +28,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const tableSchema = z.object({
-  name: z.string().min(1, "Table name is required"),
-  capacity: z.coerce.number().min(1, "السعة must be at least 1").max(20, "السعة max 20"),
+  name: z.string().min(1, "اسم الطاولة مطلوب"),
+  capacity: z.coerce.number().min(1, "السعة يجب أن تكون 1 على الأقل").max(20, "السعة يجب أن لا تتجاوز 20"),
 });
 
 export default function AdminTables() {
@@ -45,7 +45,7 @@ export default function AdminTables() {
   const createTable = useCreateTable({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Table created" });
+        toast({ title: "تم إنشاء الطاولة بنجاح" });
         queryClient.invalidateQueries({ queryKey: getGetTablesQueryKey() });
         setIsAddOpen(false);
         addForm.reset();
@@ -56,7 +56,7 @@ export default function AdminTables() {
   const updateTable = useUpdateTable({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Table updated" });
+        toast({ title: "تم تحديث الطاولة بنجاح" });
         queryClient.invalidateQueries({ queryKey: getGetTablesQueryKey() });
         setEditingTable(null);
       }
@@ -66,7 +66,7 @@ export default function AdminTables() {
   const deleteTable = useDeleteTable({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Table deleted" });
+        toast({ title: "تم حذف الطاولة بنجاح" });
         queryClient.invalidateQueries({ queryKey: getGetTablesQueryKey() });
       }
     }
@@ -106,20 +106,20 @@ export default function AdminTables() {
     <AdminLayout>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Table Management</h1>
-          <p className="text-muted-foreground mt-1">Configure and monitor all tables in the café.</p>
+          <h1 className="text-3xl font-bold tracking-tight">إدارة الطاولات</h1>
+          <p className="text-muted-foreground mt-1">تكوين ومراقبة جميع الطاولات في المقهى.</p>
         </div>
 
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
             <Button className="shrink-0">
-              <Plus className="w-4 h-4 mr-2" /> إضافة Table
+              <Plus className="w-4 h-4 mr-2" /> إضافة طاولة
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>إضافة New Table</DialogTitle>
-              <DialogDescription>Create a new table for customers to order from.</DialogDescription>
+              <DialogTitle>إضافة طاولة جديدة</DialogTitle>
+              <DialogDescription>أنشئ طاولة جديدة ليتمكن العملاء من الطلب منها.</DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
               <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
@@ -139,7 +139,7 @@ export default function AdminTables() {
                 )} />
                 <DialogFooter className="pt-4">
                   <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)}>إلغاء</Button>
-                  <Button type="submit" disabled={createTable.isPending}>Create Table</Button>
+                  <Button type="submit" disabled={createTable.isPending}>إنشاء الطاولة</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -150,8 +150,8 @@ export default function AdminTables() {
       <Dialog open={!!editingTable} onOpenChange={(open) => !open && setEditingTable(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>تعديل Table</DialogTitle>
-            <DialogDescription>Update table details.</DialogDescription>
+            <DialogTitle>تعديل الطاولة</DialogTitle>
+            <DialogDescription>تحديث تفاصيل الطاولة.</DialogDescription>
           </DialogHeader>
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
@@ -171,7 +171,7 @@ export default function AdminTables() {
               )} />
               <DialogFooter className="pt-4">
                 <Button type="button" variant="outline" onClick={() => setEditingTable(null)}>إلغاء</Button>
-                <Button type="submit" disabled={updateTable.isPending}>حفظ Changes</Button>
+                <Button type="submit" disabled={updateTable.isPending}>حفظ التغييرات</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -183,7 +183,7 @@ export default function AdminTables() {
           Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)
         ) : tables?.length === 0 ? (
           <div className="col-span-full py-20 text-center text-muted-foreground border border-dashed rounded-xl">
-            لا tables configured yet.
+            لا توجد طاولات مضافة بعد.
           </div>
         ) : (
           tables?.map((table) => (
@@ -234,9 +234,9 @@ export default function AdminTables() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>هل أنت متأكد تماماً؟</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently delete table {table.name} and remove it from the system.
+                          سيؤدي هذا إلى حذف الطاولة {table.name} نهائياً وإزالتها من النظام.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

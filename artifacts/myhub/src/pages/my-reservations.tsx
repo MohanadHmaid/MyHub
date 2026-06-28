@@ -42,14 +42,14 @@ export default function MyReservationsPage() {
           <div className="bg-primary/10 p-5 rounded-2xl">
             <UserCircle className="w-12 h-12 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Sign in to view your reservations</h1>
-          <p className="text-muted-foreground max-w-sm">Create a free account or sign in to keep track of all your bookings.</p>
+          <h1 className="text-3xl font-bold">سجل الدخول لعرض حجوزاتك</h1>
+          <p className="text-muted-foreground max-w-sm">أنشئ حساباً مجانياً أو سجل الدخول لتتمكن من متابعة جميع حجوزاتك.</p>
           <div className="flex gap-3 flex-wrap justify-center">
             <Link href="/login">
-              <Button size="lg" className="h-12 px-8">دخول</Button>
+              <Button size="lg" className="h-12 px-8">تسجيل الدخول</Button>
             </Link>
             <Link href="/register">
-              <Button size="lg" variant="outline" className="h-12 px-8">تسجيل</Button>
+              <Button size="lg" variant="outline" className="h-12 px-8">تسجيل جديد</Button>
             </Link>
           </div>
         </div>
@@ -63,15 +63,15 @@ export default function MyReservationsPage() {
         <div className="flex items-start justify-between mb-8 gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold">حجوزاتي</h1>
-            <p className="text-muted-foreground text-sm mt-1">Logged in as <span className="font-medium text-foreground">{customer.name}</span></p>
+            <p className="text-muted-foreground text-sm mt-1">تم تسجيل الدخول باسم <span className="font-medium text-foreground">{customer.name}</span></p>
           </div>
           <div className="flex gap-2">
             <Link href="/reservation">
               <Button variant="outline" className="gap-2">
-                <CalendarCheck className="w-4 h-4" /> New Reservation
+                <CalendarCheck className="w-4 h-4" /> حجز جديد
               </Button>
             </Link>
-            <Button variant="ghost" size="icon" onClick={customerLogout} title="Sign out">
+            <Button variant="ghost" size="icon" onClick={customerLogout} title="تسجيل الخروج">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -87,9 +87,9 @@ export default function MyReservationsPage() {
               <CalendarCheck className="w-12 h-12 text-primary/60" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-xl font-bold">لا reservations found</h2>
+              <h2 className="text-xl font-bold">لا توجد حجوزات</h2>
               <p className="text-muted-foreground max-w-xs mx-auto">
-                You haven't made any bookings yet. Ready to secure your spot at MyHUB?
+                لم تقم بأي حجوزات بعد. هل أنت مستعد لتأمين مكانك في MyHUB؟
               </p>
             </div>
             <Link href="/reservation">
@@ -105,14 +105,14 @@ export default function MyReservationsPage() {
               <div key={r.id} className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm space-y-3 hover:border-primary/30 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-bold text-lg">{format(Date(r.dateTime), "EEEE, MMM d, yyyy")}</p>
+                    <p className="font-bold text-lg">{format(new Date(r.dateTime), "EEEE, MMM d, yyyy")}</p>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{format(Date(r.dateTime), "h:mm a")}</span>
-                      <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{r.partySize} {r.partySize === 1 ? "person" : "people"}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{format(new Date(r.dateTime), "h:mm a")}</span>
+                      <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{r.partySize} {r.partySize === 1 ? "شخص" : "أشخاص"}</span>
                     </div>
                   </div>
                   <Badge className={`capitalize border text-xs font-semibold ${statusColors[r.status] ?? ""}`} variant="outline">
-                    {r.status}
+                    {r.status === 'confirmed' ? 'مؤكد' : r.status === 'cancelled' ? 'ملغى' : 'قيد الانتظار'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-border/50">
@@ -120,7 +120,7 @@ export default function MyReservationsPage() {
                     <QrCode className="w-3.5 h-3.5" />
                     <span className="tracking-widest font-semibold text-foreground">{r.code}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">Use this code to check in at your table</span>
+                  <span className="text-xs text-muted-foreground">استخدم هذا الكود عند الحضور للمقهى لتسجيل الدخول لطاولتك</span>
                 </div>
               </div>
             ))}

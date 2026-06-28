@@ -14,7 +14,7 @@ import { Link } from "wouter";
 import { useMemo } from "react";
 
 const HOURS = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"];
-const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAYS = ["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
 
 export default function AdminDashboard() {
   // Fetch raw data to compute our own summary instead of relying on the crashing /api/dashboard/summary
@@ -93,41 +93,41 @@ export default function AdminDashboard() {
 
   const statsCards = summary ? [
     {
-      title: "Today's Revenue",
+      title: "إيرادات اليوم",
       value: `₪${summary.todayRevenue.toFixed(2)}`,
-      description: "مدفوع orders today",
+      description: "الطلبات المدفوعة اليوم",
       icon: TrendingUp,
       color: "text-emerald-600",
       bg: "bg-emerald-500/10",
     },
     {
-      title: "غير مدفوع المبلغ",
+      title: "المبلغ غير المدفوع",
       value: `₪${summary.unpaidAmount.toFixed(2)}`,
-      description: "الإجمالي pending payments",
+      description: "إجمالي المدفوعات المعلقة",
       icon: Receipt,
       color: "text-red-600",
       bg: "bg-red-500/10",
     },
     {
-      title: "Table الحالة",
+      title: "حالة الطاولات",
       value: `${summary.occupiedTables} / ${summary.totalTables}`,
-      description: `${summary.availableTables} available now`,
+      description: `${summary.availableTables} متاحة الآن`,
       icon: Monitor,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
     },
     {
-      title: "قيد الانتظار Bookings",
+      title: "حجوزات قيد الانتظار",
       value: summary.pendingReservations,
-      description: "الحجوزات to review",
+      description: "حجوزات تحتاج مراجعة",
       icon: Calendar,
       color: "text-purple-500",
       bg: "bg-purple-500/10",
     },
     {
-      title: "Today's Guests",
+      title: "ضيوف اليوم",
       value: summary.confirmedToday,
-      description: "Confirmed for today",
+      description: "مؤكدة لليوم",
       icon: Users,
       color: "text-amber-500",
       bg: "bg-amber-500/10",
@@ -142,13 +142,13 @@ export default function AdminDashboard() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">لوحة التحكم Overview</h1>
-            <p className="text-muted-foreground mt-1">Live status and performance metrics for MyHUB.</p>
+            <h1 className="text-3xl font-bold tracking-tight">نظرة عامة على لوحة التحكم</h1>
+            <p className="text-muted-foreground mt-1">الحالة المباشرة ومؤشرات الأداء لـ MyHUB.</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 gap-1.5 py-1 px-3">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Live System
+              النظام مباشر
             </Badge>
           </div>
         </div>
@@ -185,12 +185,12 @@ export default function AdminDashboard() {
           <Card className="lg:col-span-2 border-border/50 shadow-sm flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-4 mb-4">
               <div>
-                <CardTitle>Recent الطلبات</CardTitle>
-                <CardDescription>Latest activity across all tables</CardDescription>
+                <CardTitle>أحدث الطلبات</CardTitle>
+                <CardDescription>آخر النشاطات على جميع الطاولات</CardDescription>
               </div>
               <Button variant="ghost" size="sm" asChild className="text-primary hover:text-primary hover:bg-primary/5">
                 <Link href="/admin/orders" className="flex items-center">
-                  View All <ChevronRight className="w-4 h-4 ml-1" />
+                  عرض الكل <ChevronRight className="w-4 h-4 ml-1" />
                 </Link>
               </Button>
             </CardHeader>
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
               ) : recentOrders?.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-10">
                   <Receipt className="w-10 h-10 mb-4 opacity-20" />
-                  <p>لا orders found for today.</p>
+                  <p>لا توجد طلبات اليوم.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                             <Clock className="w-3 h-3 mr-1" />
                             {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             <span className="mx-2">•</span>
-                            {order.items.length} items
+                            {order.items.length} عناصر
                           </div>
                         </div>
                       </div>
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
           <div className="flex flex-col gap-6">
             <Card className="border-border/50 shadow-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Table Utilization</CardTitle>
+                <CardTitle className="text-base">استخدام الطاولات</CardTitle>
               </CardHeader>
               <CardContent>
                 {isLoadingTables ? (
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
                         {summary.totalTables > 0 ? Math.round((summary.occupiedTables / summary.totalTables) * 100) : 0}%
                       </div>
                       <div className="text-xs text-muted-foreground pb-1">
-                        {summary.occupiedTables} of {summary.totalTables} tables
+                        {summary.occupiedTables} من {summary.totalTables} طاولة
                       </div>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2">
@@ -282,7 +282,7 @@ export default function AdminDashboard() {
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-primary" />
-                  <CardTitle className="text-base">Peak Hours</CardTitle>
+                  <CardTitle className="text-base">ساعات الذروة</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -312,14 +312,14 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-2 border-t border-border/50">
-                      <span>Quiet</span>
+                      <span>هادئ</span>
                       <div className="flex gap-1">
                         <div className="w-2 h-2 rounded-sm bg-secondary" />
                         <div className="w-2 h-2 rounded-sm bg-emerald-200" />
                         <div className="w-2 h-2 rounded-sm bg-amber-300" />
                         <div className="w-2 h-2 rounded-sm bg-red-400" />
                       </div>
-                      <span>Busy</span>
+                      <span>مزدحم</span>
                     </div>
                   </div>
                 )}

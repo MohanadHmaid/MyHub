@@ -24,9 +24,9 @@ const TIME_SLOTS = [
 const STEPS = [
   { num: 1, label: "التاريخ" },
   { num: 2, label: "الوقت" },
-  { num: 3, label: "Table" },
-  { num: 4, label: "Your معلومة" },
-  { num: 5, label: "Summary" },
+  { num: 3, label: "الطاولة" },
+  { num: 4, label: "المعلومات الشخصية" },
+  { num: 5, label: "ملخص الحجز" },
 ];
 
 function StepIndicator({ current }: { current: number }) {
@@ -173,8 +173,8 @@ export default function Reservation() {
       },
       onError: (error: any) => {
         toast({
-          title: "Reservation failed",
-          description: error.message || "Please try again",
+          title: "فشل الحجز",
+          description: error.message || "يرجى المحاولة مرة أخرى",
           variant: "destructive",
         });
       },
@@ -189,8 +189,8 @@ export default function Reservation() {
   const validateStep4 = () => {
     const e: Record<string, string> = {};
     if (name.trim().length < 2) e.name = "يجب أن يكون الاسم حرفين على الأقل";
-    if (phone.trim().length < 10) e.phone = "Please enter a valid phone number";
-    if (partySize < 1 || partySize > 20) e.partySize = "Party size must be between 1 and 20";
+    if (phone.trim().length < 10) e.phone = "يرجى إدخال رقم هاتف صالح";
+    if (partySize < 1 || partySize > 20) e.partySize = "عدد الأشخاص يجب أن يكون بين 1 و 20";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -218,7 +218,7 @@ export default function Reservation() {
       <div className={`container mx-auto px-4 py-12 transition-all ${step === 1 ? "max-w-5xl" : "max-w-2xl"}`}>
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold tracking-tight mb-2">احجز طاولة</h1>
-          <p className="text-muted-foreground">Complete the steps below to secure your spot at MyHUB.</p>
+          <p className="text-muted-foreground">أكمل الخطوات أدناه لتأمين مكانك في MyHUB.</p>
         </div>
 
         <StepIndicator current={step} />
@@ -232,19 +232,19 @@ export default function Reservation() {
                 <div className="bg-primary/15 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                   <CalendarCheck className="w-8 h-8 text-primary" />
                 </div>
-                <h2 className="text-3xl font-extrabold tracking-tight mb-3">Choose a التاريخ</h2>
+                <h2 className="text-3xl font-extrabold tracking-tight mb-3">اختر التاريخ</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Pick the day you'd like to visit MyHUB. Past dates are unavailable.
+                  اختر اليوم الذي ترغب فيه بزيارة مقهى MyHUB. التواريخ السابقة غير متاحة.
                 </p>
 
                 {/* Legend */}
                 <div className="mt-6 space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2">Availability</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2">حالة التوفر</p>
                   {[
-                    { color: "#dcfce7", border: "#86efac", label: "All tables free" },
-                    { color: "#fef9c3", border: "#fde047", label: "Partially booked" },
-                    { color: "#fee2e2", border: "#fca5a5", label: "Heavily booked" },
-                    { color: "#f3f4f6", border: "#d1d5db", label: "Fully booked / unavailable", cross: true },
+                    { color: "#dcfce7", border: "#86efac", label: "جميع الطاولات متاحة" },
+                    { color: "#fef9c3", border: "#fde047", label: "محجوزة جزئياً" },
+                    { color: "#fee2e2", border: "#fca5a5", label: "حجوزات كثيرة" },
+                    { color: "#f3f4f6", border: "#d1d5db", label: "ممتلئ بالكامل / غير متاح", cross: true },
                   ].map((item) => (
                     <div key={item.label} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="inline-block w-5 h-5 rounded-md border flex-shrink-0" style={{ backgroundColor: item.color, borderColor: item.border }} />
@@ -255,8 +255,8 @@ export default function Reservation() {
 
                 {selectedDate && (
                   <div className="mt-6 bg-primary/10 border border-primary/20 rounded-2xl p-4">
-                    <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Selected التاريخ</p>
-                    <p className="text-xl font-bold text-foreground">{format(selectedDate, "MMMM d, yyyy")}</p>
+                    <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">التاريخ المختار</p>
+                    <p className="text-xl font-bold text-foreground">{format(selectedDate, "yyyy-MM-dd")}</p>
                     <p className="text-sm text-muted-foreground mt-0.5">{format(selectedDate, "EEEE")}</p>
                   </div>
                 )}
@@ -267,7 +267,7 @@ export default function Reservation() {
                 disabled={!selectedDate}
                 onClick={goNext}
               >
-                Continue <ChevronRight className="w-4 h-4 ml-1" />
+                متابعة <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
 
@@ -307,7 +307,7 @@ export default function Reservation() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
               <Clock className="w-5 h-5 text-primary" />
-              Pick a الوقت Slot
+              اختر الفترة الزمنية
               {selectedDate && (
                 <span className="text-muted-foreground font-normal text-sm ml-1">
                   — {format(selectedDate, "EEE, MMM d")}
@@ -339,7 +339,7 @@ export default function Reservation() {
                         ? "bg-primary text-primary-foreground border-primary shadow-md"
                         : "bg-emerald-50 border-emerald-300 hover:border-primary/50 text-foreground"
                     }`}
-                    title={isPast ? "الوقت has already passed" : isSlotFull ? "لا tables available" : ""}
+                    title={isPast ? "هذا الوقت قد مضى بالفعل" : isSlotFull ? "لا توجد طاولات متاحة" : ""}
                   >
                     {display}
                   </button>
@@ -351,7 +351,7 @@ export default function Reservation() {
                 <ChevronLeft className="w-4 h-4 mr-1" /> رجوع
               </Button>
               <Button className="flex-1 h-11" disabled={!selectedTime} onClick={goNext}>
-                Continue <ChevronRight className="w-4 h-4 ml-1" />
+                متابعة <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
@@ -362,8 +362,8 @@ export default function Reservation() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
               <Monitor className="w-5 h-5 text-primary" />
-              Select a Table
-              <span className="text-muted-foreground font-normal text-sm ml-1">(optional — we can auto-assign)</span>
+              اختر طاولة
+              <span className="text-muted-foreground font-normal text-sm ml-1">(اختياري — يمكننا التخصيص تلقائياً)</span>
             </div>
             {tablesLoading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -402,7 +402,7 @@ export default function Reservation() {
                         <Users className="w-3 h-3" /> حتى {table.capacity}
                       </div>
                       {!isTableAvailable && <span className="text-xs text-amber-600 font-medium mt-1 block">محجوزة</span>}
-                      {isSelected && <span className="text-xs text-primary font-semibold mt-1 block">Selected ✓</span>}
+                      {isSelected && <span className="text-xs text-primary font-semibold mt-1 block">تم اختيارها ✓</span>}
                     </button>
                   );
                 })}
@@ -413,7 +413,7 @@ export default function Reservation() {
                 <ChevronLeft className="w-4 h-4 mr-1" /> رجوع
               </Button>
               <Button className="flex-1 h-11" onClick={goNext}>
-                {selectedTableId ? "Continue" : "Skip & Continue"} <ChevronRight className="w-4 h-4 ml-1" />
+                {selectedTableId ? "متابعة" : "تخطي ومتابعة"} <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
@@ -424,19 +424,19 @@ export default function Reservation() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
               <User className="w-5 h-5 text-primary" />
-              Your Information
+              معلوماتك
             </div>
 
             {!isLoggedIn && (
               <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
                 <UserPlus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p className="font-semibold text-foreground">حفظ your reservation history</p>
+                  <p className="font-semibold text-foreground">حفظ سجل الحجوزات الخاصة بك</p>
                   <p className="text-muted-foreground mt-0.5">
-                    <Link href="/register" className="text-primary font-medium hover:underline">Create a free account</Link>{" "}
-                    or{" "}
-                    <Link href="/login" className="text-primary font-medium hover:underline">sign in</Link>{" "}
-                    to access all your bookings anytime.
+                    <Link href="/register" className="text-primary font-medium hover:underline">أنشئ حساباً مجانياً</Link>{" "}
+                    أو{" "}
+                    <Link href="/login" className="text-primary font-medium hover:underline">سجل الدخول</Link>{" "}
+                    للوصول إلى جميع حجوزاتك في أي وقت.
                   </p>
                 </div>
               </div>
@@ -444,7 +444,7 @@ export default function Reservation() {
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="name">Full Name <span className="text-destructive">*</span></Label>
+                <Label htmlFor="name">الاسم الكامل <span className="text-destructive">*</span></Label>
                 <div className="relative">
                   <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -459,7 +459,7 @@ export default function Reservation() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="phone">Phone Number <span className="text-destructive">*</span></Label>
+                <Label htmlFor="phone">رقم الهاتف <span className="text-destructive">*</span></Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -475,7 +475,7 @@ export default function Reservation() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="email">البريد الإلكتروني Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                <Label htmlFor="email">البريد الإلكتروني <span className="text-muted-foreground text-xs">(اختياري)</span></Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -490,7 +490,7 @@ export default function Reservation() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="party">Party Size <span className="text-destructive">*</span></Label>
+                <Label htmlFor="party">عدد الأشخاص <span className="text-destructive">*</span></Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -515,7 +515,7 @@ export default function Reservation() {
                 className="flex-1 h-11"
                 onClick={() => { if (validateStep4()) goNext(); }}
               >
-                Continue <ChevronRight className="w-4 h-4 ml-1" />
+                متابعة <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
@@ -526,7 +526,7 @@ export default function Reservation() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-2 text-lg font-semibold">
               <CreditCard className="w-5 h-5 text-primary" />
-              Booking Summary
+              ملخص الحجز
             </div>
 
             <Card className="border-2 border-primary/20">
@@ -544,7 +544,7 @@ export default function Reservation() {
                 <div className="flex items-center justify-between py-3 border-b border-border">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="w-4 h-4 text-primary" />
-                    الوقت Slot
+                    الفترة الزمنية
                   </div>
                   <span className="font-semibold text-sm">
                     {selectedTime ? (() => {
@@ -560,14 +560,14 @@ export default function Reservation() {
                     Table
                   </div>
                   <span className="font-semibold text-sm">
-                    {selectedTable ? selectedTable.name : "Auto-assigned by staff"}
+                    {selectedTable ? selectedTable.name : "سيتم التخصيص تلقائياً من قبل الموظفين"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between py-3 border-b border-border">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <User className="w-4 h-4 text-primary" />
-                    Name
+                    الاسم الكامل
                   </div>
                   <span className="font-semibold text-sm">{name}</span>
                 </div>
@@ -575,18 +575,18 @@ export default function Reservation() {
                 <div className="flex items-center justify-between py-3 border-b border-border">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Users className="w-4 h-4 text-primary" />
-                    Party Size
+                    عدد الأشخاص
                   </div>
-                  <span className="font-semibold text-sm">{partySize} {partySize === 1 ? "person" : "people"}</span>
+                  <span className="font-semibold text-sm">{partySize} {partySize === 1 ? "شخص" : "أشخاص"}</span>
                 </div>
 
                 <div className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CreditCard className="w-4 h-4 text-primary" />
-                    Payment
+                    الدفع
                   </div>
                   <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 font-semibold">
-                    Pay at Café
+                    الدفع في المقهى
                   </Badge>
                 </div>
               </CardContent>
@@ -601,7 +601,7 @@ export default function Reservation() {
                 onClick={handleConfirm}
                 disabled={createReservation.isPending}
               >
-                {createReservation.isPending ? "Confirming..." : "تأكيد Reservation"}
+                {createReservation.isPending ? "جاري التأكيد..." : "تأكيد الحجز"}
               </Button>
             </div>
           </div>

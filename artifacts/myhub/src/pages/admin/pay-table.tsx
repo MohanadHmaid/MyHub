@@ -71,21 +71,21 @@ export default function AdminPayTable() {
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getGetTablesQueryKey() });
-        toast({ title: "Table cleared", description: `${selectedTable?.name} is now available.` });
+        toast({ title: "تم تحرير الطاولة", description: `${selectedTable?.name} متاحة الآن للعملاء.` });
         setSelectedTable(null);
         setAmount("");
         setQrLink(null);
         setConfirmDialogOpen(false);
       },
       onError: () => {
-        toast({ title: "Failed to clear table", variant: "destructive" });
+        toast({ title: "فشل تحرير الطاولة", variant: "destructive" });
       },
     },
   });
 
   const handleGenerateQR = () => {
     if (!selectedTable || !amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      toast({ title: "Invalid amount", description: "Please select a table and enter a valid amount.", variant: "destructive" });
+      toast({ title: "مبلغ غير صالح", description: "يرجى اختيار طاولة وإدخال مبلغ صالح.", variant: "destructive" });
       return;
     }
     // Format: *268*1*0595256882*[السعر in placeholder]#
@@ -104,16 +104,16 @@ export default function AdminPayTable() {
     <AdminLayout>
       <div className="flex flex-col gap-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pay for Table</h1>
+          <h1 className="text-3xl font-bold tracking-tight">دفع حساب الطاولة</h1>
           <p className="text-muted-foreground mt-1">
-            Select an occupied table, set the amount, generate a payment QR code, then clear the table on approval.
+            اختر طاولة مشغولة، وحدد المبلغ، ثم أنشئ رمز الاستجابة السريعة (QR) للدفع، وحرر الطاولة بعد الموافقة.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Table Selection */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Step 1 — Select a Table</h2>
+            <h2 className="text-lg font-semibold">الخطوة 1 — اختر طاولة</h2>
             {tablesLoading ? (
               <div className="grid grid-cols-2 gap-4">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -123,7 +123,7 @@ export default function AdminPayTable() {
             ) : occupiedTables.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 border border-dashed rounded-xl text-muted-foreground gap-2">
                 <Monitor className="w-8 h-8 opacity-30" />
-                <p className="text-sm">لا occupied or reserved tables right now.</p>
+                <p className="text-sm">لا توجد طاولات مشغولة أو محجوزة حالياً.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4">
@@ -171,19 +171,19 @@ export default function AdminPayTable() {
 
           {/* المبلغ + QR Generation */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Step 2 — Set المبلغ & Generate QR</h2>
+            <h2 className="text-lg font-semibold">الخطوة 2 — حدد المبلغ وأنشئ رمز الـ QR</h2>
             <Card className={`transition-all ${!selectedTable ? "opacity-50 pointer-events-none" : ""}`}>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-primary" />
-                  {selectedTable ? selectedTable.name : "لا table selected"}
+                  {selectedTable ? selectedTable.name : "لم يتم اختيار طاولة"}
                   {ordersLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                 </CardTitle>
-                <CardDescription>Enter the amount to charge and generate the payment QR code.</CardDescription>
+                <CardDescription>أدخل المبلغ المراد تحصيله لإنشاء رمز الدفع (QR).</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-5">
                 <div className="space-y-1.5">
-                  <Label htmlFor="amount">المبلغ (ILS)</Label>
+                  <Label htmlFor="amount">المبلغ (شيكل)</Label>
                   <div className="flex gap-2">
                     <Input
                       id="amount"
@@ -196,7 +196,7 @@ export default function AdminPayTable() {
                       className="h-11"
                     />
                     <Button onClick={handleGenerateQR} className="shrink-0 h-11" disabled={ordersLoading}>
-                      Generate QR
+                      إنشاء رمز QR
                     </Button>
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export default function AdminPayTable() {
                       <QRCodeSVG value={qrLink} size={180} level="H" includeMargin={false} fgColor="#134e4a" />
                     </div>
                     <p className="text-xs text-muted-foreground text-center">
-                      العميل scans this code to pay <strong>₪{amount}</strong> via iBouraq
+                      يقوم العميل بمسح هذا الرمز لدفع <strong>₪{amount}</strong> عبر آي براق
                     </p>
                     <div className="w-full bg-secondary/60 rounded-xl border border-border px-3 py-2">
                       <span className="text-xs font-mono text-foreground break-all">{qrLink}</span>
@@ -219,7 +219,7 @@ export default function AdminPayTable() {
                       disabled={updateTable.isPending}
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      Approve Payment & Clear Table
+                      تأكيد الدفع وتحرير الطاولة
                     </Button>
                   </div>
                 )}
@@ -233,10 +233,10 @@ export default function AdminPayTable() {
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>تأكيد Payment Approval</DialogTitle>
+            <DialogTitle>تأكيد استلام الدفعة</DialogTitle>
             <DialogDescription>
-              This will mark the payment as approved and set <strong>{selectedTable?.name}</strong> back to{" "}
-              <strong>available</strong>. Make sure the customer has completed the payment before proceeding.
+              سيؤدي هذا إلى وضع علامة على الدفعة كمقبولة وإعادة الطاولة <strong>{selectedTable?.name}</strong> إلى حالة{" "}
+              <strong>متاحة</strong>. تأكد من إتمام العميل للدفع قبل المتابعة.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
@@ -249,7 +249,7 @@ export default function AdminPayTable() {
               disabled={updateTable.isPending}
             >
               <CheckCircle2 className="w-4 h-4" />
-              {updateTable.isPending ? "Clearing..." : "تأكيد & Clear Table"}
+              {updateTable.isPending ? "جاري التحرير..." : "تأكيد وتحرير الطاولة"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -12,7 +12,7 @@ import { Lock, User } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "اسم المستخدم is required"),
+  username: z.string().min(1, "اسم المستخدم مطلوب"),
   password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
 
@@ -34,20 +34,20 @@ export default function AdminLogin() {
       onSuccess: (data) => {
         if (data.success) {
           queryClient.invalidateQueries(); // Clear cache to refetch auth state
-          toast({ title: "دخول successful" });
+          toast({ title: "تم تسجيل الدخول بنجاح" });
           setLocation("/admin/dashboard");
         } else {
           toast({
-            title: "دخول failed",
-            description: "Invalid credentials",
+            title: "فشل تسجيل الدخول",
+            description: "بيانات الاعتماد غير صالحة",
             variant: "destructive",
           });
         }
       },
       onError: () => {
         toast({
-          title: "دخول failed",
-          description: "Invalid credentials",
+          title: "فشل تسجيل الدخول",
+          description: "بيانات الاعتماد غير صالحة",
           variant: "destructive",
         });
       }
@@ -65,9 +65,9 @@ export default function AdminLogin() {
           <div className="mx-auto w-16 h-16 bg-primary/10 flex items-center justify-center rounded-2xl mb-6">
             <Lock className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-3xl font-bold tracking-tight">المسؤول Access</CardTitle>
+          <CardTitle className="text-3xl font-bold tracking-tight">دخول المسؤولين</CardTitle>
           <CardDescription className="text-base mt-2">
-            MyHUB نظام إدارة مقهى الإنترنت System
+            نظام إدارة مقهى الإنترنت MyHUB
           </CardDescription>
         </CardHeader>
         <CardContent className="pb-10 px-8">
@@ -123,7 +123,7 @@ export default function AdminLogin() {
                 className="w-full h-12 text-lg font-medium mt-4"
                 disabled={loginMutation.isPending}
               >
-                {loginMutation.isPending ? "Authenticating..." : "دخول"}
+                {loginMutation.isPending ? "جاري التحقق..." : "تسجيل الدخول"}
               </Button>
             </form>
           </Form>

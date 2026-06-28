@@ -37,8 +37,8 @@ export default function TableOrder() {
     mutation: {
       onSuccess: () => {
         toast({
-          title: "الطلب placed successfully!",
-          description: "We are preparing your items.",
+          title: "تم إرسال الطلب بنجاح!",
+          description: "نحن نجهز طلبك الآن.",
           duration: 5000,
         });
         setCart([]);
@@ -46,8 +46,8 @@ export default function TableOrder() {
       },
       onError: (error: any) => {
         toast({
-          title: "Failed to place order",
-          description: error.message || "Please try again",
+          title: "فشل إرسال الطلب",
+          description: error.message || "يرجى المحاولة مرة أخرى",
           variant: "destructive",
         });
       }
@@ -60,7 +60,7 @@ export default function TableOrder() {
         setIsVerified(true);
         setVerifyError("");
         queryClient.invalidateQueries({ queryKey: getGetTableQueryKey(tableId) });
-        toast({ title: "Reservation verified!", description: "مرحباً بكم في MyHUB. Your table is ready." });
+        toast({ title: "تم التحقق من الحجز!", description: "مرحباً بكم في MyHUB. طاولتك جاهزة الآن." });
       },
       onError: (err: any) => {
         const msg = err?.response?.data?.error || err?.message || "Invalid reservation code.";
@@ -71,7 +71,7 @@ export default function TableOrder() {
 
   const handleVerify = () => {
     if (!verifyCode.trim()) {
-      setVerifyError("Please enter your reservation code.");
+      setVerifyError("يرجى إدخال رمز الحجز الخاص بك.");
       return;
     }
     verifyReservation.mutate({ id: tableId, data: { code: verifyCode.trim() } });
@@ -150,8 +150,8 @@ export default function TableOrder() {
           <div className="bg-destructive/10 text-destructive p-4 rounded-full mb-4">
             <CheckCircle2 className="w-12 h-12" />
           </div>
-          <h2 className="text-2xl font-bold mb-2">Table غير موجود</h2>
-          <p className="text-muted-foreground">The table you are trying to order from does not exist.</p>
+          <h2 className="text-2xl font-bold mb-2">الطاولة غير موجودة</h2>
+          <p className="text-muted-foreground">الطاولة التي تحاول الطلب منها غير موجودة في النظام.</p>
         </div>
       </CustomerLayout>
     );
@@ -169,14 +169,14 @@ export default function TableOrder() {
               </div>
               <h1 className="text-2xl font-bold mb-2">{table.name} — محجوزة</h1>
               <p className="text-muted-foreground text-sm mb-8">
-                This table is reserved. Enter the 8-character code from your reservation confirmation to check in.
+                هذه الطاولة محجوزة. يرجى إدخال رمز الحجز المكون من 8 رموز لتأكيد الحضور.
               </p>
 
               <div className="space-y-4">
                 <Input
                   value={verifyCode}
                   onChange={(e) => { setVerifyCode(e.target.value.toUpperCase()); setVerifyError(""); }}
-                  placeholder="Enter reservation code (e.g. ABC12345)"
+                  placeholder="أدخل رمز الحجز (مثال: ABC12345)"
                   className="text-center text-lg font-mono tracking-widest h-14 border-2 uppercase"
                   maxLength={8}
                   onKeyDown={(e) => e.key === "Enter" && handleVerify()}
@@ -192,12 +192,12 @@ export default function TableOrder() {
                   disabled={verifyReservation.isPending}
                 >
                   <KeyRound className="w-5 h-5 mr-2" />
-                  {verifyReservation.isPending ? "Verifying..." : "Verify & Check In"}
+                  {verifyReservation.isPending ? "جاري التحقق..." : "التحقق وتأكيد الدخول"}
                 </Button>
               </div>
 
               <p className="text-xs text-muted-foreground mt-6">
-                Don't have a code? <a href="/reservation" className="text-primary underline">Make a reservation</a>
+                ليس لديك رمز؟ <a href="/reservation" className="text-primary underline">قم بإجراء حجز الآن</a>
               </p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function TableOrder() {
     <CustomerLayout minimal>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">الطلب for {table.name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">الطلب لـ {table.name}</h1>
           <Badge variant="outline" className="text-sm">{table.status === 'occupied' ? 'مشغولة' : 'متاحة'}</Badge>
         </div>
 
@@ -249,7 +249,7 @@ export default function TableOrder() {
                             className="w-full"
                             variant="secondary"
                           >
-                            <Plus className="w-4 h-4 mr-2" /> إضافة to الطلب
+                            <Plus className="w-4 h-4 mr-2" /> إضافة إلى الطلب
                           </Button>
                         </CardFooter>
                       </Card>
@@ -257,7 +257,7 @@ export default function TableOrder() {
                   </div>
                   {products?.filter(p => p.category === category && p.available).length === 0 && (
                     <div className="py-12 text-center text-muted-foreground border border-dashed rounded-lg">
-                      لا items available in this category.
+                      لا توجد عناصر متاحة في هذا القسم.
                     </div>
                   )}
                 </TabsContent>
@@ -270,7 +270,7 @@ export default function TableOrder() {
               <CardHeader className="bg-primary/5 border-b border-border/50 py-4">
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5 text-primary" />
-                  Your الطلب
+                  طلبك
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -278,8 +278,8 @@ export default function TableOrder() {
                   {cart.length === 0 ? (
                     <div className="h-full min-h-[300px] flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
                       <ShoppingCart className="w-12 h-12 mb-4 opacity-20" />
-                      <p>Your cart is empty.</p>
-                      <p className="text-sm mt-1">إضافة some items from the menu.</p>
+                      <p>سلتك فارغة.</p>
+                      <p className="text-sm mt-1">أضف بعض العناصر من القائمة للبدء.</p>
                     </div>
                   ) : (
                     <div className="p-4 flex flex-col gap-4">
@@ -334,7 +334,7 @@ export default function TableOrder() {
                   disabled={cart.length === 0 || createOrder.isPending}
                   onClick={handleSubmitOrder}
                 >
-                  {createOrder.isPending ? "Sending الطلب..." : "Place الطلب"}
+                  {createOrder.isPending ? "جاري إرسال الطلب..." : "إرسال الطلب"}
                 </Button>
               </CardFooter>
             </Card>

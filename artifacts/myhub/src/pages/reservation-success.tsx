@@ -31,8 +31,8 @@ export default function ReservationSuccess() {
   const copyCode = () => {
     navigator.clipboard.writeText(code);
     toast({
-      title: "Code copied",
-      description: "Reservation code copied to clipboard",
+      title: "تم نسخ الرمز",
+      description: "تم نسخ رمز الحجز إلى الحافظة",
     });
   };
 
@@ -44,12 +44,12 @@ export default function ReservationSuccess() {
             <div className="bg-primary/20 p-4 rounded-full mb-6">
               <CheckCircle2 className="w-16 h-16 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Reservation Confirmed</h1>
-            <p className="text-muted-foreground px-8">We've saved your spot. Show this code to the staff when you arrive.</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">تم تأكيد الحجز</h1>
+            <p className="text-muted-foreground px-8">لقد تم حفظ مكانك. يرجى إظهار هذا الرمز للموظفين عند وصولك للمقهى.</p>
           </div>
           
           <CardContent className="pt-10 pb-8 px-8">
-            <p className="text-sm font-medium text-muted-foreground mb-4 uppercase tracking-widest">Your رمز الحجز</p>
+            <p className="text-sm font-medium text-muted-foreground mb-4 uppercase tracking-widest">رمز الحجز الخاص بك</p>
             <div className="flex items-center justify-center gap-3 bg-secondary/50 py-6 px-4 rounded-xl border border-border group relative mb-8">
               <span className="text-5xl font-mono font-bold tracking-widest text-primary">{code}</span>
               <Button 
@@ -72,15 +72,15 @@ export default function ReservationSuccess() {
               <div className="text-left space-y-3 bg-secondary/20 p-4 rounded-lg border border-border/50">
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(Date(reservation.dateTime), 'EEEE, MMMM d, yyyy')}</span>
+                  <span className="font-medium">{format(new Date(reservation.dateTime), 'EEEE, MMMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Clock className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">{format(Date(reservation.dateTime), 'h:mm a')}</span>
+                  <span className="font-medium">{format(new Date(reservation.dateTime), 'h:mm a')}</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-3 text-primary" />
-                  <span className="font-medium">Party of {reservation.partySize}</span>
+                  <span className="font-medium">عدد الأشخاص: {reservation.partySize}</span>
                 </div>
               </div>
             ) : null}
@@ -88,7 +88,7 @@ export default function ReservationSuccess() {
           
           <CardFooter className="bg-secondary/20 p-6 flex flex-col gap-3 border-t border-border/50">
             <Button className="w-full h-12" onClick={() => setLocation("/")}>
-              Return to الرئيسية <ArrowRight className="w-4 h-4 ml-2" />
+              العودة إلى الرئيسية <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </CardFooter>
         </Card>

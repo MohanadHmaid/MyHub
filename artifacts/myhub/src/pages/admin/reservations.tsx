@@ -23,7 +23,7 @@ export default function AdminReservations() {
   const updateStatus = useUpdateReservationStatus({
     mutation: {
       onSuccess: () => {
-        toast({ title: "Reservation updated" });
+        toast({ title: "تم تحديث الحجز" });
         queryClient.invalidateQueries({ queryKey: getGetReservationsQueryKey() });
       }
     }
@@ -35,7 +35,7 @@ export default function AdminReservations() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'confirmed': return <Badge variant="outline" className="border-green-500 text-green-500 bg-green-500/10">Confirmed</Badge>;
+      case 'confirmed': return <Badge variant="outline" className="border-green-500 text-green-500 bg-green-500/10">مؤكد</Badge>;
       case 'cancelled': return <Badge variant="outline" className="border-destructive text-destructive bg-destructive/10">ملغى</Badge>;
       default: return <Badge variant="outline" className="border-amber-500 text-amber-500 bg-amber-500/10">قيد الانتظار</Badge>;
     }
@@ -55,7 +55,7 @@ export default function AdminReservations() {
           <Calendar className="w-8 h-8 text-primary" />
           الحجوزات
         </h1>
-        <p className="text-muted-foreground mt-1">Manage table bookings and guest requests.</p>
+        <p className="text-muted-foreground mt-1">إدارة حجوزات الطاولات وطلبات الضيوف.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -63,7 +63,7 @@ export default function AdminReservations() {
           Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)
         ) : sortedReservations.length === 0 ? (
           <div className="col-span-full py-20 text-center text-muted-foreground border border-dashed rounded-xl">
-            لا reservations found.
+            لا توجد حجوزات.
           </div>
         ) : (
           sortedReservations.map((res) => (
@@ -92,7 +92,7 @@ export default function AdminReservations() {
                 </div>
                 <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-3 text-primary" />
-                  <span>Party of <strong className="text-base">{res.partySize}</strong></span>
+                  <span>عدد الأشخاص: <strong className="text-base">{res.partySize}</strong></span>
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground mt-4 pt-4 border-t border-border/50">
                   <Phone className="w-4 h-4 mr-3" />
@@ -107,7 +107,7 @@ export default function AdminReservations() {
                     onClick={() => handleStatusChange(res.id, 'cancelled')}
                     disabled={updateStatus.isPending}
                   >
-                    <X className="w-4 h-4 mr-2" /> Decline
+                    <X className="w-4 h-4 mr-2" /> رفض
                   </Button>
                   <Button 
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white"

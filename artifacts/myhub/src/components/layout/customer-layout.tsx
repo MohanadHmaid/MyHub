@@ -51,12 +51,12 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link href="/my-reservations" className="flex items-center gap-2 cursor-pointer">
-                          <CalendarCheck className="w-4 h-4" /> My Reservations
+                          <CalendarCheck className="w-4 h-4" /> حجوزاتي
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={customerLogout} className="text-destructive gap-2 cursor-pointer">
-                        <LogOut className="w-4 h-4" /> Sign Out
+                        <LogOut className="w-4 h-4" /> تسجيل الخروج
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -64,8 +64,8 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                   <Link href="/login">
                     <Button size="sm" className="ml-2 h-9 gap-2 whitespace-nowrap">
                       <UserCircle className="w-4 h-4" />
-                      <span className="hidden xs:inline">دخول</span>
-                      <span className="xs:hidden">دخول</span>
+                      <span className="hidden xs:inline">تسجيل الدخول</span>
+                      <span className="xs:hidden">تسجيل الدخول</span>
                     </Button>
                   </Link>
                 )}
@@ -87,12 +87,12 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link href="/my-reservations" className="flex items-center gap-2 cursor-pointer">
-                          <CalendarCheck className="w-4 h-4" /> My Reservations
+                          <CalendarCheck className="w-4 h-4" /> حجوزاتي
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={customerLogout} className="text-destructive gap-2 cursor-pointer">
-                        <LogOut className="w-4 h-4" /> Sign Out
+                        <LogOut className="w-4 h-4" /> تسجيل الخروج
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -100,7 +100,7 @@ export default function CustomerLayout({ children, minimal = false }: CustomerLa
                   <Link href="/login">
                     <Button size="sm" className="h-9 gap-2">
                       <UserCircle className="w-4 h-4" />
-                      <span className="hidden xs:inline">دخول</span>
+                      <span className="hidden xs:inline">تسجيل الدخول</span>
                       <span className="xs:hidden">دخول</span>
                     </Button>
                   </Link>

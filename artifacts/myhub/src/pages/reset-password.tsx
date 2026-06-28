@@ -22,7 +22,7 @@ const resetPasswordSchema = z.object({
   password: z.string().min(6, "يجب أن تكون كلمة المرور 6 أحرف على الأقل"),
   confirmPassword: z.string().min(6, "يجب أن تكون كلمة المرور 6 أحرف على الأقل"),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "كلمتا المرور غير متطابقتين",
   path: ["confirmPassword"],
 });
 
@@ -47,8 +47,8 @@ export default function ResetPasswordPage() {
 
       setIsSuccess(true);
       toast({
-        title: "كلمة المرور updated",
-        description: "Your password has been reset successfully.",
+        title: "تم تحديث كلمة المرور",
+        description: "تمت إعادة تعيين كلمة المرور الخاصة بك بنجاح.",
       });
     } catch (error: any) {
       toast({
@@ -72,11 +72,11 @@ export default function ResetPasswordPage() {
 
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">New كلمة المرور</CardTitle>
+          <CardTitle className="text-2xl font-bold">كلمة مرور جديدة</CardTitle>
           <CardDescription>
             {isSuccess 
-              ? "Your password has been updated" 
-              : "Enter your new password below"}
+              ? "تم تحديث كلمة المرور الخاصة بك" 
+              : "أدخل كلمة المرور الجديدة أدناه"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,10 +86,10 @@ export default function ResetPasswordPage() {
                 <CheckCircle2 className="w-8 h-8 text-emerald-600" />
               </div>
               <p className="text-muted-foreground">
-                You can now sign in with your new password.
+                يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة الخاصة بك.
               </p>
               <Button asChild className="w-full">
-                <Link href="/login">Go to دخول</Link>
+                <Link href="/login">تسجيل الدخول</Link>
               </Button>
             </div>
           ) : (
@@ -97,7 +97,7 @@ export default function ResetPasswordPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField control={form.control} name="password" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New كلمة المرور</FormLabel>
+                    <FormLabel>كلمة المرور الجديدة</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -109,7 +109,7 @@ export default function ResetPasswordPage() {
                 )} />
                 <FormField control={form.control} name="confirmPassword" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>تأكيد New كلمة المرور</FormLabel>
+                    <FormLabel>تأكيد كلمة المرور الجديدة</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
                   </FormItem>
                 )} />
                 <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
-                  {isLoading ? "Updating password..." : "Update كلمة المرور"}
+                  {isLoading ? "جاري التحديث..." : "تحديث كلمة المرور"}
                 </Button>
               </form>
             </Form>
