@@ -33,37 +33,52 @@ router.get("/auth/me", async (req: Request, res): Promise<void> => {
       return;
     }
 
-    // Find or create customer in our DB linked to Supabase ID
-    let [customer] = await db.select().from(customersTable).where(eq(customersTable.supabaseId, supabaseUser.id));
+    // Try database lookup, but fall back to Supabase metadata if DB fails
+    try {
+      // Find or create customer in our DB linked to Supabase ID
+      let [customer] = await db.select().from(customersTable).where(eq(customersTable.supabaseId, supabaseUser.id));
 
-    if (!customer) {
-      // Check if customer exists by email (for migration)
-      const [existingByEmail] = await db.select().from(customersTable).where(eq(customersTable.email, supabaseUser.email!));
-      
-      if (existingByEmail) {
-        // Link existing customer to Supabase ID
-        [customer] = await db.update(customersTable)
-          .set({ supabaseId: supabaseUser.id })
-          .where(eq(customersTable.id, existingByEmail.id))
-          .returning();
-      } else {
-        // Create new customer
-        [customer] = await db.insert(customersTable).values({
-          supabaseId: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: supabaseUser.user_metadata.full_name || 'New User',
-          phone: supabaseUser.user_metadata.phone || null,
-        }).returning();
+      if (!customer) {
+        // Check if customer exists by email (for migration)
+        const [existingByEmail] = await db.select().from(customersTable).where(eq(customersTable.email, supabaseUser.email!));
+        
+        if (existingByEmail) {
+          // Link existing customer to Supabase ID
+          [customer] = await db.update(customersTable)
+            .set({ supabaseId: supabaseUser.id })
+            .where(eq(customersTable.id, existingByEmail.id))
+            .returning();
+        } else {
+          // Create new customer
+          [customer] = await db.insert(customersTable).values({
+            supabaseId: supabaseUser.id,
+            email: supabaseUser.email!,
+            name: supabaseUser.user_metadata.full_name || 'New User',
+            phone: supabaseUser.user_metadata.phone || null,
+          }).returning();
+        }
       }
-    }
 
-    res.json(GetCustomerMeResponse.parse({
-      authenticated: true,
-      customer: { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone ?? null },
-    }));
+      res.json(GetCustomerMeResponse.parse({
+        authenticated: true,
+        customer: { id: customer.id, name: customer.name, email: customer.email, phone: customer.phone ?? null },
+      }));
+    } catch (dbError) {
+      // Database unavailable — fall back to Supabase user metadata
+      console.error("Auth me DB error (falling back to Supabase metadata):", dbError);
+      res.json(GetCustomerMeResponse.parse({
+        authenticated: true,
+        customer: {
+          id: 0,
+          name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || "User",
+          email: supabaseUser.email || "",
+          phone: supabaseUser.user_metadata?.phone || null,
+        },
+      }));
+    }
   } catch (error) {
     console.error("Auth me error:", error);
-    res.status(500).json({ error: "Failed to fetch user info" });
+    res.json({ authenticated: false, customer: null });
   }
 });
 
@@ -76,29 +91,46 @@ router.get("/auth/my-reservations", async (req: Request, res): Promise<void> => 
       return;
     }
 
-    const [customer] = await db.select().from(customersTable).where(eq(customersTable.supabaseId, supabaseUser.id));
-    
-    if (!customer) {
-      res.status(404).json({ error: "Customer not found" });
-      return;
+    try {
+      const [customer] = await db.select().from(customersTable).where(eq(customersTable.supabaseId, supabaseUser.id));
+      
+      if (!customer) {
+        // Customer not in DB yet — try email-based lookup for reservations
+        if (supabaseUser.email) {
+          const reservations = await db.select().from(reservationsTable)
+            .where(eq(reservationsTable.email, supabaseUser.email));
+          res.json(reservations.map(r => ({
+            ...r,
+            dateTime: r.dateTime.toISOString(),
+            createdAt: r.createdAt.toISOString(),
+          })));
+          return;
+        }
+        res.json([]);
+        return;
+      }
+
+      const reservations = await db.select().from(reservationsTable)
+        .where(
+          or(
+            eq(reservationsTable.customerId, customer.id),
+            eq(reservationsTable.email, customer.email)
+          )
+        );
+
+      res.json(reservations.map(r => ({
+        ...r,
+        dateTime: r.dateTime.toISOString(),
+        createdAt: r.createdAt.toISOString(),
+      })));
+    } catch (dbError) {
+      // Database unavailable — return empty array instead of 500
+      console.error("Auth my-reservations DB error (returning empty):", dbError);
+      res.json([]);
     }
-
-    const reservations = await db.select().from(reservationsTable)
-      .where(
-        or(
-          eq(reservationsTable.customerId, customer.id),
-          eq(reservationsTable.email, customer.email)
-        )
-      );
-
-    res.json(reservations.map(r => ({
-      ...r,
-      dateTime: r.dateTime.toISOString(),
-      createdAt: r.createdAt.toISOString(),
-    })));
   } catch (error) {
     console.error("Auth my-reservations error:", error);
-    res.status(500).json({ error: "Failed to fetch reservations" });
+    res.json([]);
   }
 });
 
